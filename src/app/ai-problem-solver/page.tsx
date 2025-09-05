@@ -48,7 +48,7 @@ const formSchema = z.object({
   currentFrame: frameSchema,
   previousPrescription: prescriptionSchema,
   previousMeasurements: measurementsSchema,
-  previousFrame: frameSchema.partial(), // Previous frame details are fully optional
+  previousFrame: frameSchema.partial(), // Previous frame details are optional
   problem: z.string().min(10, "Please describe the problem in at least 10 characters."),
 });
 
@@ -80,7 +80,10 @@ function AiProblemSolverContent() {
       problem: '',
       currentPrescription: { sphere: 0, cylinder: 0 },
       currentMeasurements: {},
-      currentFrame: {},
+      currentFrame: {
+        lensMaterial: '1.50',
+        lensType: 'Single Vision',
+      },
       previousPrescription: { sphere: 0, cylinder: 0 },
       previousMeasurements: {},
       previousFrame: {},
@@ -276,7 +279,7 @@ function AiProblemSolverContent() {
                     </div>
                 </div>
 
-                <Accordion type="single" collapsible className="w-full" defaultValue="previous-details">
+                <Accordion type="single" collapsible className="w-full">
                   <AccordionItem value="previous-details">
                     <AccordionTrigger>
                       <h3 className="text-lg font-medium text-foreground">Previous Details</h3>
@@ -361,3 +364,5 @@ export default function AiProblemSolverPage() {
         </React.Suspense>
     )
 }
+
+    
