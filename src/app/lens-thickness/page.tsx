@@ -94,7 +94,6 @@ export default function LensThicknessPage() {
     }
 
     // Sagitta formula: s = r - sqrt(r^2 - (d/2)^2)
-    // For minus lenses, r is negative, for plus lenses, r is positive.
     const sag = radius - Math.sign(radius) * Math.sqrt(radius * radius - semiDiameter * semiDiameter);
 
     if (power < 0) { // Minus lens
@@ -242,5 +241,3 @@ export default function LensThicknessPage() {
     </ToolPageLayout>
   );
 }
-
-    
