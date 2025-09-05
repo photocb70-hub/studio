@@ -53,7 +53,7 @@ const menuItems = [
   },
 ];
 
-const appVersion = "0.6 alpha";
+const appVersion = "0.7 alpha";
 
 export default function Home() {
 
@@ -101,5 +101,3 @@ export default function Home() {
     </main>
   );
 }
-
-    

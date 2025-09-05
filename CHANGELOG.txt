@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7 alpha]
+
+### Changed
+- Reordered the calculator cards on the homepage for better usability.
+- Reverted experimental background design to ensure app stability.
+
 ## [0.6 alpha]
 
 ### Added
@@ -30,7 +36,7 @@ All notable changes to this project will be documented in this file.
 - Implemented the "Prescription Transposer" tool to convert eyeglass prescriptions between plus and minus cylinder formats.
 - Added a new page and menu item on the homepage for the transposer.
 
-## [0.2 alpha]
+## [02 alpha]
 
 ### Added
 - Introduced the "Lens Thickness Calculator" for calculating edge and center thickness.
