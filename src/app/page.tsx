@@ -28,12 +28,6 @@ const menuItems = [
     icon: <Triangle className="size-8 text-primary" />,
   },
   {
-    href: '/rx-tolerance',
-    title: 'Rx Tolerance Analysis',
-    description: 'AI-powered analysis of prescription tolerance.',
-    icon: <FlaskConical className="size-8 text-primary" />,
-  },
-  {
     href: '/vertex-conversion',
     title: 'Vertex Conversion',
     description: 'Convert prescription power for different vertex distances.',
