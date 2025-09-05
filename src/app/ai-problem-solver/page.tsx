@@ -17,12 +17,23 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Bot, Loader2, Copy } from 'lucide-react';
+import { Sparkles, Bot, Loader2, Copy, AlertTriangle } from 'lucide-react';
 import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flow';
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+
 
 const prescriptionSchema = z.object({
   sphere: z.coerce.number().optional(),
@@ -37,8 +48,8 @@ const measurementsSchema = z.object({
 });
 
 const frameSchema = z.object({
-  lensMaterial: z.string({ required_error: "Please select a lens material." }),
-  lensType: z.string({ required_error: "Please select a lens type." }),
+  lensMaterial: z.string().optional(),
+  lensType: z.string().optional(),
   minFittingHeight: z.coerce.number().optional(),
 });
 
@@ -49,7 +60,7 @@ const formSchema = z.object({
   previousPrescription: prescriptionSchema,
   previousMeasurements: measurementsSchema,
   previousFrame: frameSchema, 
-  problem: z.string().min(10, "Please describe the problem in at least 10 characters."),
+  problem: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -73,6 +84,7 @@ const lensTypes = [
 function AiProblemSolverContent() {
   const [result, setResult] = useState<ProblemSolverOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -92,7 +104,7 @@ function AiProblemSolverContent() {
       },
     },
   });
-
+  
   const currentSphere = form.watch('currentPrescription.sphere');
   const currentCylinder = form.watch('currentPrescription.cylinder');
   const previousSphere = form.watch('previousPrescription.sphere');
@@ -101,12 +113,15 @@ function AiProblemSolverContent() {
   const currentLensType = form.watch('currentFrame.lensType');
   const previousLensType = form.watch('previousFrame.lensType');
 
-  async function onSubmit(values: FormValues) {
+  const proceedToSubmit = async () => {
+    setIsAlertOpen(false);
     setIsLoading(true);
     setResult(null);
 
+    const values = form.getValues();
+
     const query = `
-      Problem: ${values.problem}
+      Problem: ${values.problem || 'N/A'}
       ---
       Current Prescription:
       Sphere: ${values.currentPrescription.sphere || 'N/A'}, Cylinder: ${values.currentPrescription.cylinder || 'N/A'}, Axis: ${values.currentPrescription.axis || 'N/A'}, Add: ${values.currentPrescription.add || 'N/A'}
@@ -134,10 +149,18 @@ function AiProblemSolverContent() {
     }
   }
 
+  function onAttemptSubmit() {
+    const { currentFrame, previousFrame, problem } = form.getValues();
+    if (!currentFrame.lensMaterial || !currentFrame.lensType || !previousFrame.lensMaterial || !previousFrame.lensType || !problem) {
+      setIsAlertOpen(true);
+    } else {
+      proceedToSubmit();
+    }
+  }
+
   const handleCopyToPrevious = () => {
     const { currentPrescription, currentMeasurements, currentFrame } = form.getValues();
     
-    // Set prescription values individually to trigger re-render of watched labels
     form.setValue('previousPrescription.sphere', currentPrescription.sphere);
     form.setValue('previousPrescription.cylinder', currentPrescription.cylinder);
     form.setValue('previousPrescription.axis', currentPrescription.axis);
@@ -259,6 +282,21 @@ function AiProblemSolverContent() {
       title="AI Problem Solver"
       description="Describe a complex optical problem, and the AI will provide a step-by-step solution."
     >
+        <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                <AlertDialogTitle>Incomplete Information</AlertDialogTitle>
+                <AlertDialogDescription>
+                    You have not filled out all the recommended fields. For the most accurate analysis, please provide as much detail as possible. Do you want to continue anyway?
+                </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={proceedToSubmit}>Continue Anyway</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+
       <div className="grid gap-8">
         <Card>
           <CardHeader>
@@ -266,7 +304,7 @@ function AiProblemSolverContent() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <form onSubmit={(e) => { e.preventDefault(); onAttemptSubmit(); }} className="space-y-8">
                 
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -370,5 +408,3 @@ export default function AiProblemSolverPage() {
         </React.Suspense>
     )
 }
-
-    
