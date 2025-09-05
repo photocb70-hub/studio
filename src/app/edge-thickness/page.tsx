@@ -23,12 +23,10 @@ import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formSchema = z.object({
-  sphere: z.coerce.number().min(-20).max(20),
-  cylinder: z.coerce.number().min(-20).max(20),
-  axis: z.coerce.number().min(1).max(180).optional(),
+  power: z.coerce.number().min(-20).max(20),
   index: z.coerce.number().min(1.4).max(2.0),
   diameter: z.coerce.number().min(30).max(90),
-  thickness: z.coerce.number().min(0.1).max(10),
+  centerThickness: z.coerce.number().min(0.1).max(10),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -42,198 +40,153 @@ const lensMaterials = [
     { name: 'High-Index', index: 1.74 },
 ];
 
-const LensDiagram = ({ minEdge, maxEdge, center, diameter }: { minEdge: number; maxEdge: number; center: number; diameter: number }) => {
-    const memoizedDiagram = useMemo(() => {
-        const viewboxWidth = 150; // Increased width for more space
-        const lensWidth = 100;
-        const textPadding = 5;
+const LensDiagram = ({ edgeThickness, centerThickness, isPlusLens }: { edgeThickness: number, centerThickness: number, isPlusLens: boolean }) => {
+  const memoizedDiagram = useMemo(() => {
+    const viewboxSize = 100;
+    const center = viewboxSize / 2;
+    const lensRadius = viewboxSize / 2 - 10;
+    
+    // Simple scaling for visualization
+    const ctVis = Math.min(Math.max(isPlusLens ? centerThickness : edgeThickness, 1), 10) * 1.5;
+    const etVis = Math.min(Math.max(isPlusLens ? edgeThickness : centerThickness, 1), 10) * 1.5;
+    
+    const curve = (ctVis - etVis) * 0.5;
 
-        const scale = lensWidth / diameter;
-        const maxThicknessForScaling = Math.max(minEdge, maxEdge, center, 4);
-        const viewboxHeight = maxThicknessForScaling * scale * 2.5;
+    const path = isPlusLens
+      ? `M ${center - lensRadius},${center} C ${center - lensRadius},${center - etVis} ${center + lensRadius},${center - etVis} ${center + lensRadius},${center} C ${center + lensRadius},${center + etVis} ${center - lensRadius},${center + etVis} ${center - lensaurus},${center} Z`
+      : `M ${center - lensRadius},${center - etVis/2} C ${center - lensRadius/2},${center - ctVis/2 - curve} ${center + lensRadius/2},${center - ctVis/2 - curve} ${center + lensRadius},${center - etVis/2} L ${center + lensRadius},${center + etVis/2} C ${center + lensRadius/2},${center + ctVis/2 + curve} ${center - lensRadius/2},${center + ctVis/2 + curve} ${center - lensRadius},${center + etVis/2} Z`;
 
-        const centerY = viewboxHeight / 2;
-        const lensStartX = (viewboxWidth - lensWidth) / 2;
-        const lensEndX = lensStartX + lensWidth;
-        const halfWidth = lensStartX + (lensWidth / 2);
-        
-        const avgEdgeHeight = ((minEdge + maxEdge) / 2) * scale / 2;
-        const centerHeight = center * scale / 2;
+    const plusPath = `M 15,50 C 30,30 70,30 85,50 C 70,70 30,70 15,50 Z`;
+    const minusPath = `M 15,35 C 40,45 60,45 85,35 L 85,65 C 60,55 40,55 15,65 Z`;
 
-        const curveFactor = (maxEdge - center) * scale * 0.1;
+    return (
+      <div className="w-full max-w-[200px] mx-auto p-4 flex items-center justify-center">
+        <svg viewBox="0 0 100 100" className="w-full h-auto">
+          <path
+            d={isPlusLens ? plusPath : minusPath}
+            fill="hsl(var(--primary) / 0.1)"
+            stroke="hsl(var(--primary))"
+            strokeWidth="1"
+          />
+          {/* Center thickness line */}
+          <line x1="50" y1={isPlusLens ? 30 : 45} x2="50" y2={isPlusLens ? 70 : 55} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
+          <text x="53" y="52" fontSize="8" fill="hsl(var(--foreground))">{centerThickness.toFixed(1)}mm</text>
+          {/* Edge thickness line */}
+          <line x1="15" y1={isPlusLens ? 50 - ((70-30)/2) : 35} x2="15" y2={isPlusLens ? 50 + ((70-30)/2) : 65} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
+          <text x="12" y="35" fontSize="8" fill="hsl(var(--foreground))" textAnchor="end">{edgeThickness.toFixed(1)}mm</text>
+        </svg>
+      </div>
+    )
+  }, [edgeThickness, centerThickness, isPlusLens]);
 
-        const path = `M ${lensStartX},${centerY - avgEdgeHeight} Q ${halfWidth},${centerY - centerHeight - curveFactor} ${lensEndX},${centerY - avgEdgeHeight} L ${lensEndX},${centerY + avgEdgeHeight} Q ${halfWidth},${centerY + centerHeight + curveFactor} ${lensStartX},${centerY + avgEdgeHeight} Z`;
-
-        return (
-            <div className="w-full max-w-xs mx-auto p-4 flex items-center justify-center">
-                <svg viewBox={`0 0 ${viewboxWidth} ${viewboxHeight}`} className="w-full h-auto">
-                    {/* Lens Body */}
-                    <path
-                        d={path}
-                        fill="hsl(var(--background))"
-                        stroke="hsl(var(--foreground))"
-                        strokeWidth="1"
-                    />
-
-                    {/* Center thickness line and value */}
-                    <line x1={halfWidth} y1={centerY - centerHeight} x2={halfWidth} y2={centerY + centerHeight} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-                    <text x={halfWidth + 3} y={centerY} fontSize="6" fill="hsl(var(--foreground))" textAnchor="start">{center.toFixed(1)}mm</text>
-                    
-                    {/* Edge thickness annotations */}
-                     <g className="text-[6px] font-medium" fill="hsl(var(--foreground))">
-                        <line x1={lensStartX} y1={centerY - avgEdgeHeight} x2={lensStartX} y2={centerY + avgEdgeHeight} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-                        <text x={lensStartX - textPadding} y={centerY - 10} textAnchor="end">Edge (Max): {maxEdge.toFixed(1)}mm</text>
-                        <text x={lensStartX - textPadding} y={centerY + 10} textAnchor="end">Edge (Min): {minEdge.toFixed(1)}mm</text>
-                    </g>
-                </svg>
-            </div>
-        )
-    }, [minEdge, maxEdge, center, diameter]);
-
-    return memoizedDiagram;
+  return memoizedDiagram;
 }
 
 export default function EdgeThicknessPage() {
-  const [result, setResult] = useState<{ minEdge: number; maxEdge: number; centerThickness: number; diameter: number; } | null>(null);
+  const [result, setResult] = useState<{ edgeThickness: number; centerThickness: number; isPlusLens: boolean; } | null>(null);
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      sphere: 0,
-      cylinder: 0,
-      axis: 90,
+      power: 0,
       index: 1.498,
       diameter: 70,
-      thickness: 2.0,
+      centerThickness: 2.0,
     },
   });
 
-  const sphereValue = form.watch('sphere');
-  const cylinderValue = form.watch('cylinder');
-  const powerIsPlus = (sphereValue + (cylinderValue > 0 ? cylinderValue : 0)) > 0;
+  const powerValue = form.watch('power');
 
   function calculateSag(power: number, index: number, diameter: number): number | null {
     if (power === 0) return 0;
     
-    const radius = Math.abs((index - 1) / power) * 1000;
+    // Base curve is F1, so R1 = (n-1)/F1
+    // We assume F2 is plano for simplicity in this spherical calculator.
+    // Let's use the lensmaker's equation for a thin lens as an approximation.
+    // F = (n-1) * (1/R1 - 1/R2). Assuming a plano-convex/concave lens, R2 is infinity.
+    // So, F = (n-1)/R1  => R1 = (n-1)/F
+    
+    const radius = ((index - 1) / power) * 1000; // in mm
     const semiDiameter = diameter / 2;
 
-    if (radius <= semiDiameter) {
+    if (Math.abs(radius) <= semiDiameter) {
         toast({
             variant: "destructive",
             title: "Invalid Calculation",
-            description: `The power ${power.toFixed(2)}D is too high for the given diameter.`
+            description: "The lens power is too high for the given diameter, resulting in an invalid lens shape."
         });
         return null;
     }
+    // Sagitta formula: s = r - sqrt(r^2 - y^2)
     return radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
   }
 
   function onSubmit(values: FormValues) {
-    const { sphere, cylinder, axis, index, diameter, thickness } = values;
+    const { power, index, diameter, centerThickness } = values;
 
-    const power1 = sphere;
-    const power2 = sphere + cylinder;
+    const sag = calculateSag(power, index, diameter);
 
-    const sag1 = calculateSag(power1, index, diameter);
-    const sag2 = calculateSag(power2, index, diameter);
-
-    if (sag1 === null || sag2 === null) {
+    if (sag === null) {
         setResult(null);
         return;
     }
 
-    let centerThickness, minEdge, maxEdge;
+    let edgeThickness;
+    let finalCenterThickness = centerThickness;
+    const isPlusLens = power > 0;
 
-    if (!cylinder || cylinder === 0) {
-      // Spherical lens
-      if (sphere < 0) { // Minus lens
-        centerThickness = thickness;
-        minEdge = maxEdge = sag1 + centerThickness;
-      } else { // Plus lens or plano
-        minEdge = maxEdge = thickness;
-        centerThickness = sag1 + minEdge;
+    if (isPlusLens) {
+      // For plus lenses, center thickness is given, edge is calculated
+      // Edge = Center - Sag. But this can be negative.
+      // Let's assume minimum edge is 1.0mm
+      const minEdge = 1.0;
+      finalCenterThickness = sag + minEdge;
+      edgeThickness = minEdge;
+       // If the user's desired center thickness is higher, we use it.
+      if (centerThickness > finalCenterThickness) {
+        finalCenterThickness = centerThickness;
+        edgeThickness = finalCenterThickness - sag;
       }
     } else {
-      // Toric lens
-      const sags = [sag1, sag2].sort((a,b) => a - b);
-      const minSag = sags[0];
-      const maxSag = sags[1];
-      
-      if (powerIsPlus) { // Plus cyl form or mixed
-        minEdge = thickness;
-        centerThickness = maxSag + minEdge;
-        maxEdge = centerThickness - minSag;
-
-      } else { // Minus cyl form
-        centerThickness = thickness;
-        minEdge = minSag + centerThickness;
-        maxEdge = maxSag + centerThickness;
-      }
+      // For minus lenses, center thickness is given, edge is calculated
+      // Edge = Center + Sag
+      edgeThickness = Math.abs(sag) + centerThickness;
     }
     
-    setResult({ minEdge, maxEdge, centerThickness, diameter });
+    setResult({ edgeThickness, centerThickness: finalCenterThickness, isPlusLens });
   }
 
   return (
     <ToolPageLayout
       title="Lens Thickness Calculator"
-      description="Calculate edge and center thickness for spherical and toric lenses."
+      description="Calculate the approximate edge thickness for a spherical lens."
     >
+      <div className="grid gap-8 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Enter Lens Parameters</CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="sphere"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Sphere Power (D): {sphereValue.toFixed(2)}</FormLabel>
-                        <FormControl>
-                          <Slider
-                              value={[field.value]}
-                              onValueChange={(value) => field.onChange(value[0])}
-                              min={-20} max={20} step={0.25}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="cylinder"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Cylinder Power (D): {cylinderValue.toFixed(2)}</FormLabel>
-                        <FormControl>
-                          <Slider
-                              value={[field.value]}
-                              onValueChange={(value) => field.onChange(value[0])}
-                              min={-20} max={20} step={0.25}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid gap-6 sm:grid-cols-4">
-                    <FormField
-                      control={form.control}
-                      name="axis"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Axis (°)</FormLabel>
-                          <FormControl><Input type="number" min="1" max="180" placeholder="e.g., 90" {...field} /></FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="power"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sphere Power (D): {powerValue.toFixed(2)}</FormLabel>
+                      <FormControl>
+                        <Slider
+                            value={[field.value]}
+                            onValueChange={(value) => field.onChange(value[0])}
+                            min={-20} max={20} step={0.25}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <div className="grid gap-4 sm:grid-cols-2">
                     <FormField
                       control={form.control}
                       name="index"
@@ -248,7 +201,7 @@ export default function EdgeThicknessPage() {
                             </FormControl>
                             <SelectContent>
                               {lensMaterials.map((material) => (
-                                <SelectItem key={material.name + material.index} value={String(material.index)}>
+                                <SelectItem key={material.name} value={String(material.index)}>
                                   {material.name} ({material.index})
                                 </SelectItem>
                               ))}
@@ -271,12 +224,13 @@ export default function EdgeThicknessPage() {
                         </FormItem>
                     )}
                     />
-                    <FormField
+                </div>
+                 <FormField
                     control={form.control}
-                    name="thickness"
+                    name="centerThickness"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>{powerIsPlus ? 'Edge' : 'Center'} Thickness (mm)</FormLabel>
+                        <FormLabel>Minimum Center Thickness (mm)</FormLabel>
                         <FormControl>
                             <Input type="number" step="0.1" {...field} />
                         </FormControl>
@@ -284,7 +238,6 @@ export default function EdgeThicknessPage() {
                         </FormItem>
                     )}
                     />
-                </div>
                 <Button type="submit" className="w-full sm:w-auto">
                   <Calculator className="mr-2 size-4" />
                   Calculate Thickness
@@ -294,43 +247,34 @@ export default function EdgeThicknessPage() {
           </CardContent>
         </Card>
 
-        <div className="mt-8">
+        <div className="flex items-center justify-center">
             {result ? (
-                <Card>
+                <Card className="w-full">
                     <CardHeader>
                         <CardTitle>Result & Visualization</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid gap-6 md:grid-cols-2 items-center">
-                        <div className="flex flex-col items-center justify-center gap-6 text-center">
+                    <CardContent className="grid gap-4 md:grid-cols-2 items-center">
+                        <div className="flex flex-col gap-4 text-center">
                            <div>
                                 <p className="text-sm text-muted-foreground">Center Thickness</p>
-                                <p className="text-4xl font-bold tracking-tight text-accent-foreground">
+                                <p className="text-3xl font-bold tracking-tight text-primary">
                                     {result.centerThickness.toFixed(2)}
-                                    <span className="text-2xl font-medium text-muted-foreground"> mm</span>
+                                    <span className="text-xl font-medium text-muted-foreground"> mm</span>
                                 </p>
                             </div>
-                             <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
-                                <div className="text-center">
-                                    <p className="text-sm text-muted-foreground">Min Edge</p>
-                                    <p className="text-2xl font-bold tracking-tight text-accent-foreground">
-                                        {result.minEdge.toFixed(2)}
-                                        <span className="text-lg font-medium text-muted-foreground"> mm</span>
-                                    </p>
-                                </div>
-                                <div className="text-center">
-                                    <p className="text-sm text-muted-foreground">Max Edge</p>
-                                    <p className="text-2xl font-bold tracking-tight text-accent-foreground">
-                                        {result.maxEdge.toFixed(2)}
-                                        <span className="text-lg font-medium text-muted-foreground"> mm</span>
-                                    </p>
-                                </div>
+                            <div>
+                                <p className="text-sm text-muted-foreground">Edge Thickness</p>
+                                <p className="text-3xl font-bold tracking-tight text-primary">
+                                    {result.edgeThickness.toFixed(2)}
+                                    <span className="text-xl font-medium text-muted-foreground"> mm</span>
+                                </p>
                             </div>
                         </div>
-                        <LensDiagram minEdge={result.minEdge} maxEdge={result.maxEdge} center={result.centerThickness} diameter={result.diameter} />
+                        <LensDiagram edgeThickness={result.edgeThickness} centerThickness={result.centerThickness} isPlusLens={result.isPlusLens} />
                     </CardContent>
                     <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
-                            Thickness = Sag + Minimum Thickness. Calculations are based on the principal meridians.
+                            Calculations are an approximation for spherical lenses.
                         </p>
                     </CardFooter>
                 </Card>
@@ -340,10 +284,7 @@ export default function EdgeThicknessPage() {
                 </div>
             )}
         </div>
+      </div>
     </ToolPageLayout>
   );
 }
-
-    
-
-    
