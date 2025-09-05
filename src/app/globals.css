@@ -56,10 +56,10 @@
   body {
     @apply text-foreground;
     background-color: hsl(var(--background));
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='300' height='200' viewBox='0 0 300 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%239C92AC' stroke-opacity='0.08'%3E%3Cg transform='translate(50 50)'%3E%3Cpath d='M50 0C22.386 0 0 22.386 0 50s22.386 50 50 50h100c27.614 0 50-22.386 50-50S177.614 0 150 0H50z' stroke-width='2'/%3E%3Ccircle cx='50' cy='50' r='30' stroke-width='2'/%3E%3Ccircle cx='150' cy='50' r='30' stroke-width='2'/%3E%3C/g%3E%3Ctext x='20' y='150' font-family='monospace' font-size='14' fill='%239C92AC' fill-opacity='0.08'%3EFc = F / (1 - dF)%3C/text%3E%3Ctext x='160' y='20' font-family='monospace' font-size='14' fill='%239C92AC' fill-opacity='0.08'%3EP = cF%3C/text%3E%3C/g%3E%3C/svg%3E");
   }
 
   .dark body {
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23e0e0e0' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='300' height='200' viewBox='0 0 300 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23e0e0e0' stroke-opacity='0.05'%3E%3Cg transform='translate(50 50)'%3E%3Cpath d='M50 0C22.386 0 0 22.386 0 50s22.386 50 50 50h100c27.614 0 50-22.386 50-50S177.614 0 150 0H50z' stroke-width='2'/%3E%3Ccircle cx='50' cy='50' r='30' stroke-width='2'/%3E%3Ccircle cx='150' cy='50' r='30' stroke-width='2'/%3E%3C/g%3E%3Ctext x='20' y='150' font-family='monospace' font-size='14' fill='%23e0e0e0' fill-opacity='0.05'%3EFc = F / (1 - dF)%3C/text%3E%3Ctext x='160' y='20' font-family='monospace' font-size='14' fill='%23e0e0e0' fill-opacity='0.05'%3EP = cF%3C/text%3E%3C/g%3E%3C/svg%3E");
   }
 }
