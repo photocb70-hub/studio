@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4 alpha]
+
+### Changed
+- Updated the application's background to a subtle and thematic design featuring various optical formulas.
+- Renamed `CHANGELOG.md` to `CHANGELOG.txt` for easier file access.
+
 ## [0.3 alpha]
 
 ### Added
