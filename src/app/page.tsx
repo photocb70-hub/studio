@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -37,6 +37,12 @@ const menuItems = [
     title: 'Vertex Conversion',
     description: 'Convert prescription power for different vertex distances.',
     icon: <MoveHorizontal className="size-8 text-primary" />,
+  },
+  {
+    href: '/blanket-size',
+    title: 'Blanket Size',
+    description: 'Calculate the minimum lens blank size needed.',
+    icon: <Maximize className="size-8 text-primary" />,
   }
 ];
 
@@ -56,7 +62,7 @@ export default function Home() {
           </p>
         </header>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {menuItems.map((item) => (
             <Link href={item.href} key={item.href} className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
               <Card className="flex h-full items-center transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary">
