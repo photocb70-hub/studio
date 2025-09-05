@@ -145,10 +145,12 @@ const LensVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness,
                     />
 
                     {/* Thickness Labels */}
-                    <text x={105} y={50} textAnchor="start" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[0].thickness ?? 0).toFixed(1)}mm</text>
-                    <text x={50} y={-5} textAnchor="middle" dominantBaseline="auto" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[1].thickness ?? 0).toFixed(1)}mm</text>
-                    <text x={-5} y={50} textAnchor="end" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[2].thickness ?? 0).toFixed(1)}mm</text>
-                    <text x={50} y={105} textAnchor="middle" dominantBaseline="hanging" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[3].thickness ?? 0).toFixed(1)}mm</text>
+                    <g transform={`rotate(${axis ?? 0} 50 50)`}>
+                        <text x={105} y={50} textAnchor="start" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[0].thickness ?? 0).toFixed(1)}mm</text>
+                        <text x={50} y={-5} textAnchor="middle" dominantBaseline="auto" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[1].thickness ?? 0).toFixed(1)}mm</text>
+                        <text x={-5} y={50} textAnchor="end" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[2].thickness ?? 0).toFixed(1)}mm</text>
+                        <text x={50} y={105} textAnchor="middle" dominantBaseline="hanging" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[3].thickness ?? 0).toFixed(1)}mm</text>
+                    </g>
                     
                     {/* Nasal/Temporal Labels */}
                     <text x={105} y={62} textAnchor="start" dominantBaseline="middle" fontSize="8" fill="hsl(var(--muted-foreground))">Temporal</text>
