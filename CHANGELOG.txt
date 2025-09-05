@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.1 alpha]
+
+### Changed
+- Reverted experimental UI changes and solidified calculator updates.
+
 ## [0.5 alpha]
 
 ### Changed
