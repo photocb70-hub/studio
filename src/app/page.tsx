@@ -10,12 +10,6 @@ import {
 
 const menuItems = [
   {
-    href: '/lens-thickness',
-    title: 'Lens Thickness',
-    description: 'Estimate lens thickness for spherical and spherocylindrical lenses.',
-    icon: <Layers className="size-8 text-primary" />,
-  },
-  {
     href: '/edge-thickness',
     title: 'Edge Thickness',
     description: 'Calculate edge thickness and visualize the lens profile.',
