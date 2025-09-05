@@ -40,45 +40,59 @@ const lensMaterials = [
     { name: 'High-Index', index: 1.74 },
 ];
 
-const LensDiagram = ({ edge, center, diameter }: { edge: number; center: number; diameter: number }) => {
+const LensDiagram = ({ edge, center, diameter, power }: { edge: number; center: number; diameter: number, power: number }) => {
     const memoizedDiagram = useMemo(() => {
         const viewboxWidth = 100;
-        const maxThickness = Math.max(edge, center, 5);
         const scale = viewboxWidth / diameter;
-        const viewboxHeight = maxThickness * scale * 2.5;
+        
+        // Determine the maximum thickness for scaling the height, with a minimum value for plano lenses
+        const maxThicknessForScaling = Math.max(edge, center, 3);
+        const viewboxHeight = maxThicknessForScaling * scale * 2.5;
 
-        const power = (edge - center);
-        const curve = power * scale * 0.5;
+        // Simplified curve calculation based on power
+        // A more pronounced curve for higher powers
+        const curveFactor = power * scale * 0.4;
+
+        const centerY = viewboxHeight / 2;
+        const halfWidth = viewboxWidth / 2;
+        
+        const edgeHeight = edge * scale;
+        const centerHeight = center * scale;
+
+        // Path for the front surface
+        const frontCurvePath = `M 0,${centerY - edgeHeight} Q ${halfWidth},${centerY - centerHeight - curveFactor} ${viewboxWidth},${centerY - edgeHeight}`;
+        // Path for the back surface (often flat for simplicity, but we can make it curved too)
+        const backCurvePath = `M 0,${centerY + edgeHeight} Q ${halfWidth},${centerY + centerHeight - curveFactor} ${viewboxWidth},${centerY + edgeHeight}`;
+
+        const lensPath = `${frontCurvePath} L ${viewboxWidth},${centerY + edgeHeight} ${backCurvePath.replace('M 0,','L ')} Z`;
 
         return (
-            <div className="w-full max-w-sm mx-auto p-4">
+            <div className="w-full max-w-sm mx-auto p-4 flex items-center justify-center">
                 <svg viewBox={`0 0 ${viewboxWidth} ${viewboxHeight}`} className="w-full h-auto">
                     <path
-                        d={`M 0,${viewboxHeight / 2 - (edge * scale)}
-                             Q ${viewboxWidth / 2},${viewboxHeight / 2 - (center * scale) - curve} ${viewboxWidth},${viewboxHeight / 2 - (edge * scale)}
-                             L ${viewboxWidth},${viewboxHeight / 2 + (edge * scale)}
-                             Q ${viewboxWidth / 2},${viewboxHeight / 2 + (center * scale) + curve} 0,${viewboxHeight / 2 + (edge * scale)}
-                             Z`}
-                        fill="hsl(var(--accent) / 0.1)"
+                        d={lensPath}
+                        fill="hsl(var(--accent) / 0.2)"
                         stroke="hsl(var(--accent))"
-                        strokeWidth="0.5"
+                        strokeWidth="0.75"
                     />
 
-                    <line x1={viewboxWidth/2} y1={viewboxHeight/2 - center*scale} x2={viewboxWidth/2} y2={viewboxHeight/2 + center*scale} stroke="hsl(var(--primary))" strokeWidth="0.25" strokeDasharray="1 1" />
-                    <text x={viewboxWidth/2 + 2} y={viewboxHeight/2} fill="hsl(var(--foreground))" fontSize="3" textAnchor="start" dominantBaseline="middle">{center.toFixed(1)}mm</text>
+                    {/* Center thickness line and label */}
+                    <line x1={halfWidth} y1={centerY - centerHeight} x2={halfWidth} y2={centerY + centerHeight} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="1.5 1.5" />
+                    <text x={halfWidth + 3} y={centerY} fill="hsl(var(--foreground))" fontSize="4" textAnchor="start" dominantBaseline="middle">{center.toFixed(1)}mm</text>
 
-                    <line x1={1} y1={viewboxHeight/2 - edge*scale} x2={1} y2={viewboxHeight/2 + edge*scale} stroke="hsl(var(--primary))" strokeWidth="0.25" strokeDasharray="1 1" />
-                    <text x={3} y={viewboxHeight/2} fill="hsl(var(--foreground))" fontSize="3" textAnchor="start" dominantBaseline="middle">{edge.toFixed(1)}mm</text>
+                    {/* Edge thickness line and label */}
+                    <line x1={2} y1={centerY - edgeHeight} x2={2} y2={centerY + edgeHeight} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="1.5 1.5" />
+                    <text x={5} y={centerY} fill="hsl(var(--foreground))" fontSize="4" textAnchor="start" dominantBaseline="middle">{edge.toFixed(1)}mm</text>
                 </svg>
             </div>
         )
-    }, [edge, center, diameter]);
+    }, [edge, center, diameter, power]);
 
     return memoizedDiagram;
 }
 
 export default function EdgeThicknessPage() {
-  const [result, setResult] = useState<{ edgeThickness: number; centerThickness: number; diameter: number } | null>(null);
+  const [result, setResult] = useState<{ edgeThickness: number; centerThickness: number; diameter: number, power: number } | null>(null);
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -97,7 +111,7 @@ export default function EdgeThicknessPage() {
     const { power, index, diameter, thickness } = values;
 
     if (power === 0) {
-        setResult({ edgeThickness: thickness, centerThickness: thickness, diameter });
+        setResult({ edgeThickness: thickness, centerThickness: thickness, diameter, power });
         return;
     }
 
@@ -126,7 +140,7 @@ export default function EdgeThicknessPage() {
       centerThickness = sag + edgeThickness;
     }
     
-    setResult({ edgeThickness, centerThickness, diameter });
+    setResult({ edgeThickness, centerThickness, diameter, power });
   }
 
   return (
@@ -244,7 +258,7 @@ export default function EdgeThicknessPage() {
                                 </p>
                             </div>
                         </div>
-                        <LensDiagram edge={result.edgeThickness} center={result.centerThickness} diameter={result.diameter} />
+                        <LensDiagram edge={result.edgeThickness} center={result.centerThickness} diameter={result.diameter} power={result.power}/>
                     </CardContent>
                     <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
