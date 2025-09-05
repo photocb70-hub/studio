@@ -37,7 +37,7 @@ export default function StepAlongPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      objectVergence: -5.00,
+      objectVergence: 0,
       surfacePower1: 0,
       distance: 0,
       refractiveIndex: 1.33,
@@ -45,6 +45,7 @@ export default function StepAlongPage() {
   });
 
   const surfacePower1Value = form.watch('surfacePower1');
+  const objectVergenceValue = form.watch('objectVergence');
 
   function onSubmit(values: FormValues) {
     const { objectVergence, surfacePower1, surfacePower2, distance, refractiveIndex } = values;
@@ -90,9 +91,15 @@ export default function StepAlongPage() {
                   name="objectVergence"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Initial Object Vergence (L, in Diopters)</FormLabel>
+                      <FormLabel>Initial Object Vergence (L, in Diopters): {objectVergenceValue.toFixed(2)}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" {...field} />
+                        <Slider
+                            value={[field.value]}
+                            onValueChange={(value) => field.onChange(value[0])}
+                            min={-20}
+                            max={20}
+                            step={0.25}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
