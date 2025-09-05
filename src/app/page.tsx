@@ -16,12 +16,6 @@ const menuItems = [
     icon: <Triangle className="size-8 text-primary" />,
   },
   {
-    href: '/vertex-conversion',
-    title: 'Vertex Conversion',
-    description: 'Convert prescription power for different vertex distances.',
-    icon: <MoveHorizontal className="size-8 text-primary" />,
-  },
-  {
     href: '/blank-size',
     title: 'Blank Size',
     description: 'Calculate the minimum lens blank size needed.',
