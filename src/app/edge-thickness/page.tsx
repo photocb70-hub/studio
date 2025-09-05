@@ -85,7 +85,7 @@ export default function EdgeThicknessPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       power: 0,
-      index: 1.586,
+      index: 1.498,
       diameter: 70,
       thickness: 1.5,
     },

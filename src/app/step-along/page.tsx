@@ -56,7 +56,7 @@ export default function StepAlongPage() {
       objectVergence: 0,
       surfacePower1: 0,
       distance: 0,
-      refractiveIndex: 1.33,
+      refractiveIndex: 1.498,
     },
   });
 
