@@ -10,12 +10,6 @@ import {
 
 const menuItems = [
   {
-    href: '/lens-thickness',
-    title: 'Lens Thickness',
-    description: 'Calculate lens thickness based on prescription.',
-    icon: <Scissors className="size-8 text-primary" />,
-  },
-  {
     href: '/induced-prism',
     title: 'Induced Prism',
     description: 'Calculate induced prism from decentration and power.',
