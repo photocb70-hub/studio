@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5 alpha]
+
+### Changed
+- Updated the "Lens Thickness Calculator" default minimum thickness to 2.0mm for more realistic results.
+- Corrected the "Blank Size Calculator" formula and updated its input fields for better accuracy.
+
 ## [0.4 alpha]
 
 ### Changed
