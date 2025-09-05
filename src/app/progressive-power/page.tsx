@@ -127,7 +127,7 @@ export default function ProgressivePowerPage() {
                     </CardContent>
                     <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
-                            Note: This is a simplified linear estimation.
+                            EA = (Dist / Corridor) * Add. Note: This is a linear estimation.
                         </p>
                     </CardFooter>
                 </Card>
