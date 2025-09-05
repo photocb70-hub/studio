@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0 alpha]
+
+### Changed
+- Overhauled the "Lens Thickness Calculator" with a more robust calculation for sphero-cylindrical lenses.
+- Updated the "Lens Thickness Calculator" UI to use sliders for cylinder and axis for a more consistent user experience.
+
+### Added
+- Implemented a new 2D/3D visualization diagram for the "Lens Thickness Calculator" to show the lens profile and where minimum/maximum thickness occurs.
+
 ## [0.9 alpha]
 
 ### Added
