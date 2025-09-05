@@ -17,7 +17,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Bot, Loader2 } from 'lucide-react';
+import { Sparkles, Bot, Loader2, Copy } from 'lucide-react';
 import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flow';
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -127,6 +127,13 @@ function AiProblemSolverContent() {
       setIsLoading(false);
     }
   }
+
+  const handleCopyToPrevious = () => {
+    const currentValues = form.getValues();
+    form.setValue('previousPrescription', currentValues.currentPrescription);
+    form.setValue('previousMeasurements', currentValues.currentMeasurements);
+    form.setValue('previousFrame', currentValues.currentFrame);
+  };
   
   const formatPower = (power?: number) => {
     if (power === undefined) return '0.00';
@@ -196,7 +203,7 @@ function AiProblemSolverContent() {
         <FormField control={form.control} name={`${prefix}.lensMaterial`} render={({ field }) => (
             <FormItem>
                 <FormLabel>Lens Material</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger><SelectValue placeholder="Select a material" /></SelectTrigger>
                   </FormControl>
@@ -210,7 +217,7 @@ function AiProblemSolverContent() {
         <FormField control={form.control} name={`${prefix}.lensType`} render={({ field }) => (
             <FormItem>
                 <FormLabel>Lens Type</FormLabel>
-                 <Select onValueChange={field.onChange} defaultValue={field.value}>
+                 <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger><SelectValue placeholder="Select a lens type" /></SelectTrigger>
                   </FormControl>
@@ -247,7 +254,13 @@ function AiProblemSolverContent() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 
                 <div className="space-y-4">
-                    <h3 className="text-lg font-medium text-foreground">Current Details</h3>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-medium text-foreground">Current Details</h3>
+                      <Button type="button" variant="ghost" size="sm" onClick={handleCopyToPrevious} className="gap-2 text-muted-foreground">
+                        <Copy className="size-4" />
+                        Copy to Previous
+                      </Button>
+                    </div>
                     <div className="space-y-6 rounded-md border p-4">
                         {renderPrescriptionFields('currentPrescription', currentSphere, currentCylinder)}
                         <hr/>
@@ -257,10 +270,10 @@ function AiProblemSolverContent() {
                     </div>
                 </div>
 
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion type="single" collapsible className="w-full" defaultValue="previous-details">
                   <AccordionItem value="previous-details">
                     <AccordionTrigger>
-                      <h3 className="text-lg font-medium text-foreground">Previous Details (Optional)</h3>
+                      <h3 className="text-lg font-medium text-foreground">Previous Details</h3>
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-6 rounded-md border p-4 mt-4">
