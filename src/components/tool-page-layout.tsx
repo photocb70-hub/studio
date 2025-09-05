@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Focus } from 'lucide-react';
+import { ArrowLeft, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 type ToolPageLayoutProps = {
@@ -15,14 +15,14 @@ export function ToolPageLayout({ title, description, children }: ToolPageLayoutP
       <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
-            <Button variant="outline" asChild>
+            <Button variant="outline" size="icon" asChild>
               <Link href="/">
-                <ArrowLeft className="mr-2 size-4" />
-                Back
+                <ArrowLeft className="size-4" />
+                <span className="sr-only">Back</span>
               </Link>
             </Button>
             <div className="flex items-center gap-2">
-                <Focus className="size-5 text-primary" />
+                <Eye className="size-5 text-primary" />
                 <h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
                     Optical Prime
                 </h1>

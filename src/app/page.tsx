@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Focus } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -68,7 +68,7 @@ export default function Home() {
       <div className="w-full max-w-4xl z-10">
         <header className="mb-12 text-center">
           <div className="mb-4 inline-flex items-center gap-3">
-            <Focus className="size-10 text-primary" />
+            <Eye className="size-10 text-primary" />
             <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
               Optical Prime
             </h1>
