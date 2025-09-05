@@ -21,12 +21,12 @@ import { Calculator } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
-  effectiveDiameter: z.coerce.number().min(0, "Must be a positive number."),
-  framePD: z.coerce.number().min(0, "Must be a positive number."),
+  eyeSize: z.coerce.number().min(0, "Must be a positive number."),
+  bridgeSize: z.coerce.number().min(0, "Must be a positive number."),
   patientPD: z.coerce.number().min(0, "Must be a positive number."),
-}).refine(data => data.framePD >= data.patientPD, {
-    message: "Frame PD must be greater than or equal to Patient PD.",
-    path: ["framePD"],
+}).refine(data => (data.eyeSize + data.bridgeSize) >= data.patientPD, {
+    message: "Frame PD (Eye Size + Bridge Size) must be greater than or equal to Patient PD.",
+    path: ["bridgeSize"],
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -38,20 +38,20 @@ export default function BlankSizePage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      effectiveDiameter: 50,
-      framePD: 70,
+      eyeSize: 50,
+      bridgeSize: 20,
       patientPD: 64,
     },
   });
 
   function onSubmit(values: FormValues) {
-    const { effectiveDiameter, framePD, patientPD } = values;
+    const { eyeSize, bridgeSize, patientPD } = values;
 
-    // Decentration = Frame PD - Patient PD
-    const decentration = framePD - patientPD;
-    
-    // Minimum Blank Size = Effective Diameter + Decentration + 2mm (for edging)
-    const blankSize = effectiveDiameter + decentration + 2;
+    // Frame PD = Eye Size + Bridge Size
+    const framePD = eyeSize + bridgeSize;
+
+    // Minimum Blank Size = Frame PD - Patient PD + Eye Size + 2mm (for glazing)
+    const blankSize = framePD - patientPD + eyeSize + 2;
     setResult(blankSize);
   }
 
@@ -70,10 +70,10 @@ export default function BlankSizePage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
-                  name="effectiveDiameter"
+                  name="eyeSize"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Effective Diameter (ED) (mm)</FormLabel>
+                      <FormLabel>Eye Size (mm)</FormLabel>
                       <FormControl>
                         <Input type="number" step="0.1" placeholder="e.g., 50" {...field} />
                       </FormControl>
@@ -83,12 +83,12 @@ export default function BlankSizePage() {
                 />
                 <FormField
                   control={form.control}
-                  name="framePD"
+                  name="bridgeSize"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Frame PD (mm)</FormLabel>
+                      <FormLabel>Bridge Size (DBL) (mm)</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" placeholder="e.g., 70" {...field} />
+                        <Input type="number" step="0.1" placeholder="e.g., 20" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -130,7 +130,7 @@ export default function BlankSizePage() {
                     </CardContent>
                     <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
-                            MBS = ED + (Frame PD - Patient PD) + 2mm
+                            MBS = (Eye Size + Bridge) - PD + Eye Size + 2mm
                         </p>
                     </CardFooter>
                 </Card>
