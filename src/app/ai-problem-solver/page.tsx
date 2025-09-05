@@ -234,7 +234,7 @@ function AiProblemSolverContent() {
   );
 
   const renderFrameFields = (prefix: 'currentFrame' | 'previousFrame') => {
-    const lensType = form.watch(prefix === 'currentFrame' ? 'currentFrame.lensType' : 'previousFrame.lensType');
+    const lensType = form.watch(prefix);
     return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <FormField control={form.control} name={`${prefix}.lensMaterial`} render={({ field }) => (
@@ -265,7 +265,7 @@ function AiProblemSolverContent() {
                 <FormMessage />
             </FormItem>
         )} />
-        {(lensType === 'Progressive' || lensType === 'Bifocal') && (
+        {(lensType?.lensType === 'Progressive' || lensType?.lensType === 'Bifocal') && (
             <FormField control={form.control} name={`${prefix}.minFittingHeight`} render={({ field }) => (
                 <FormItem>
                     <FormLabel>Minimum Fitting Height</FormLabel>
@@ -408,3 +408,5 @@ export default function AiProblemSolverPage() {
         </React.Suspense>
     )
 }
+
+    
