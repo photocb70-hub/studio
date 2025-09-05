@@ -129,14 +129,15 @@ export default function EdgeThicknessPage() {
                     <FormItem>
                       <FormLabel>Sphere Power (D): {powerValue.toFixed(2)}</FormLabel>
                       <FormControl>
-                          <Slider
-                              value={[field.value]}
-                              onValueChange={(value) => field.onChange(value[0])}
-                              min={-20}
-                              max={0}
-                              step={0.25}
-                              dir="rtl"
-                          />
+                        <div className="flex items-center gap-4">
+                            <Slider
+                                value={[field.value]}
+                                onValueChange={(value) => field.onChange(value[0])}
+                                min={-20}
+                                max={0}
+                                step={0.25}
+                            />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
