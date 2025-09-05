@@ -23,7 +23,9 @@ import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formSchema = z.object({
-  power: z.coerce.number().min(-20).max(20),
+  sphere: z.coerce.number().min(-20).max(20),
+  cylinder: z.coerce.number().min(-20).max(20),
+  axis: z.coerce.number().min(1).max(180).optional(),
   index: z.coerce.number().min(1.4).max(2.0),
   diameter: z.coerce.number().min(30).max(90),
   thickness: z.coerce.number().min(0.1).max(10),
@@ -40,25 +42,26 @@ const lensMaterials = [
     { name: 'High-Index', index: 1.74 },
 ];
 
-const LensDiagram = ({ edge, center, diameter, power }: { edge: number; center: number; diameter: number, power: number }) => {
+const LensDiagram = ({ minEdge, maxEdge, center, diameter }: { minEdge: number; maxEdge: number; center: number; diameter: number }) => {
     const memoizedDiagram = useMemo(() => {
-        const viewboxWidth = 120; // Increased width for more space
-        const scale = viewboxWidth / (diameter * 1.2); // Adjust scale for padding
-        const maxThicknessForScaling = Math.max(edge, center, 4);
+        const viewboxWidth = 120;
+        const scale = viewboxWidth / (diameter * 1.2);
+        const maxThicknessForScaling = Math.max(minEdge, maxEdge, center, 4);
         const viewboxHeight = maxThicknessForScaling * scale * 3;
 
         const centerY = viewboxHeight / 2;
         const halfWidth = viewboxWidth / 2;
         
-        const edgeHeight = edge * scale / 2;
+        // Use average edge thickness for a representative shape
+        const avgEdgeHeight = ((minEdge + maxEdge) / 2) * scale / 2;
         const centerHeight = center * scale / 2;
 
-        const curveFactor = power * scale * 0.4;
+        const curveFactor = (maxEdge - center) * scale * 0.1;
         const lensWidth = 100;
         const lensStartX = (viewboxWidth - lensWidth) / 2;
         const lensEndX = lensStartX + lensWidth;
 
-        const path = `M ${lensStartX},${centerY - edgeHeight} Q ${halfWidth},${centerY - centerHeight - curveFactor} ${lensEndX},${centerY - edgeHeight} L ${lensEndX},${centerY + edgeHeight} Q ${halfWidth},${centerY + centerHeight - curveFactor} ${lensStartX},${centerY + edgeHeight} Z`;
+        const path = `M ${lensStartX},${centerY - avgEdgeHeight} Q ${halfWidth},${centerY - centerHeight - curveFactor} ${lensEndX},${centerY - avgEdgeHeight} L ${lensEndX},${centerY + avgEdgeHeight} Q ${halfWidth},${centerY + centerHeight - curveFactor} ${lensStartX},${centerY + avgEdgeHeight} Z`;
 
         return (
             <div className="w-full max-w-sm mx-auto p-2 flex items-center justify-center">
@@ -68,54 +71,55 @@ const LensDiagram = ({ edge, center, diameter, power }: { edge: number; center: 
                         d={path}
                         fill="hsl(var(--accent) / 0.3)"
                         stroke="hsl(var(--accent-foreground))"
-                        strokeWidth="1"
+                        strokeWidth="1.5"
                     />
 
                     {/* Center thickness line, label and value */}
-                    <g className="text-xs font-medium" fill="hsl(var(--foreground))">
+                    <g className="text-[6px] font-medium" fill="hsl(var(--foreground))">
                         <line x1={halfWidth} y1={centerY - centerHeight} x2={halfWidth} y2={centerY + centerHeight} stroke="hsl(var(--foreground) / 0.7)" strokeWidth="0.5" strokeDasharray="2 2" />
-                        <text x={halfWidth + 4} y={centerY - 6} textAnchor="start">Center</text>
+                        <text x={halfWidth + 4} y={centerY - 4} textAnchor="start">Center</text>
                         <text x={halfWidth + 4} y={centerY + 6} textAnchor="start" className="font-bold">{center.toFixed(1)}mm</text>
                     </g>
                     
-                    {/* Edge thickness line, label and value */}
-                    <g className="text-xs font-medium" fill="hsl(var(--foreground))">
-                        <line x1={lensStartX} y1={centerY - edgeHeight} x2={lensStartX} y2={centerY + edgeHeight} stroke="hsl(var(--foreground) / 0.7)" strokeWidth="0.5" strokeDasharray="2 2" />
-                        <text x={lensStartX - 4} y={centerY - 6} textAnchor="end">Edge</text>
-                        <text x={lensStartX - 4} y={centerY + 6} textAnchor="end" className="font-bold">{edge.toFixed(1)}mm</text>
+                    {/* Edge thickness annotations */}
+                     <g className="text-[6px] font-medium" fill="hsl(var(--foreground))">
+                        <line x1={lensStartX} y1={centerY - avgEdgeHeight} x2={lensStartX} y2={centerY + avgEdgeHeight} stroke="hsl(var(--foreground) / 0.7)" strokeWidth="0.5" strokeDasharray="2 2" />
+                        <text x={lensStartX - 4} y={centerY - 10} textAnchor="end">Edge (Max)</text>
+                        <text x={lensStartX - 4} y={centerY} textAnchor="end" className="font-bold">{maxEdge.toFixed(1)}mm</text>
+                        <text x={lensStartX - 4} y={centerY + 10} textAnchor="end">Edge (Min)</text>
+                        <text x={lensStartX - 4} y={centerY + 20} textAnchor="end" className="font-bold">{minEdge.toFixed(1)}mm</text>
                     </g>
                 </svg>
             </div>
         )
-    }, [edge, center, diameter, power]);
+    }, [minEdge, maxEdge, center, diameter]);
 
     return memoizedDiagram;
 }
 
 export default function EdgeThicknessPage() {
-  const [result, setResult] = useState<{ edgeThickness: number; centerThickness: number; diameter: number, power: number } | null>(null);
+  const [result, setResult] = useState<{ minEdge: number; maxEdge: number; centerThickness: number; diameter: number; } | null>(null);
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      power: 0,
+      sphere: 0,
+      cylinder: 0,
+      axis: 90,
       index: 1.498,
       diameter: 70,
       thickness: 2.0,
     },
   });
 
-  const powerValue = form.watch('power');
+  const sphereValue = form.watch('sphere');
+  const cylinderValue = form.watch('cylinder');
+  const powerIsPlus = (sphereValue + (cylinderValue > 0 ? cylinderValue : 0)) > 0;
 
-  function onSubmit(values: FormValues) {
-    const { power, index, diameter, thickness } = values;
-
-    if (power === 0) {
-        setResult({ edgeThickness: thickness, centerThickness: thickness, diameter, power });
-        return;
-    }
-
+  function calculateSag(power: number, index: number, diameter: number): number | null {
+    if (power === 0) return 0;
+    
     const radius = Math.abs((index - 1) / power) * 1000;
     const semiDiameter = diameter / 2;
 
@@ -123,31 +127,63 @@ export default function EdgeThicknessPage() {
         toast({
             variant: "destructive",
             title: "Invalid Calculation",
-            description: "The lens power is too high for the given diameter."
+            description: `The power ${power.toFixed(2)}D is too high for the given diameter.`
         });
+        return null;
+    }
+    return radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
+  }
+
+  function onSubmit(values: FormValues) {
+    const { sphere, cylinder, axis, index, diameter, thickness } = values;
+
+    const power1 = sphere;
+    const power2 = sphere + cylinder;
+
+    const sag1 = calculateSag(power1, index, diameter);
+    const sag2 = calculateSag(power2, index, diameter);
+
+    if (sag1 === null || sag2 === null) {
         setResult(null);
         return;
     }
 
-    const sag = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
+    let centerThickness, minEdge, maxEdge;
 
-    let edgeThickness, centerThickness;
+    if (!cylinder || cylinder === 0) {
+      // Spherical lens
+      if (sphere < 0) { // Minus lens
+        centerThickness = thickness;
+        minEdge = maxEdge = sag1 + centerThickness;
+      } else { // Plus lens or plano
+        minEdge = maxEdge = thickness;
+        centerThickness = sag1 + minEdge;
+      }
+    } else {
+      // Toric lens
+      const sags = [sag1, sag2].sort((a,b) => a - b);
+      const minSag = sags[0];
+      const maxSag = sags[1];
+      
+      if (powerIsPlus) { // Plus cyl form or mixed
+        minEdge = thickness;
+        centerThickness = maxSag + minEdge;
+        maxEdge = centerThickness - minSag;
 
-    if (power < 0) { // Minus lens
-      centerThickness = thickness;
-      edgeThickness = sag + centerThickness;
-    } else { // Plus lens
-      edgeThickness = thickness;
-      centerThickness = sag + edgeThickness;
+      } else { // Minus cyl form
+        centerThickness = thickness;
+        minEdge = minSag + centerThickness;
+        maxEdge = maxSag + centerThickness;
+      }
     }
     
-    setResult({ edgeThickness, centerThickness, diameter, power });
+    setResult({ minEdge, maxEdge, centerThickness, diameter });
   }
 
   return (
     <ToolPageLayout
       title="Lens Thickness Calculator"
-      description="Calculate edge and center thickness for plus and minus lenses."
+      description="Calculate edge and center thickness for spherical and toric lenses."
     >
         <Card>
           <CardHeader>
@@ -155,27 +191,53 @@ export default function EdgeThicknessPage() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="power"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Sphere Power (D): {powerValue.toFixed(2)}</FormLabel>
-                      <FormControl>
-                        <Slider
-                            value={[field.value]}
-                            onValueChange={(value) => field.onChange(value[0])}
-                            min={-20}
-                            max={20}
-                            step={0.25}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="grid gap-6 sm:grid-cols-3">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="sphere"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sphere Power (D): {sphereValue.toFixed(2)}</FormLabel>
+                        <FormControl>
+                          <Slider
+                              value={[field.value]}
+                              onValueChange={(value) => field.onChange(value[0])}
+                              min={-20} max={20} step={0.25}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="cylinder"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Cylinder Power (D): {cylinderValue.toFixed(2)}</FormLabel>
+                        <FormControl>
+                          <Slider
+                              value={[field.value]}
+                              onValueChange={(value) => field.onChange(value[0])}
+                              min={-20} max={20} step={0.25}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid gap-6 sm:grid-cols-4">
+                    <FormField
+                      control={form.control}
+                      name="axis"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Axis (°)</FormLabel>
+                          <FormControl><Input type="number" min="1" max="180" placeholder="e.g., 90" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <FormField
                       control={form.control}
                       name="index"
@@ -218,7 +280,7 @@ export default function EdgeThicknessPage() {
                     name="thickness"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>{powerValue < 0 ? 'Center' : 'Edge'} Thickness (mm)</FormLabel>
+                        <FormLabel>{powerIsPlus ? 'Edge' : 'Center'} Thickness (mm)</FormLabel>
                         <FormControl>
                             <Input type="number" step="0.1" {...field} />
                         </FormControl>
@@ -243,27 +305,36 @@ export default function EdgeThicknessPage() {
                         <CardTitle>Result & Visualization</CardTitle>
                     </CardHeader>
                     <CardContent className="grid gap-6 md:grid-cols-2 items-center">
-                        <div className="flex flex-col items-center justify-center gap-4 text-center">
-                            <div>
-                                <p className="text-sm text-muted-foreground">Edge Thickness</p>
-                                <p className="text-4xl font-bold tracking-tight text-accent-foreground">
-                                    {result.edgeThickness.toFixed(2)}
-                                    <span className="text-2xl font-medium text-muted-foreground"> mm</span>
-                                </p>
-                            </div>
-                             <div>
+                        <div className="flex flex-col items-center justify-center gap-6 text-center">
+                           <div>
                                 <p className="text-sm text-muted-foreground">Center Thickness</p>
                                 <p className="text-4xl font-bold tracking-tight text-accent-foreground">
                                     {result.centerThickness.toFixed(2)}
                                     <span className="text-2xl font-medium text-muted-foreground"> mm</span>
                                 </p>
                             </div>
+                             <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
+                                <div className="text-center">
+                                    <p className="text-sm text-muted-foreground">Min Edge</p>
+                                    <p className="text-2xl font-bold tracking-tight text-accent-foreground">
+                                        {result.minEdge.toFixed(2)}
+                                        <span className="text-lg font-medium text-muted-foreground"> mm</span>
+                                    </p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-sm text-muted-foreground">Max Edge</p>
+                                    <p className="text-2xl font-bold tracking-tight text-accent-foreground">
+                                        {result.maxEdge.toFixed(2)}
+                                        <span className="text-lg font-medium text-muted-foreground"> mm</span>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                        <LensDiagram edge={result.edgeThickness} center={result.centerThickness} diameter={result.diameter} power={result.power}/>
+                        <LensDiagram minEdge={result.minEdge} maxEdge={result.maxEdge} center={result.centerThickness} diameter={result.diameter} />
                     </CardContent>
                     <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
-                            Thickness = Sag + Minimum Thickness
+                            Thickness = Sag + Minimum Thickness. Calculations are based on the principal meridians.
                         </p>
                     </CardFooter>
                 </Card>
@@ -276,3 +347,5 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
+
+    
