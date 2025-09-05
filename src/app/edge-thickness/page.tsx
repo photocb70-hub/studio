@@ -54,9 +54,9 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness }: { minThick
         <svg viewBox="0 0 100 100" className="w-full h-auto">
           <path
             d={isPlusLens ? plusPath : minusPath}
-            fill="hsl(var(--primary) / 0.2)"
+            fill="hsl(var(--primary) / 0.1)"
             stroke="hsl(var(--primary))"
-            strokeWidth="2"
+            strokeWidth="1.5"
           />
           {/* Center thickness */}
           <line x1="50" y1={isPlusLens ? 30 : 45} x2="50" y2={isPlusLens ? 70 : 55} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
@@ -65,11 +65,11 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness }: { minThick
           {/* Edge thickness lines */}
           <g transform="rotate(90 50 50)">
             <line x1="15" y1="50" x2="85" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2"/>
-            <text x="12" y="53" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end">Min: {minThickness.toFixed(1)}mm</text>
+            <text x="12" y="53" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Min: {minThickness.toFixed(1)}mm</text>
           </g>
           <g>
             <line x1="15" y1="50" x2="85" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-            <text x="12" y="35" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end">Max: {maxThickness.toFixed(1)}mm</text>
+            <text x="12" y="38" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Max: {maxThickness.toFixed(1)}mm</text>
           </g>
         </svg>
       </div>
@@ -187,29 +187,32 @@ export default function EdgeThicknessPage() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="cylinder"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cylinder Power (D): {formatPower(cylinderValue)}</FormLabel>
-                      <FormControl>
-                        <Slider
-                            value={[field.value ?? 0]}
-                            onValueChange={(value) => field.onChange(value[0])}
-                            min={-10} max={0} step={0.25}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField control={form.control} name="axis" render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Axis (°)</FormLabel>
-                    <FormControl><Input type="number" min="1" max="180" placeholder="e.g., 90" {...field} value={field.value ?? ''} /></FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )} />
+                
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-4">
+                  <FormField
+                    control={form.control}
+                    name="cylinder"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Cylinder Power (D): {formatPower(cylinderValue)}</FormLabel>
+                        <FormControl>
+                          <Slider
+                              value={[field.value ?? 0]}
+                              onValueChange={(value) => field.onChange(value[0])}
+                              min={-10} max={0} step={0.25}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField control={form.control} name="axis" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Axis (°)</FormLabel>
+                        <FormControl><Input type="number" min="1" max="180" placeholder="e.g., 90" {...field} value={field.value ?? ''} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                  )} />
+                </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                     <FormField
@@ -320,5 +323,3 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
-
-    
