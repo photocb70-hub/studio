@@ -72,7 +72,7 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, max
             <svg viewBox="0 0 110 100" className="w-full h-auto overflow-visible">
                 <path
                     d={isPlusLens ? plusPath : minusPath}
-                    fill="hsl(var(--primary) / 0.1)"
+                    fill="none"
                     stroke="hsl(var(--primary))"
                     strokeWidth="1.5"
                 />
