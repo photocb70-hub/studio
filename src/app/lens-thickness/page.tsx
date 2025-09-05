@@ -82,35 +82,37 @@ const LensVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness 
         const sphereThickness = calculateThickness(spherePower) ?? (sphere > 0 ? minThickness : 20);
         const cylinderThickness = calculateThickness(cylinderPower) ?? (sphere > 0 ? minThickness : 20);
 
-        const isPlusLens = sphere > 0;
+        const isPlusLens = sphere >= 0;
         const centerThickness = isPlusLens ? Math.max(sphereThickness, cylinderThickness) : minThickness;
-        const edgeThickness1 = isPlusLens ? minThickness : sphereThickness;
-        const edgeThickness2 = isPlusLens ? minThickness : cylinderThickness;
-
+        const edgeThickness1 = !isPlusLens ? sphereThickness : minThickness;
+        const edgeThickness2 = !isPlusLens ? cylinderThickness : minThickness;
+        
         const maxDim = Math.max(edgeThickness1, edgeThickness2, centerThickness, 5) * 1.2;
         const size = 200;
         const center = size / 2;
-        const scale = size / maxDim;
+        const scale = size / (maxDim * 2.5);
 
         return (
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center relative">
+                <div className="absolute top-1/2 -translate-y-1/2 -left-4 text-xs text-muted-foreground">Nasal</div>
+                <div className="absolute top-1/2 -translate-y-1/2 -right-4 text-xs text-muted-foreground">Temple</div>
                 <svg viewBox={`0 0 ${size} ${size}`} className="w-full max-w-xs" >
                     {/* Lens Outline */}
                     <circle cx={center} cy={center} r={diameter / 2 * (size / (diameter * 1.1))} fill="hsl(var(--accent) / 0.05)" stroke="hsl(var(--accent) / 0.5)" strokeWidth="1" />
 
                     <g transform={`rotate(${axis || 0} ${center} ${center})`}>
                         {/* Sphere Meridian */}
-                        <line x1={center} y1={center - (edgeThickness1 / 2 * scale)} x2={center} y2={center + (edgeThickness1 / 2 * scale)} stroke="hsl(var(--foreground) / 0.3)" strokeWidth="0.5" strokeDasharray="2 2" />
-                        <text x={center + 5} y={center - (edgeThickness1 / 2 * scale) - 5} fontSize="10" fill="hsl(var(--foreground))">{edgeThickness1.toFixed(2)}mm</text>
-                        <text x={center + 5} y={center + (edgeThickness1 / 2 * scale) + 15} fontSize="10" fill="hsl(var(--foreground))">{edgeThickness1.toFixed(2)}mm</text>
+                        <line x1={center} y1={center - (edgeThickness1 * scale)} x2={center} y2={center + (edgeThickness1 * scale)} stroke="hsl(var(--foreground) / 0.3)" strokeWidth="0.5" strokeDasharray="2 2" />
+                        <text x={center + 5} y={center - (edgeThickness1 * scale) - 5} fontSize="10" fill="hsl(var(--foreground))">{edgeThickness1.toFixed(2)}mm</text>
+                        <text x={center + 5} y={center + (edgeThickness1 * scale) + 15} fontSize="10" fill="hsl(var(--foreground))">{edgeThickness1.toFixed(2)}mm</text>
                         
                         {/* Cylinder Meridian */}
-                        <line x1={center - (edgeThickness2 / 2 * scale)} y1={center} x2={center + (edgeThickness2 / 2 * scale)} y2={center} stroke="hsl(var(--foreground) / 0.3)" strokeWidth="0.5" strokeDasharray="2 2" />
-                        <text x={center - (edgeThickness2 / 2 * scale) - 35} y={center + 5} fontSize="10" fill="hsl(var(--foreground))">{edgeThickness2.toFixed(2)}mm</text>
-                        <text x={center + (edgeThickness2 / 2 * scale) + 5} y={center + 5} fontSize="10" fill="hsl(var(--foreground))">{edgeThickness2.toFixed(2)}mm</text>
+                        <line x1={center - (edgeThickness2 * scale)} y1={center} x2={center + (edgeThickness2 * scale)} y2={center} stroke="hsl(var(--foreground) / 0.3)" strokeWidth="0.5" strokeDasharray="2 2" />
+                        <text x={center - (edgeThickness2 * scale) - 35} y={center + 5} fontSize="10" fill="hsl(var(--foreground))">{edgeThickness2.toFixed(2)}mm</text>
+                        <text x={center + (edgeThickness2 * scale) + 5} y={center + 5} fontSize="10" fill="hsl(var(--foreground))">{edgeThickness2.toFixed(2)}mm</text>
                         
                         {/* Center Thickness */}
-                        <circle cx={center} cy={center} r={centerThickness / 2 * scale * 0.5} fill="hsl(var(--primary) / 0.8)" />
+                        <circle cx={center} cy={center} r={centerThickness * scale * 0.5} fill="hsl(var(--primary) / 0.8)" />
                         <text x={center} y={center} fontSize="10" fill="hsl(var(--primary-foreground))" textAnchor="middle" dy=".3em">{centerThickness.toFixed(2)}</text>
                     </g>
                 </svg>
@@ -187,7 +189,7 @@ export default function LensThicknessPage() {
       return;
     }
 
-    if (sphere > 0) { // Plus lens
+    if (sphere >= 0) { // Plus lens
       setResult({
         max: Math.max(sphereThickness, cylinderThickness),
         min: minThickness,
