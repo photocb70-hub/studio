@@ -133,9 +133,10 @@ export default function EdgeThicknessPage() {
                             <Slider
                                 value={[field.value]}
                                 onValueChange={(value) => field.onChange(value[0])}
-                                min={-20}
+                                min={-15}
                                 max={0}
                                 step={0.25}
+                                dir="rtl"
                             />
                         </div>
                       </FormControl>
