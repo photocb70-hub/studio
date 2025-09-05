@@ -1,4 +1,4 @@
-import {createNextHandler} from '@genkit-ai/next';
+import {createGenkitNextHandler} from '@genkit-ai/next';
 import '@/ai/dev';
 
-export const {GET, POST} = createNextHandler();
+export const {GET, POST} = createGenkitNextHandler();
