@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -32,6 +32,12 @@ const menuItems = [
     description: 'AI-powered analysis of prescription tolerance.',
     icon: <FlaskConical className="size-8 text-primary" />,
   },
+  {
+    href: '/vertex-conversion',
+    title: 'Vertex Conversion',
+    description: 'Convert prescription power for different vertex distances.',
+    icon: <MoveHorizontal className="size-8 text-primary" />,
+  }
 ];
 
 export default function Home() {
