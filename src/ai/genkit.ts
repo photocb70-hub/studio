@@ -10,8 +10,6 @@ export const ai = genkit({
   plugins: [
     googleAI(),
   ],
-  // Log all AI model requests and responses to the console.
-  logLevel: 'debug',
   // Enable production-ready monitoring and tracing.
   enableTracingAndMetrics: true,
 });

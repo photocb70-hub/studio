@@ -9,6 +9,7 @@
  */
 
 import { ai } from '@/ai/genkit';
+import { googleAI } from '@genkit-ai/googleai';
 import { z } from 'zod';
 
 // Define the input schema for the problem solver
@@ -33,6 +34,7 @@ export async function solveProblem(input: ProblemSolverInput): Promise<ProblemSo
 // Define the Genkit prompt
 const problemSolverPrompt = ai.definePrompt({
   name: 'problemSolverPrompt',
+  model: googleAI('gemini-1.5-flash-latest'),
   input: { schema: ProblemSolverInputSchema },
   output: { schema: ProblemSolverOutputSchema },
   prompt: `You are an expert ophthalmic optician and AI problem solver. A user has presented you with the following complex optical scenario, including current and previous patient data.
@@ -63,5 +65,3 @@ const problemSolverFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    
