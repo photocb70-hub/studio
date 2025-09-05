@@ -43,7 +43,7 @@ const frameShapes = {
     const w = size;
     const h = size * 0.8;
      // Centering the aviator shape by translating it
-    consttranslateX = 0;
+    const translateX = 0;
     const translateY = (size - h) / 2;
     return `M ${w*0.5 + translateX},${0 + translateY}
             C ${w*0.1 + translateX},${0 + translateY} ${0 + translateX},${h*0.1 + translateY} ${0 + translateX},${h*0.5 + translateY}
