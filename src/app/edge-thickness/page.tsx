@@ -22,7 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Slider } from '@/components/ui/slider';
 
 const formSchema = z.object({
-  power: z.coerce.number().max(0, { message: 'Power must be zero or negative for this tool.' }),
+  power: z.coerce.number().max(0, { message: 'Power must be zero or negative for this tool.' }).min(-20),
   index: z.coerce.number().min(1.4).max(2.0),
   diameter: z.coerce.number().min(30).max(90),
   centerThickness: z.coerce.number().min(0.1).max(10),
@@ -133,10 +133,11 @@ export default function EdgeThicknessPage() {
                             <Slider
                                 value={[field.value]}
                                 onValueChange={(value) => field.onChange(value[0])}
-                                min={-15}
+                                min={-20}
                                 max={0}
                                 step={0.25}
-                                className="[&>span:first-child]:bg-primary [&>span:first-child>span]:bg-secondary"
+                                className="[&>span:first-child]:bg-secondary [&>span:first-child>span]:bg-primary"
+                                dir="rtl"
                             />
                         </div>
                       </FormControl>
