@@ -44,24 +44,25 @@ const lensMaterials = [
 
 const LensDiagram = ({ minEdge, maxEdge, center, diameter }: { minEdge: number; maxEdge: number; center: number; diameter: number }) => {
     const memoizedDiagram = useMemo(() => {
-        const viewboxWidth = 120;
-        const scale = viewboxWidth / (diameter * 1.2);
+        const viewboxWidth = 150; // Increased width for more space
+        const lensWidth = 100;
+        const textPadding = 5;
+
+        const scale = lensWidth / diameter;
         const maxThicknessForScaling = Math.max(minEdge, maxEdge, center, 4);
-        const viewboxHeight = maxThicknessForScaling * scale * 3;
+        const viewboxHeight = maxThicknessForScaling * scale * 2.5;
 
         const centerY = viewboxHeight / 2;
-        const halfWidth = viewboxWidth / 2;
+        const lensStartX = (viewboxWidth - lensWidth) / 2;
+        const lensEndX = lensStartX + lensWidth;
+        const halfWidth = lensStartX + (lensWidth / 2);
         
-        // Use average edge thickness for a representative shape
         const avgEdgeHeight = ((minEdge + maxEdge) / 2) * scale / 2;
         const centerHeight = center * scale / 2;
 
         const curveFactor = (maxEdge - center) * scale * 0.1;
-        const lensWidth = 100;
-        const lensStartX = (viewboxWidth - lensWidth) / 2;
-        const lensEndX = lensStartX + lensWidth;
 
-        const path = `M ${lensStartX},${centerY - avgEdgeHeight} Q ${halfWidth},${centerY - centerHeight - curveFactor} ${lensEndX},${centerY - avgEdgeHeight} L ${lensEndX},${centerY + avgEdgeHeight} Q ${halfWidth},${centerY + centerHeight - curveFactor} ${lensStartX},${centerY + avgEdgeHeight} Z`;
+        const path = `M ${lensStartX},${centerY - avgEdgeHeight} Q ${halfWidth},${centerY - centerHeight - curveFactor} ${lensEndX},${centerY - avgEdgeHeight} L ${lensEndX},${centerY + avgEdgeHeight} Q ${halfWidth},${centerY + centerHeight + curveFactor} ${lensStartX},${centerY + avgEdgeHeight} Z`;
 
         return (
             <div className="w-full max-w-xs mx-auto p-4 flex items-center justify-center">
@@ -81,8 +82,8 @@ const LensDiagram = ({ minEdge, maxEdge, center, diameter }: { minEdge: number; 
                     {/* Edge thickness annotations */}
                      <g className="text-[6px] font-medium" fill="hsl(var(--foreground))">
                         <line x1={lensStartX} y1={centerY - avgEdgeHeight} x2={lensStartX} y2={centerY + avgEdgeHeight} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-                        <text x={lensStartX - 3} y={centerY - 10} textAnchor="end">Edge (Max): {maxEdge.toFixed(1)}mm</text>
-                        <text x={lensStartX - 3} y={centerY + 10} textAnchor="end">Edge (Min): {minEdge.toFixed(1)}mm</text>
+                        <text x={lensStartX - textPadding} y={centerY - 10} textAnchor="end">Edge (Max): {maxEdge.toFixed(1)}mm</text>
+                        <text x={lensStartX - textPadding} y={centerY + 10} textAnchor="end">Edge (Min): {minEdge.toFixed(1)}mm</text>
                     </g>
                 </svg>
             </div>
