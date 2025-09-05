@@ -39,7 +39,6 @@ const measurementsSchema = z.object({
 const frameSchema = z.object({
   lensMaterial: z.string({ required_error: "Please select a lens material." }),
   lensType: z.string({ required_error: "Please select a lens type." }),
-  frameDetails: z.string().optional(),
   minFittingHeight: z.coerce.number().optional(),
 });
 
@@ -108,14 +107,14 @@ function AiProblemSolverContent() {
       Current Measurements:
       PD: ${values.currentMeasurements.pd || 'N/A'}, Fitting Height: ${values.currentMeasurements.fittingHeight || 'N/A'}
       Current Frame/Lens:
-      Material: ${values.currentFrame.lensMaterial || 'N/A'}, Type: ${values.currentFrame.lensType || 'N/A'}, Details: ${values.currentFrame.frameDetails || 'N/A'}, Minimum Fitting Height: ${values.currentFrame.minFittingHeight || 'N/A'}
+      Material: ${values.currentFrame.lensMaterial || 'N/A'}, Type: ${values.currentFrame.lensType || 'N/A'}, Minimum Fitting Height: ${values.currentFrame.minFittingHeight || 'N/A'}
       ---
       Previous Prescription:
       Sphere: ${values.previousPrescription.sphere || 'N/A'}, Cylinder: ${values.previousPrescription.cylinder || 'N/A'}, Axis: ${values.previousPrescription.axis || 'N/A'}, Add: ${values.previousPrescription.add || 'N/A'}
       Previous Measurements:
       PD: ${values.previousMeasurements.pd || 'N/A'}, Fitting Height: ${values.previousMeasurements.fittingHeight || 'N/A'}
       Previous Frame/Lens:
-      Material: ${values.previousFrame.lensMaterial || 'N/A'}, Type: ${values.previousFrame.lensType || 'N/A'}, Details: ${values.previousFrame.frameDetails || 'N/A'}, Minimum Fitting Height: ${values.previousFrame.minFittingHeight || 'N/A'}
+      Material: ${values.previousFrame.lensMaterial || 'N/A'}, Type: ${values.previousFrame.lensType || 'N/A'}, Minimum Fitting Height: ${values.previousFrame.minFittingHeight || 'N/A'}
     `;
 
     try {
@@ -202,7 +201,7 @@ function AiProblemSolverContent() {
                     <SelectTrigger><SelectValue placeholder="Select a material" /></SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {lensMaterials.map(m => m && <SelectItem key={m.value} value={m.value}>{m.name}</SelectItem>)}
+                    {lensMaterials.map(m => <SelectItem key={m.value} value={m.value}>{m.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -230,14 +229,6 @@ function AiProblemSolverContent() {
                 </FormItem>
             )} />
         )}
-        <div className="sm:col-span-2">
-            <FormField control={form.control} name={`${prefix}.frameDetails`} render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Frame Details</FormLabel>
-                    <FormControl><Input placeholder="e.g., Zyl, 52-18-140" {...field} value={field.value ?? ''} /></FormControl>
-                </FormItem>
-            )} />
-        </div>
     </div>
   );
 
