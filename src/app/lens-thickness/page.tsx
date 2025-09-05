@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { Slider } from '@/components/ui/slider';
 
 const formSchema = z.object({
   power: z.coerce.number(),
@@ -95,6 +96,8 @@ export default function LensThicknessPage() {
     }
   }
 
+  const powerValue = form.watch('power');
+
   return (
     <ToolPageLayout
       title="Lens Thickness Calculator"
@@ -113,9 +116,18 @@ export default function LensThicknessPage() {
                   name="power"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Sphere Power (D)</FormLabel>
+                      <FormLabel>Sphere Power (D): {powerValue.toFixed(2)}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" {...field} />
+                        <div className="flex items-center gap-4">
+                            <Slider
+                                value={[field.value]}
+                                onValueChange={(value) => field.onChange(value[0])}
+                                min={-20}
+                                max={20}
+                                step={0.25}
+                                className="flex-1"
+                            />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
