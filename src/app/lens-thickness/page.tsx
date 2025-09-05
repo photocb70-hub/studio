@@ -146,7 +146,7 @@ const LensDiagram = ({ power, axis, center, edge, diameter }: { power: number; a
             </CardContent>
         </Card>
     );
-}
+};
 
 
 export default function LensThicknessPage() {
@@ -212,7 +212,7 @@ export default function LensThicknessPage() {
                             <FormItem>
                             <FormLabel>Cylinder Power (D, optional)</FormLabel>
                             <FormControl>
-                                <Input type="number" step="0.25" placeholder="e.g., -1.50" {...field} />
+                                <Input type="number" step="0.25" placeholder="e.g., -1.50" {...field} value={field.value ?? ''} />
                             </FormControl>
                             <FormMessage />
                             </FormItem>
@@ -225,7 +225,7 @@ export default function LensThicknessPage() {
                             <FormItem>
                             <FormLabel>Axis (°, optional)</FormLabel>
                             <FormControl>
-                                <Input type="number" step="1" placeholder="e.g., 90" {...field} />
+                                <Input type="number" step="1" placeholder="e.g., 90" {...field} value={field.value ?? ''} />
                             </FormControl>
                             <FormMessage />
                             </FormItem>
