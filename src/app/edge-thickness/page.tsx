@@ -87,10 +87,11 @@ export default function EdgeThicknessPage() {
   function calculateSag(power: number, index: number, diameter: number): number | null {
     if (power === 0) return 0;
     
+    // Use F = (n-1)/r to find r
     const radius = ((index - 1) / power) * 1000; // in mm
     const semiDiameter = diameter / 2;
 
-    if (Math.pow(radius, 2) < Math.pow(semiDiameter, 2)) {
+    if (Math.abs(radius) < semiDiameter) {
         toast({
             variant: "destructive",
             title: "Invalid Calculation",
@@ -99,8 +100,11 @@ export default function EdgeThicknessPage() {
         return null;
     }
     // Sagitta formula: s = r - sqrt(r^2 - y^2)
-    const sag = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
-    return sag;
+    // We use the absolute value of radius because the sign only indicates concave/convex
+    const sag = Math.abs(radius) - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
+    
+    // Return negative sag for minus lenses (concave) and positive for plus (convex)
+    return power > 0 ? sag : -sag;
   }
 
   function onSubmit(values: FormValues) {
@@ -114,12 +118,11 @@ export default function EdgeThicknessPage() {
     }
 
     let edgeThickness;
-    let finalCenterThickness;
+    let finalCenterThickness = centerThickness;
     const isPlusLens = power > 0;
 
     if (isPlusLens) {
         // For plus lenses, center is thicker than the edge. ET = CT - Sag
-        finalCenterThickness = centerThickness;
         edgeThickness = finalCenterThickness - sag;
 
         // Ensure a minimum edge thickness, adjusting center if necessary
@@ -128,11 +131,10 @@ export default function EdgeThicknessPage() {
             edgeThickness = minEdge;
             finalCenterThickness = edgeThickness + sag;
         }
-
     } else {
-        // For minus lenses, edge is thicker than the center. ET = CT + |Sag|
-        finalCenterThickness = centerThickness;
-        edgeThickness = finalCenterThickness + Math.abs(sag);
+        // For minus lenses, edge is thicker than the center. ET = CT + Sag
+        // Sag is negative for minus lenses, so this is effectively a subtraction
+        edgeThickness = finalCenterThickness - sag;
     }
     
     setResult({ edgeThickness, centerThickness: finalCenterThickness, isPlusLens });
