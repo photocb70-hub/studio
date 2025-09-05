@@ -68,3 +68,5 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Set the default refractive index to "Standard Index" across all relevant calculators for consistency.
+
+    
