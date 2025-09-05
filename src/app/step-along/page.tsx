@@ -39,10 +39,10 @@ const lensMaterials = [
     { name: 'Aqueous', index: 1.336 },
     { name: 'Vitreous', index: 1.336 },
     { name: 'Cornea', index: 1.376 },
-    { name: 'Standard Index', index: 1.498 },
+    { name: 'Standard Index (1.50)', index: 1.498 },
     { name: 'Crown Glass', index: 1.523 },
-    { name: 'Polycarbonate', index: 1.586 },
-    { name: 'Mid-Index', index: 1.60 },
+    { name: 'Polycarbonate (1.59)', index: 1.586 },
+    { name: 'Mid-Index (1.60)', index: 1.60 },
     { name: 'High-Index (1.67)', index: 1.67 },
     { name: 'High-Index (1.74)', index: 1.74 },
 ];
@@ -159,7 +159,7 @@ export default function StepAlongPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Refractive Index of Final Medium (n')</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={String(field.value)}>
+                      <Select onValueChange={(v) => field.onChange(parseFloat(v))} defaultValue={String(field.value)}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a material" />

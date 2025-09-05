@@ -71,7 +71,7 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness }: { minThick
         </svg>
       </div>
     )
-  }, [minThickness, maxThickness, centerThickness, isPlusLens]);
+  }, [isPlusLens]);
 
   return memoizedDiagram;
 }
