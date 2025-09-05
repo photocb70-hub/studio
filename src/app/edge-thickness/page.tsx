@@ -90,7 +90,7 @@ export default function EdgeThicknessPage() {
     const radius = ((index - 1) / power) * 1000; // in mm
     const semiDiameter = diameter / 2;
 
-    if (Math.abs(radius) < semiDiameter) {
+    if (Math.pow(radius, 2) < Math.pow(semiDiameter, 2)) {
         toast({
             variant: "destructive",
             title: "Invalid Calculation",
@@ -118,22 +118,21 @@ export default function EdgeThicknessPage() {
     const isPlusLens = power > 0;
 
     if (isPlusLens) {
-      // For plus lenses, center is thicker than the edge.
-      // ET = CT - Sag
-      const minEdge = 1.0; // A reasonable minimum edge thickness
-      finalCenterThickness = sag + minEdge;
-      edgeThickness = minEdge;
-      
-      // If user's desired center thickness is higher, use it and recalculate edge.
-      if (centerThickness > finalCenterThickness) {
+        // For plus lenses, center is thicker than the edge. ET = CT - Sag
         finalCenterThickness = centerThickness;
         edgeThickness = finalCenterThickness - sag;
-      }
+
+        // Ensure a minimum edge thickness, adjusting center if necessary
+        const minEdge = 1.0;
+        if (edgeThickness < minEdge) {
+            edgeThickness = minEdge;
+            finalCenterThickness = edgeThickness + sag;
+        }
+
     } else {
-      // For minus lenses, edge is thicker than the center.
-      // ET = CT + Sag
-      finalCenterThickness = centerThickness;
-      edgeThickness = finalCenterThickness + Math.abs(sag);
+        // For minus lenses, edge is thicker than the center. ET = CT + |Sag|
+        finalCenterThickness = centerThickness;
+        edgeThickness = finalCenterThickness + Math.abs(sag);
     }
     
     setResult({ edgeThickness, centerThickness: finalCenterThickness, isPlusLens });
