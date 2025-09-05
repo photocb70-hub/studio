@@ -64,30 +64,25 @@ const LensDiagram = ({ minEdge, maxEdge, center, diameter }: { minEdge: number; 
         const path = `M ${lensStartX},${centerY - avgEdgeHeight} Q ${halfWidth},${centerY - centerHeight - curveFactor} ${lensEndX},${centerY - avgEdgeHeight} L ${lensEndX},${centerY + avgEdgeHeight} Q ${halfWidth},${centerY + centerHeight - curveFactor} ${lensStartX},${centerY + avgEdgeHeight} Z`;
 
         return (
-            <div className="w-full max-w-sm mx-auto p-2 flex items-center justify-center">
+            <div className="w-full max-w-xs mx-auto p-4 flex items-center justify-center">
                 <svg viewBox={`0 0 ${viewboxWidth} ${viewboxHeight}`} className="w-full h-auto">
                     {/* Lens Body */}
                     <path
                         d={path}
-                        fill="hsl(var(--accent) / 0.3)"
-                        stroke="hsl(var(--accent-foreground))"
-                        strokeWidth="1.5"
+                        fill="hsl(var(--background))"
+                        stroke="hsl(var(--foreground))"
+                        strokeWidth="1"
                     />
 
-                    {/* Center thickness line, label and value */}
-                    <g className="text-[6px] font-medium" fill="hsl(var(--foreground))">
-                        <line x1={halfWidth} y1={centerY - centerHeight} x2={halfWidth} y2={centerY + centerHeight} stroke="hsl(var(--foreground) / 0.7)" strokeWidth="0.5" strokeDasharray="2 2" />
-                        <text x={halfWidth + 4} y={centerY - 4} textAnchor="start">Center</text>
-                        <text x={halfWidth + 4} y={centerY + 6} textAnchor="start" className="font-bold">{center.toFixed(1)}mm</text>
-                    </g>
+                    {/* Center thickness line and value */}
+                    <line x1={halfWidth} y1={centerY - centerHeight} x2={halfWidth} y2={centerY + centerHeight} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
+                    <text x={halfWidth + 3} y={centerY} fontSize="6" fill="hsl(var(--foreground))" textAnchor="start">{center.toFixed(1)}mm</text>
                     
                     {/* Edge thickness annotations */}
                      <g className="text-[6px] font-medium" fill="hsl(var(--foreground))">
-                        <line x1={lensStartX} y1={centerY - avgEdgeHeight} x2={lensStartX} y2={centerY + avgEdgeHeight} stroke="hsl(var(--foreground) / 0.7)" strokeWidth="0.5" strokeDasharray="2 2" />
-                        <text x={lensStartX - 4} y={centerY - 10} textAnchor="end">Edge (Max)</text>
-                        <text x={lensStartX - 4} y={centerY} textAnchor="end" className="font-bold">{maxEdge.toFixed(1)}mm</text>
-                        <text x={lensStartX - 4} y={centerY + 10} textAnchor="end">Edge (Min)</text>
-                        <text x={lensStartX - 4} y={centerY + 20} textAnchor="end" className="font-bold">{minEdge.toFixed(1)}mm</text>
+                        <line x1={lensStartX} y1={centerY - avgEdgeHeight} x2={lensStartX} y2={centerY + avgEdgeHeight} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
+                        <text x={lensStartX - 3} y={centerY - 10} textAnchor="end">Edge (Max): {maxEdge.toFixed(1)}mm</text>
+                        <text x={lensStartX - 3} y={centerY + 10} textAnchor="end">Edge (Min): {minEdge.toFixed(1)}mm</text>
                     </g>
                 </svg>
             </div>
@@ -347,5 +342,7 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
+
+    
 
     
