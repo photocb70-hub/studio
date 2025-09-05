@@ -48,7 +48,7 @@ const formSchema = z.object({
   currentFrame: frameSchema,
   previousPrescription: prescriptionSchema,
   previousMeasurements: measurementsSchema,
-  previousFrame: frameSchema.partial(), // Previous frame details are optional
+  previousFrame: frameSchema, 
   problem: z.string().min(10, "Please describe the problem in at least 10 characters."),
 });
 
@@ -86,7 +86,10 @@ function AiProblemSolverContent() {
       },
       previousPrescription: { sphere: 0, cylinder: 0 },
       previousMeasurements: {},
-      previousFrame: {},
+      previousFrame: {
+        lensMaterial: '1.50',
+        lensType: 'Single Vision',
+      },
     },
   });
 
@@ -207,12 +210,14 @@ function AiProblemSolverContent() {
     </div>
   );
 
-  const renderFrameFields = (prefix: 'currentFrame' | 'previousFrame', lensType?: string) => (
+  const renderFrameFields = (prefix: 'currentFrame' | 'previousFrame') => {
+    const lensType = form.watch(prefix === 'currentFrame' ? 'currentFrame.lensType' : 'previousFrame.lensType');
+    return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <FormField control={form.control} name={`${prefix}.lensMaterial`} render={({ field }) => (
             <FormItem>
                 <FormLabel>Lens Material</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger><SelectValue placeholder="Select a material" /></SelectTrigger>
                   </FormControl>
@@ -226,7 +231,7 @@ function AiProblemSolverContent() {
         <FormField control={form.control} name={`${prefix}.lensType`} render={({ field }) => (
             <FormItem>
                 <FormLabel>Lens Type</FormLabel>
-                 <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger><SelectValue placeholder="Select a lens type" /></SelectTrigger>
                   </FormControl>
@@ -246,7 +251,8 @@ function AiProblemSolverContent() {
             )} />
         )}
     </div>
-  );
+    )
+  };
 
   return (
     <ToolPageLayout
@@ -275,7 +281,7 @@ function AiProblemSolverContent() {
                         <hr/>
                         {renderMeasurementsFields('currentMeasurements')}
                         <hr/>
-                        {renderFrameFields('currentFrame', currentLensType)}
+                        {renderFrameFields('currentFrame')}
                     </div>
                 </div>
 
@@ -290,7 +296,7 @@ function AiProblemSolverContent() {
                           <hr/>
                           {renderMeasurementsFields('previousMeasurements')}
                           <hr/>
-                          {renderFrameFields('previousFrame', previousLensType)}
+                          {renderFrameFields('previousFrame')}
                       </div>
                     </AccordionContent>
                   </AccordionItem>
