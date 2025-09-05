@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9 alpha]
+
+### Added
+- Implemented an experimental, AI-based "Problem Solver" to provide analysis and solutions for complex optical scenarios. (Note: Might be deleted depending on feedback).
+
+### Changed
+- The AI Problem Solver is hidden behind a feature flag for testing and can be enabled by adding `?enabled=true` to the URL.
+
 ## [0.8 alpha]
 
 ### Changed
