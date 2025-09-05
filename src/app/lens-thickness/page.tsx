@@ -28,32 +28,6 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { Slider } from '@/components/ui/slider';
 
-
-const frameShapes = {
-  round: (size: number) => {
-    const r = size / 2;
-    // A path for a circle centered at (r, r)
-    return `M ${r}, 0 A ${r},${r} 0 1,0 ${r},${size} A ${r},${r} 0 1,0 ${r},0 Z`;
-  },
-  square: (size: number) => {
-    const r = 8; // corner radius
-    return `M ${r},0 L ${size-r},0 A ${r},${r} 0 0 1 ${size},${r} L ${size},${size-r} A ${r},${r} 0 0 1 ${size-r},${size} L ${r},${size} A ${r},${r} 0 0 1 0,${size-r} L 0,${r} A ${r},${r} 0 0 1 ${r},0 Z`;
-  },
-  aviator: (size: number) => {
-    const w = size;
-    const h = size * 0.8;
-     // Centering the aviator shape by translating it
-    const translateX = 0;
-    const translateY = (size - h) / 2;
-    return `M ${w*0.5 + translateX},${0 + translateY}
-            C ${w*0.1 + translateX},${0 + translateY} ${0 + translateX},${h*0.1 + translateY} ${0 + translateX},${h*0.5 + translateY}
-            S ${w*0.1 + translateX},${h + translateY} ${w*0.5 + translateX},${h + translateY}
-            S ${w*0.9 + translateX},${h + translateY} ${w + translateX},${h*0.5 + translateY}
-            S ${w*0.9 + translateX},${0 + translateY} ${w*0.5 + translateX},${0 + translateY} Z`;
-  }
-};
-const frameShapeNames = Object.keys(frameShapes);
-
 const formSchema = z.object({
   sphere: z.coerce.number(),
   cylinder: z.coerce.number().optional(),
@@ -61,7 +35,6 @@ const formSchema = z.object({
   index: z.coerce.number().min(1.4).max(2.0),
   diameter: z.coerce.number().min(30).max(90),
   minThickness: z.coerce.number().min(0.1).max(10),
-  frameShape: z.enum(frameShapeNames as [string, ...string[]]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -75,7 +48,7 @@ const materialIndices = [
     { name: 'High-Index 1.74', value: 1.74 },
 ];
 
-const LensVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness, frameShape }: FormValues) => {
+const LensVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness }: FormValues) => {
     const { toast } = useToast();
 
     const memoizedViz = useMemo(() => {
@@ -131,35 +104,46 @@ const LensVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness,
             });
             return <p className="text-destructive text-center p-4">Invalid calculation. Power may be too high for the diameter.</p>;
         }
-
-        const pathData = frameShapes[frameShape as keyof typeof frameShapes](100);
+        
+        const maxThickness = Math.max(...thicknessPoints.map(p => p.thickness ?? 0), 2);
+        const scale = 50 / maxThickness;
 
         return (
             <div className="w-full max-w-sm mx-auto p-4">
-                <svg viewBox="-30 -30 160 160" className="w-full h-auto font-sans">
-                    <path
-                        d={pathData}
-                        fill="hsl(var(--accent) / 0.05)"
-                        stroke="hsl(var(--accent) / 0.5)"
-                        strokeWidth="1"
-                    />
+                 <svg viewBox="-60 -60 120 120" className="w-full h-auto font-sans">
+                    {/* Lens Outline */}
+                    <circle cx="0" cy="0" r="50" fill="hsl(var(--accent) / 0.1)" stroke="hsl(var(--accent))" strokeWidth="0.5" />
 
-                    {/* Thickness Labels */}
-                    <g transform={`rotate(${axis ?? 0} 50 50)`}>
-                        <text x={105} y={50} textAnchor="start" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[0].thickness ?? 0).toFixed(1)}mm</text>
-                        <text x={50} y={-5} textAnchor="middle" dominantBaseline="auto" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[1].thickness ?? 0).toFixed(1)}mm</text>
-                        <text x={-5} y={50} textAnchor="end" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[2].thickness ?? 0).toFixed(1)}mm</text>
-                        <text x={50} y={105} textAnchor="middle" dominantBaseline="hanging" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[3].thickness ?? 0).toFixed(1)}mm</text>
+                    {/* Axis Rotation Group */}
+                    <g transform={`rotate(${axis ?? 0})`}>
+                        {thicknessPoints.map((p, i) => (
+                           <g key={i} transform={`rotate(${p.angle})`}>
+                                <circle cx="0" cy="0" r={(p.thickness ?? 0) * scale} fill="hsl(var(--primary) / 0.2)" />
+                               <text
+                                    x="55"
+                                    y="0"
+                                    textAnchor="start"
+                                    dominantBaseline="middle"
+                                    fontSize="8"
+                                    fill="hsl(var(--foreground))"
+                                    transform="rotate(0 55 0)"
+                                >
+                                    {(p.thickness ?? 0).toFixed(1)}mm
+                                </text>
+                            </g>
+                        ))}
+                         {/* Axis Line */}
+                        {cylinder && cylinder !== 0 && (
+                            <line x1="-50" y1="0" x2="50" y2="0" stroke="hsl(var(--primary) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
+                        )}
                     </g>
-                    
-                    {/* Nasal/Temporal Labels */}
-                    <text x={105} y={62} textAnchor="start" dominantBaseline="middle" fontSize="8" fill="hsl(var(--muted-foreground))">Temporal</text>
-                    <text x={-5} y={62} textAnchor="end" dominantBaseline="middle" fontSize="8" fill="hsl(var(--muted-foreground))">Nasal</text>
+                     {/* Center point */}
+                    <circle cx="0" cy="0" r="1" fill="hsl(var(--primary))" />
                 </svg>
             </div>
         );
 
-    }, [sphere, cylinder, axis, diameter, index, minThickness, frameShape, toast]);
+    }, [sphere, cylinder, axis, diameter, index, minThickness, toast]);
 
     return memoizedViz;
 };
@@ -177,7 +161,6 @@ export default function LensThicknessPage() {
       index: 1.586,
       diameter: 70,
       minThickness: 1.0,
-      frameShape: "round",
     },
   });
 
@@ -276,43 +259,20 @@ export default function LensThicknessPage() {
                         />
                      <FormField
                         control={form.control}
-                        name="frameShape"
+                        name="diameter"
                         render={({ field }) => (
                             <FormItem>
-                            <FormLabel>Frame Shape</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select a frame shape" />
-                                </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                {frameShapeNames.map((shape) => (
-                                    <SelectItem key={shape} value={shape} className="capitalize">
-                                    {shape}
-                                    </SelectItem>
-                                ))}
-                                </SelectContent>
-                            </Select>
+                            <FormLabel>Lens Diameter (mm)</FormLabel>
+                            <FormControl>
+                                <Input type="number" step="1" {...field} />
+                            </FormControl>
                             <FormMessage />
                             </FormItem>
                         )}
                         />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <FormField
-                    control={form.control}
-                    name="diameter"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Lens Diameter (mm)</FormLabel>
-                        <FormControl>
-                            <Input type="number" step="1" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
+                    
                     <FormField
                     control={form.control}
                     name="minThickness"
@@ -341,7 +301,7 @@ export default function LensThicknessPage() {
                  <Card>
                     <CardHeader>
                         <CardTitle>Thickness Visualization</CardTitle>
-                         <CardDescription>Estimated thickness (mm) at key points. For plus powers, this is center thickness; for minus, edge thickness.</CardDescription>
+                         <CardDescription>Estimated thickness (mm) at key meridians. For plus powers, this is center thickness; for minus, edge thickness.</CardDescription>
                     </CardHeader>
                     <CardContent>
                        <LensVisualizer {...submittedValues} />
