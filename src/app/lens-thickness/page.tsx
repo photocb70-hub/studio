@@ -21,6 +21,14 @@ import { Calculator } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 
 const formSchema = z.object({
   power: z.coerce.number(),
@@ -36,6 +44,15 @@ const ThicknessInputLabel = ({ control }: { control: any }) => {
     const label = power < 0 ? 'Center Thickness (mm)' : 'Edge Thickness (mm)';
     return <FormLabel>{label}</FormLabel>;
 };
+
+const lensMaterials = [
+    { name: 'CR-39', index: 1.498 },
+    { name: 'Trivex', index: 1.53 },
+    { name: 'Polycarbonate', index: 1.586 },
+    { name: 'High-Index 1.60', index: 1.60 },
+    { name: 'High-Index 1.67', index: 1.67 },
+    { name: 'High-Index 1.74', index: 1.74 },
+];
 
 
 export default function LensThicknessPage() {
@@ -77,11 +94,12 @@ export default function LensThicknessPage() {
     }
 
     // Sagitta formula: s = r - sqrt(r^2 - (d/2)^2)
+    // For minus lenses, r is negative, for plus lenses, r is positive.
     const sag = radius - Math.sqrt(radius * radius - semiDiameter * semiDiameter);
 
     if (power < 0) { // Minus lens
       const centerThickness = thickness;
-      const edgeThickness = centerThickness - sag; // sag is negative for minus lenses
+      const edgeThickness = centerThickness + Math.abs(sag);
       setResult({ edge: edgeThickness, center: centerThickness });
     } else { // Plus lens
       const edgeThickness = thickness;
@@ -129,9 +147,20 @@ export default function LensThicknessPage() {
                             render={({ field }) => (
                                 <FormItem>
                                 <FormLabel>Refractive Index (n)</FormLabel>
-                                <FormControl>
-                                    <Input type="number" step="0.001" placeholder="e.g., 1.586" {...field} />
-                                </FormControl>
+                                 <Select onValueChange={(value) => field.onChange(parseFloat(value))} defaultValue={String(field.value)}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a material" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {lensMaterials.map((material) => (
+                                            <SelectItem key={material.name} value={String(material.index)}>
+                                                {material.name} ({material.index})
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                                 </FormItem>
                             )}
@@ -213,3 +242,5 @@ export default function LensThicknessPage() {
     </ToolPageLayout>
   );
 }
+
+    
