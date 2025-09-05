@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8 alpha]
+
+### Changed
+- Improved navigation by adding a "Back" label to the return button on calculator pages.
+- Refactored the footer component to prevent potential hydration errors and improve stability.
+
 ## [0.7 alpha]
 
 ### Changed
