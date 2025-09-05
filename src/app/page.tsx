@@ -40,7 +40,7 @@ const menuItems = [
   },
   {
     href: '/blanket-size',
-    title: 'Blanket Size',
+    title: 'Blank Size',
     description: 'Calculate the minimum lens blank size needed.',
     icon: <Maximize className="size-8 text-primary" />,
   }

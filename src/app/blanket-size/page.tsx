@@ -31,7 +31,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function BlanketSizePage() {
+export default function BlankSizePage() {
   const [result, setResult] = useState<number | null>(null);
   const { toast } = useToast();
 
@@ -50,14 +50,14 @@ export default function BlanketSizePage() {
     // Decentration = Frame PD - Patient PD
     const decentration = framePD - patientPD;
     
-    // Minimum Blanket Size = Effective Diameter + Decentration + 2mm (for edging)
-    const blanketSize = effectiveDiameter + decentration + 2;
-    setResult(blanketSize);
+    // Minimum Blank Size = Effective Diameter + Decentration + 2mm (for edging)
+    const blankSize = effectiveDiameter + decentration + 2;
+    setResult(blankSize);
   }
 
   return (
     <ToolPageLayout
-      title="Blanket Size Calculator"
+      title="Blank Size Calculator"
       description="Calculate the minimum lens blank size required for a given frame and patient PD."
     >
       <div className="grid gap-8 md:grid-cols-2">
@@ -120,7 +120,7 @@ export default function BlanketSizePage() {
             {result !== null ? (
                 <Card className="w-full bg-accent/10 border-accent/50">
                     <CardHeader className="items-center text-center">
-                        <CardTitle>Minimum Blanket Size</CardTitle>
+                        <CardTitle>Minimum Blank Size</CardTitle>
                     </CardHeader>
                     <CardContent className="text-center">
                         <p className="text-5xl font-bold tracking-tight text-accent-foreground">
