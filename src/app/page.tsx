@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -44,6 +44,12 @@ const menuItems = [
     title: 'Lens Thickness',
     description: 'Calculate edge and center thickness for a lens.',
     icon: <Layers className="size-8 text-primary" />,
+  },
+  {
+    href: '/prescription-transposer',
+    title: 'Prescription Transposer',
+    description: 'Convert between plus and minus cylinder formats.',
+    icon: <Repeat className="size-8 text-primary" />,
   },
 ];
 
