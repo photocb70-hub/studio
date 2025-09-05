@@ -159,7 +159,10 @@ export default function StepAlongPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Refractive Index of Final Medium (n')</FormLabel>
-                      <Select onValueChange={(v) => field.onChange(parseFloat(v))} defaultValue={String(field.value)}>
+                      <Select 
+                        onValueChange={(v) => field.onChange(parseFloat(v))} 
+                        defaultValue={String(field.value)}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a material" />
@@ -167,7 +170,7 @@ export default function StepAlongPage() {
                         </FormControl>
                         <SelectContent>
                           {lensMaterials.map((material) => (
-                            <SelectItem key={`${material.name}-${material.index}`} value={String(material.index)}>
+                            <SelectItem key={material.name} value={String(material.index)}>
                               {material.name} ({material.index})
                             </SelectItem>
                           ))}
