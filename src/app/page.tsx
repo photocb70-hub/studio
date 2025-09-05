@@ -1,12 +1,16 @@
 
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Loader } from 'lucide-react';
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
+import { generateImage } from '@/ai/flows/generate-image';
 
 const menuItems = [
   {
@@ -54,9 +58,46 @@ const menuItems = [
 ];
 
 export default function Home() {
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function createBackground() {
+      try {
+        setLoading(true);
+        const result = await generateImage({ prompt: 'A photorealistic image of a vintage optician\'s workshop, warm and detailed, with sunlight streaming through a window onto a dark wood workbench with antique tools.' });
+        if (result.imageDataUri) {
+          setBackgroundImage(result.imageDataUri);
+        }
+      } catch (error) {
+        console.error('Failed to generate background image:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    createBackground();
+  }, []);
+
+
   return (
-    <main className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-4xl">
+    <main 
+        className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000"
+        style={{
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
+        }}
+    >
+      <div 
+        className="absolute inset-0 bg-background/80 backdrop-blur-sm z-0"
+        style={{
+          backgroundImage: !backgroundImage 
+            ? `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'%3e%3cdefs%3e%3cstyle%3e.formula %7b font-family: 'Inter', sans-serif; font-size: 16px; fill: hsl(var(--primary) / 0.05); opacity: 0; animation: fadeIn 1.5s ease-in-out forwards; %7d @keyframes fadeIn %7b to %7b opacity: 1; %7d %7d%3c/style%3e%3c/defs%3e%3ctext x='100' y='120' class='formula' style='animation-delay: 0.1s;' transform='rotate(-15 100 120)'%3en₁sin(θ₁) = n₂sin(θ₂)%3c/text%3e%3ctext x='550' y='80' class='formula' style='animation-delay: 0.2s;' transform='rotate(10 550 80)'%3eP = cF%3c/text%3e%3ctext x='80' y='300' class='formula' style='animation-delay: 0.3s;' transform='rotate(8 80 300)'%3eFc = F / (1 - d*F)%3c/text%3e%3ctext x='600' y='450' class='formula' style='animation-delay: 0.4s;' transform='rotate(-5 600 450)'%3e1/f = (n-1)(1/R₁ - 1/R₂)%3c/text%3e%3ctext x='150' y='550' class='formula' style='animation-delay: 0.5s;' transform='rotate(20 150 550)'%3eM = -v/u%3c/text%3e%3ctext x='400' y='680' class='formula' style='animation-delay: 0.6s;' transform='rotate(-12 400 680)'%3eL' = L + F%3c/text%3e%3ctext x='700' y='250' class='formula' style='animation-delay: 0.7s;' transform='rotate(15 700 250)'%3eSM = A*ED + B*DBL%3c/text%3e%3ctext x='350' y='180' class='formula' style='animation-delay: 0.8s;' transform='rotate(-8 350 180)'%3eFₑ = F₁ + F₂ - (t/n)F₁F₂%3c/text%3e%3ctext x='50' y='720' class='formula' style='animation-delay: 0.9s;' transform='rotate(-18 50 720)'%3eΔ = P * d%3c/text%3e%3ctext x='650' y='650' class='formula' style='animation-delay: 1.0s;' transform='rotate(12 650 650)'%3eSag ≈ r² / 2R%3c/text%3e%3ctext x='380' y='400' class='formula' style='animation-delay: 1.1s;' transform='rotate(0 380 400)'%3eMBS = ED + Dec + 2%3c/text%3e%3c/svg%3e")` 
+            : 'none',
+        }}
+      />
+      <div className="w-full max-w-4xl z-10">
         <header className="mb-12 text-center">
           <div className="mb-4 inline-flex items-center gap-3">
             <Eye className="size-10 text-primary" />
@@ -72,7 +113,7 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {menuItems.map((item) => (
             <Link href={item.href} key={item.href} className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-              <Card className="flex h-full items-center transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary">
+              <Card className="flex h-full items-center transition-all duration-300 ease-in-out group-hover:shadow-lg group-hover:-translate-y-1 group-hover:border-primary bg-card/80 backdrop-blur-sm">
                 <CardHeader className="flex w-full flex-row items-center gap-4 space-y-0 p-4">
                   {item.icon}
                   <div className="grid gap-1">
@@ -84,6 +125,13 @@ export default function Home() {
             </Link>
           ))}
         </div>
+        
+        {loading && (
+          <div className="mt-8 flex items-center justify-center gap-2 text-muted-foreground">
+            <Loader className="size-4 animate-spin" />
+            <span>Generating background...</span>
+          </div>
+        )}
 
         <footer className="mt-12 text-center text-sm text-muted-foreground">
           © {new Date().getFullYear()} Optical Prime. All Rights Reserved.
