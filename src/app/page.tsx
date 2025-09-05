@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -52,9 +52,15 @@ const menuItems = [
     description: 'Calculate vergence through an optical system.',
     icon: <Footprints className="size-8 text-primary" />,
   },
+   {
+    href: '/ai-problem-solver',
+    title: 'AI Problem Solver',
+    description: 'Get AI-powered solutions for optical problems.',
+    icon: <Sparkles className="size-8 text-primary" />,
+  },
 ];
 
-const appVersion = "0.8 alpha";
+const appVersion = "0.9 alpha";
 
 export default function Home() {
 
