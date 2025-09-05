@@ -1,0 +1,19 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [0.3 alpha]
+
+### Added
+- Implemented the "Prescription Transposer" tool to convert eyeglass prescriptions between plus and minus cylinder formats.
+- Added a new page and menu item on the homepage for the transposer.
+
+## [0.2 alpha]
+
+### Added
+- Introduced the "Lens Thickness Calculator" for calculating edge and center thickness.
+- Added a visualization diagram for the calculated lens thickness.
+- Added a new menu item on the homepage for the thickness calculator.
+
+### Changed
+- Set the default refractive index to "Standard Index" across all relevant calculators for consistency.
