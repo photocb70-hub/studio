@@ -90,7 +90,6 @@ const FrameVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness
             const isPlusLens = power > 0;
             const semiDiameter = diameter / 2;
             
-            // For plus lenses, we calculate sag from the edge. For minus, from the center.
             const baseThickness = minThickness;
 
             if (power === 0) return baseThickness;
@@ -104,11 +103,10 @@ const FrameVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness
             const sag = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
 
             if(isPlusLens) {
-                // Center thickness is sag + min edge thickness
-                // We're showing edge thickness here, so it's the minimum.
-                return baseThickness; // This part is complex, for now we visualize relative thickness
+                // For a plus lens, we calculate center thickness. The minimum thickness is at the edge.
+                return sag + baseThickness;
             } else {
-                 // Edge thickness is sag + min center thickness
+                 // For a minus lens, we calculate edge thickness. The minimum thickness is at the center.
                 return sag + baseThickness;
             }
         };
@@ -121,7 +119,8 @@ const FrameVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness
             { angle: 270, power: getPowerAtMeridian(270) }
         ].map(p => ({
             ...p,
-            thickness: calculateThickness(p.power)
+            thickness: calculateThickness(p.power),
+            isPlus: p.power > 0,
         }));
 
         if (thicknessPoints.some(p => p.thickness === null)) {
@@ -349,7 +348,7 @@ export default function LensThicknessPage() {
                  <Card>
                     <CardHeader>
                         <CardTitle>Thickness Visualization</CardTitle>
-                         <CardDescription>Estimated edge thickness (mm) at key points on the lens shape.</CardDescription>
+                         <CardDescription>Estimated thickness (mm) at key points. For plus powers, this is center thickness; for minus, edge thickness.</CardDescription>
                     </CardHeader>
                     <CardContent>
                        <FrameVisualizer {...submittedValues} />
