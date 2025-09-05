@@ -55,7 +55,7 @@ const menuItems = [
 
 const appVersion = "0.6 alpha";
 
-export default async function Home() {
+export default function Home() {
 
   return (
     <main 
