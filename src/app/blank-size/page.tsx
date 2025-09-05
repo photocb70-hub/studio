@@ -21,9 +21,9 @@ import { Calculator } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
-  eyeSize: z.coerce.number().min(0, "Must be a positive number."),
-  bridgeSize: z.coerce.number().min(0, "Must be a positive number."),
-  patientPD: z.coerce.number().min(0, "Must be a positive number."),
+  eyeSize: z.coerce.number().min(1, "Must be a positive number."),
+  bridgeSize: z.coerce.number().min(1, "Must be a positive number."),
+  patientPD: z.coerce.number().min(1, "Must be a positive number."),
 }).refine(data => (data.eyeSize + data.bridgeSize) >= data.patientPD, {
     message: "Frame PD (Eye Size + Bridge Size) must be greater than or equal to Patient PD.",
     path: ["bridgeSize"],

@@ -23,7 +23,7 @@ import { Slider } from '@/components/ui/slider';
 const formSchema = z.object({
   sphere: z.coerce.number().min(-25).max(25),
   cylinder: z.coerce.number().min(-15).max(15),
-  axis: z.coerce.number().min(1).max(180),
+  axis: z.coerce.number({ required_error: "Axis is required." }).min(1, "Axis must be between 1 and 180.").max(180, "Axis must be between 1 and 180."),
 });
 
 type FormValues = z.infer<typeof formSchema>;

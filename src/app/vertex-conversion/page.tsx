@@ -22,8 +22,8 @@ import { Slider } from '@/components/ui/slider';
 
 const formSchema = z.object({
   power: z.coerce.number(),
-  originalBVD: z.coerce.number().min(0, "Must be positive."),
-  newBVD: z.coerce.number().min(0, "Must be positive."),
+  originalBVD: z.coerce.number({ required_error: "Original BVD is required." }).min(0, "Must be positive."),
+  newBVD: z.coerce.number({ required_error: "New BVD is required." }).min(0, "Must be positive."),
 });
 
 type FormValues = z.infer<typeof formSchema>;

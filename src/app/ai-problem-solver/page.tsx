@@ -37,8 +37,8 @@ const measurementsSchema = z.object({
 });
 
 const frameSchema = z.object({
-  lensMaterial: z.string().optional(),
-  lensType: z.string().optional(),
+  lensMaterial: z.string({ required_error: "Please select a lens material." }),
+  lensType: z.string({ required_error: "Please select a lens type." }),
   frameDetails: z.string().optional(),
   minFittingHeight: z.coerce.number().optional(),
 });
@@ -49,7 +49,7 @@ const formSchema = z.object({
   currentFrame: frameSchema,
   previousPrescription: prescriptionSchema,
   previousMeasurements: measurementsSchema,
-  previousFrame: frameSchema,
+  previousFrame: frameSchema.partial(), // Previous frame details are fully optional
   problem: z.string().min(10, "Please describe the problem in at least 10 characters."),
 });
 
@@ -205,6 +205,7 @@ function AiProblemSolverContent() {
                     {lensMaterials.map(m => m && <SelectItem key={m.value} value={m.value}>{m.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                <FormMessage />
             </FormItem>
         )} />
         <FormField control={form.control} name={`${prefix}.lensType`} render={({ field }) => (
@@ -218,6 +219,7 @@ function AiProblemSolverContent() {
                     {lensTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                <FormMessage />
             </FormItem>
         )} />
         {(lensType === 'Progressive' || lensType === 'Bifocal') && (
