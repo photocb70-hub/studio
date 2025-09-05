@@ -21,6 +21,7 @@ import { Calculator } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 
 const formSchema = z.object({
   sphere: z.coerce.number().min(-20).max(20),
@@ -42,38 +43,77 @@ const lensMaterials = [
     { name: 'High-Index (1.74)', index: 1.74 },
 ];
 
-const LensDiagram = ({ minThickness, maxThickness, centerThickness }: { minThickness: number, maxThickness: number, centerThickness: number }) => {
+const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, maxAxis }: { minThickness: number, maxThickness: number, centerThickness: number, minAxis: number, maxAxis: number }) => {
   const isPlusLens = (minThickness + maxThickness) / 2 < centerThickness;
   
-  const memoizedDiagram = useMemo(() => {
+  const memoizedDiagrams = useMemo(() => {
     const plusPath = `M 20,50 C 35,30 75,30 90,50 C 75,70 35,70 20,50 Z`;
     const minusPath = `M 20,35 C 45,45 65,45 90,35 L 90,65 C 65,55 45,55 20,65 Z`;
+    const etRotation = `rotate(${maxAxis} 50 50)`;
 
     return (
-      <div className="w-full max-w-[250px] mx-auto p-4 flex items-center justify-center">
-        <svg viewBox="0 0 110 100" className="w-full h-auto overflow-visible">
-          <path
-            d={isPlusLens ? plusPath : minusPath}
-            fill="hsl(var(--primary) / 0.1)"
-            stroke="hsl(var(--primary))"
-            strokeWidth="1.5"
-          />
-          {/* Center thickness */}
-          <line x1="55" y1={isPlusLens ? 30 : 45} x2="55" y2={isPlusLens ? 70 : 55} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-          
-          {/* Edge thickness lines */}
-          <g transform="rotate(90 55 50)">
-            <line x1="20" y1="50" x2="90" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2"/>
-          </g>
-          <g>
-            <line x1="20" y1="50" x2="90" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-          </g>
-        </svg>
+      <div className="w-full max-w-[250px] mx-auto p-4 flex flex-col items-center justify-center gap-6">
+        {/* 2D Cross-section */}
+        <div className="w-full">
+            <svg viewBox="0 0 110 100" className="w-full h-auto overflow-visible">
+                <path
+                    d={isPlusLens ? plusPath : minusPath}
+                    fill="hsl(var(--primary) / 0.1)"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth="1.5"
+                />
+                
+                {/* Center thickness line and label */}
+                <line x1="55" y1={isPlusLens ? 30 : 45} x2="55" y2={isPluslens ? 70 : 55} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
+                <line x1="55" y1={isPlusLens ? 50 : 35} x2="70" y2="15" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5"/>
+                <text x="72" y="15" textAnchor="start" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{centerThickness.toFixed(2)}mm</text>
+                
+                {/* Edge thickness line and label */}
+                <line x1="20" y1="50" x2="10" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
+                <text x="8" y="50" textAnchor="end" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{minThickness.toFixed(2)}mm</text>
+            </svg>
+        </div>
+        
+        <Separator />
+        
+        {/* 3D Perspective */}
+        <div className="w-full">
+             <svg viewBox="0 0 100 100" className="w-full h-auto overflow-visible">
+                <defs>
+                    <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                        <stop offset="0%" style={{stopColor: 'hsl(var(--primary) / 0.2)', stopOpacity: 1}} />
+                        <stop offset="100%" style={{stopColor: 'hsl(var(--primary) / 0.1)', stopOpacity: 1}} />
+                    </radialGradient>
+                </defs>
+                
+                {/* Back surface */}
+                <ellipse cx="50" cy="50" rx="45" ry="30" fill="url(#grad1)" />
+                
+                {/* Edge */}
+                <ellipse cx="50" cy="50" rx="45" ry="30" fill="none" stroke="hsl(var(--primary) / 0.5)" strokeWidth="1.5"/>
+                
+                {/* Front curve highlight */}
+                <path d="M 20 40 C 40 25, 60 25, 80 40" fill="none" stroke="hsl(var(--background) / 0.5)" strokeWidth="2.5" strokeLinecap="round" />
+            
+                {/* Thickness indicators */}
+                <g transform={etRotation}>
+                    {/* Max Thickness */}
+                    <line x1="50" y1="20" x2="50" y2="0" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
+                    <text x="50" y="-4" textAnchor="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{maxThickness.toFixed(2)}mm</text>
+                    <text x="50" y="8" textAnchor="middle" fontSize="7" fill="hsl(var(--muted-foreground))">({maxAxis}°)</text>
+
+                    {/* Min Thickness */}
+                    <line x1="5" y1="50" x2="-10" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
+                    <text x="-12" y="50" textAnchor="end" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{minThickness.toFixed(2)}mm</text>
+                     <text x="-12" y="60" textAnchor="end" dominantBaseline="middle" fontSize="7" fill="hsl(var(--muted-foreground))">({minAxis}°)</text>
+                </g>
+            </svg>
+        </div>
       </div>
     )
-  }, [isPlusLens]);
+  }, [isPlusLens, minThickness, maxThickness, centerThickness, minAxis, maxAxis]);
 
-  return memoizedDiagram;
+  return memoizedDiagrams;
 }
 
 export default function EdgeThicknessPage() {
@@ -112,9 +152,7 @@ export default function EdgeThicknessPage() {
       });
       return null;
     }
-    // Sag = r - sqrt(r^2 - (d/2)^2)
     const sag = Math.abs(radius) - Math.sqrt(Math.pow(Math.abs(radius), 2) - Math.pow(semiDiameter, 2));
-    // Return sag with the correct sign based on power
     return power > 0 ? sag : -sag;
   }
   
@@ -122,7 +160,6 @@ export default function EdgeThicknessPage() {
     const { sphere, cylinder = 0, axis = 90, index, diameter, centerThickness } = values;
 
     const cyl = cylinder || 0;
-    // Power in the two principal meridians
     const power1 = sphere;
     const power2 = sphere + cyl;
 
@@ -135,22 +172,15 @@ export default function EdgeThicknessPage() {
     }
 
     let finalCenterThickness = centerThickness;
-    
-    // For a plus lens, ensure the thinnest edge is not below a minimum (e.g. 1.0mm)
-    // The thinnest part of a plus lens is on the edge.
+    const minEdgeForPlus = 1.0;
+
     if (sphere > 0) {
-      const minEdgeThicknessAtPeriphery = 1.0;
-      // Tentative edge thicknesses
-      const tempEt1 = centerThickness - sag1;
-      const tempEt2 = centerThickness - sag2;
-      const thinnestEdge = Math.min(tempEt1, tempEt2);
-      
-      if (thinnestEdge < minEdgeThicknessAtPeriphery) {
-        finalCenterThickness += minEdgeThicknessAtPeriphery - thinnestEdge;
+      const thinnestEdge = Math.min(centerThickness - sag1, centerThickness - sag2);
+      if (thinnestEdge < minEdgeForPlus) {
+        finalCenterThickness += minEdgeForPlus - thinnestEdge;
       }
     }
     
-    // Final edge thickness calculations based on the (potentially adjusted) center thickness
     const thickness1 = finalCenterThickness - sag1;
     const thickness2 = finalCenterThickness - sag2;
 
@@ -327,7 +357,13 @@ export default function EdgeThicknessPage() {
                                 </p>
                             </div>
                         </div>
-                        <LensDiagram minThickness={result.minThickness} maxThickness={result.maxThickness} centerThickness={result.centerThickness} />
+                        <LensDiagram 
+                            minThickness={result.minThickness} 
+                            maxThickness={result.maxThickness} 
+                            centerThickness={result.centerThickness}
+                            minAxis={result.minAxis}
+                            maxAxis={result.maxAxis}
+                        />
                     </CardContent>
                     <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
@@ -345,3 +381,5 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
+
+    
