@@ -56,10 +56,13 @@
   body {
     @apply text-foreground;
     background-color: hsl(var(--background));
-    background-image: linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--secondary)));
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'%3e%3cdefs%3e%3cstyle%3e.formula %7b font-family: 'Inter', sans-serif; font-size: 16px; fill: hsl(var(--primary) / 0.05); opacity: 0; animation: fadeIn 1.5s ease-in-out forwards; %7d @keyframes fadeIn %7b to %7b opacity: 1; %7d %7d%3c/style%3e%3c/defs%3e%3ctext x='100' y='150' class='formula' style='animation-delay: 0.2s;' transform='rotate(-15 100 150)'%3en₁sin(θ₁) = n₂sin(θ₂)%3c/text%3e%3ctext x='550' y='100' class='formula' style='animation-delay: 0.4s;' transform='rotate(10 550 100)'%3eP = cF%3c/text%3e%3ctext x='300' y='300' class='formula' style='animation-delay: 0.6s;' transform='rotate(5 300 300)'%3eL' = L + F%3c/text%3e%3ctext x='600' y='450' class='formula' style='animation-delay: 0.8s;' transform='rotate(-5 600 450)'%3e1/f = (n-1)(1/R₁ - 1/R₂)%3c/text%3e%3ctext x='150' y='550' class='formula' style='animation-delay: 1s;' transform='rotate(20 150 550)'%3eM = -v/u%3c/text%3e%3ctext x='400' y='700' class='formula' style='animation-delay: 1.2s;' transform='rotate(-10 400 700)'%3eFc = F / (1 - d*F)%3c/text%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
   }
 
   .dark body {
-    background-image: linear-gradient(to bottom right, hsl(var(--background)), hsl(var(--secondary)));
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'%3e%3cdefs%3e%3cstyle%3e.formula %7b font-family: 'Inter', sans-serif; font-size: 16px; fill: hsl(var(--primary) / 0.1); opacity: 0; animation: fadeIn 1.5s ease-in-out forwards; %7d @keyframes fadeIn %7b to %7b opacity: 1; %7d %7d%3c/style%3e%3c/defs%3e%3ctext x='100' y='150' class='formula' style='animation-delay: 0.2s;' transform='rotate(-15 100 150)'%3en₁sin(θ₁) = n₂sin(θ₂)%3c/text%3e%3ctext x='550' y='100' class='formula' style='animation-delay: 0.4s;' transform='rotate(10 550 100)'%3eP = cF%3c/text%3e%3ctext x='300' y='300' class='formula' style='animation-delay: 0.6s;' transform='rotate(5 300 300)'%3eL' = L + F%3c/text%3e%3ctext x='600' y='450' class='formula' style='animation-delay: 0.8s;' transform='rotate(-5 600 450)'%3e1/f = (n-1)(1/R₁ - 1/R₂)%3c/text%3e%3ctext x='150' y='550' class='formula' style='animation-delay: 1s;' transform='rotate(20 150 550)'%3eM = -v/u%3c/text%3e%3ctext x='400' y='700' class='formula' style='animation-delay: 1.2s;' transform='rotate(-10 400 700)'%3eFc = F / (1 - d*F)%3c/text%3e%3c/svg%3e");
   }
 }
