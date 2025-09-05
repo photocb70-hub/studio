@@ -22,10 +22,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Slider } from '@/components/ui/slider';
 
 const formSchema = z.object({
-  power: z.coerce.number().min(-20).max(0, { message: 'Power must be zero or negative for this tool.' }),
+  power: z.coerce.number().min(-20).max(20),
   index: z.coerce.number().min(1.4).max(2.0),
   diameter: z.coerce.number().min(30).max(90),
-  centerThickness: z.coerce.number().min(0.1).max(10),
+  thickness: z.coerce.number().min(0.1).max(10),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -33,7 +33,7 @@ type FormValues = z.infer<typeof formSchema>;
 const LensDiagram = ({ edge, center, diameter }: { edge: number; center: number; diameter: number }) => {
     const memoizedDiagram = useMemo(() => {
         const viewboxWidth = 100;
-        const maxThickness = Math.max(edge, center, 5); // Ensure a minimum height
+        const maxThickness = Math.max(edge, center, 5);
         const scale = viewboxWidth / diameter;
         const viewboxHeight = maxThickness * scale * 2.5;
 
@@ -77,17 +77,17 @@ export default function EdgeThicknessPage() {
       power: -2.0,
       index: 1.586,
       diameter: 70,
-      centerThickness: 1.5,
+      thickness: 1.5,
     },
   });
 
   const powerValue = form.watch('power');
 
   function onSubmit(values: FormValues) {
-    const { power, index, diameter, centerThickness } = values;
+    const { power, index, diameter, thickness } = values;
 
     if (power === 0) {
-        setResult({ edgeThickness: centerThickness, centerThickness, diameter });
+        setResult({ edgeThickness: thickness, centerThickness: thickness, diameter });
         return;
     }
 
@@ -105,19 +105,28 @@ export default function EdgeThicknessPage() {
     }
 
     const sag = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
-    const edgeThickness = sag + centerThickness;
 
+    let edgeThickness, centerThickness;
+
+    if (power < 0) { // Minus lens
+      centerThickness = thickness;
+      edgeThickness = sag + centerThickness;
+    } else { // Plus lens
+      edgeThickness = thickness;
+      centerThickness = sag + edgeThickness;
+    }
+    
     setResult({ edgeThickness, centerThickness, diameter });
   }
 
   return (
     <ToolPageLayout
-      title="Edge Thickness Calculator"
-      description="Calculate and visualize the edge thickness for a minus-power lens."
+      title="Lens Thickness Calculator"
+      description="Calculate edge and center thickness for plus and minus lenses."
     >
         <Card>
           <CardHeader>
-            <CardTitle>Enter Parameters for a Minus Lens</CardTitle>
+            <CardTitle>Enter Lens Parameters</CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -129,16 +138,13 @@ export default function EdgeThicknessPage() {
                     <FormItem>
                       <FormLabel>Sphere Power (D): {powerValue.toFixed(2)}</FormLabel>
                       <FormControl>
-                        <div className="flex items-center gap-4">
-                            <Slider
-                                value={[field.value]}
-                                onValueChange={(value) => field.onChange(value[0])}
-                                min={-20}
-                                max={0}
-                                step={0.25}
-                                className="[--slider-connect-color:hsl(var(--primary))]"
-                            />
-                        </div>
+                        <Slider
+                            value={[field.value]}
+                            onValueChange={(value) => field.onChange(value[0])}
+                            min={-20}
+                            max={20}
+                            step={0.25}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -173,10 +179,10 @@ export default function EdgeThicknessPage() {
                     />
                     <FormField
                     control={form.control}
-                    name="centerThickness"
+                    name="thickness"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Center Thickness (mm)</FormLabel>
+                        <FormLabel>{powerValue < 0 ? 'Center' : 'Edge'} Thickness (mm)</FormLabel>
                         <FormControl>
                             <Input type="number" step="0.1" {...field} />
                         </FormControl>
@@ -201,12 +207,19 @@ export default function EdgeThicknessPage() {
                         <CardTitle>Result & Visualization</CardTitle>
                     </CardHeader>
                     <CardContent className="grid gap-6 md:grid-cols-2 items-center">
-                        <div className="flex items-center justify-center">
-                            <div className="text-center">
-                                <p className="text-sm text-muted-foreground">Calculated Edge Thickness</p>
-                                <p className="text-5xl font-bold tracking-tight text-accent-foreground">
+                        <div className="flex flex-col items-center justify-center gap-4 text-center">
+                            <div>
+                                <p className="text-sm text-muted-foreground">Edge Thickness</p>
+                                <p className="text-4xl font-bold tracking-tight text-accent-foreground">
                                     {result.edgeThickness.toFixed(2)}
-                                    <span className="text-3xl font-medium text-muted-foreground"> mm</span>
+                                    <span className="text-2xl font-medium text-muted-foreground"> mm</span>
+                                </p>
+                            </div>
+                             <div>
+                                <p className="text-sm text-muted-foreground">Center Thickness</p>
+                                <p className="text-4xl font-bold tracking-tight text-accent-foreground">
+                                    {result.centerThickness.toFixed(2)}
+                                    <span className="text-2xl font-medium text-muted-foreground"> mm</span>
                                 </p>
                             </div>
                         </div>
@@ -214,7 +227,7 @@ export default function EdgeThicknessPage() {
                     </CardContent>
                     <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
-                            Edge Thickness = Sag + Center Thickness
+                            Thickness = Sag + Minimum Thickness
                         </p>
                     </CardFooter>
                 </Card>

@@ -18,9 +18,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Calculator } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
 
 const formSchema = z.object({
-  power: z.coerce.number(),
+  power: z.coerce.number().min(-20).max(20),
   originalDistance: z.coerce.number().min(0),
   newDistance: z.coerce.number().min(0),
 });
@@ -38,6 +39,8 @@ export default function VertexConversionPage() {
       newDistance: 10,
     },
   });
+
+  const powerValue = form.watch('power');
 
   function onSubmit(values: FormValues) {
     const { power, originalDistance, newDistance } = values;
@@ -66,9 +69,15 @@ export default function VertexConversionPage() {
                   name="power"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Original Power (D)</FormLabel>
+                      <FormLabel>Original Power (D): {powerValue.toFixed(2)}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder="e.g., -8.00" {...field} />
+                        <Slider
+                            value={[field.value]}
+                            onValueChange={(value) => field.onChange(value[0])}
+                            min={-20}
+                            max={20}
+                            step={0.25}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
