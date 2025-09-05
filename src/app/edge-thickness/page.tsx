@@ -25,7 +25,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 const formSchema = z.object({
   sphere: z.coerce.number().min(-20).max(20),
   cylinder: z.coerce.number().min(-10).max(0),
-  axis: z.coerce.number().min(1).max(180).optional(),
+  axis: z.coerce.number().min(1).max(180),
   index: z.coerce.number().min(1.4).max(2.0),
   diameter: z.coerce.number().min(30).max(90),
   centerThickness: z.coerce.number().min(0.1).max(10),
@@ -98,6 +98,7 @@ export default function EdgeThicknessPage() {
   const sphereValue = form.watch('sphere');
   const cylinderValue = form.watch('cylinder');
   const invertedCylinderValue = cylinderValue !== undefined ? Math.abs(cylinderValue) : 0;
+  const axisValue = form.watch('axis');
 
 
   function calculateSag(power: number, index: number, diameter: number): number | null {
@@ -213,13 +214,23 @@ export default function EdgeThicknessPage() {
                       </FormItem>
                     )}
                   />
-                  <FormField control={form.control} name="axis" render={({ field }) => (
+                  <FormField
+                    control={form.control}
+                    name="axis"
+                    render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Axis (°)</FormLabel>
-                        <FormControl><Input type="number" min="1" max="180" placeholder="e.g., 90" {...field} value={field.value ?? ''} /></FormControl>
+                        <FormLabel>Axis (°): {axisValue}</FormLabel>
+                        <FormControl>
+                            <Slider
+                                value={[field.value ?? 90]}
+                                onValueChange={(value) => field.onChange(value[0])}
+                                min={1} max={180} step={1}
+                            />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
-                  )} />
+                    )}
+                  />
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
