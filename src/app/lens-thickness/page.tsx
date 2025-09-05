@@ -32,7 +32,8 @@ import { Slider } from '@/components/ui/slider';
 const frameShapes = {
   round: (size: number) => {
     const r = size / 2;
-    return `M ${r},0 A ${r},${r} 0 1,1 ${r},-0.01 Z`;
+    // A path for a circle centered at (r, r)
+    return `M ${r}, 0 A ${r},${r} 0 1,0 ${r},${size} A ${r},${r} 0 1,0 ${r},0 Z`;
   },
   square: (size: number) => {
     const r = 8; // corner radius
@@ -41,11 +42,14 @@ const frameShapes = {
   aviator: (size: number) => {
     const w = size;
     const h = size * 0.8;
-    return `M ${w*0.5},0
-            C ${w*0.1},0 ${0},${h*0.1} ${0},${h*0.5}
-            S ${w*0.1},${h} ${w*0.5},${h}
-            S ${w*0.9},${h} ${w},${h*0.5}
-            S ${w*0.9},0 ${w*0.5},0 Z`;
+     // Centering the aviator shape by translating it
+    consttranslateX = 0;
+    const translateY = (size - h) / 2;
+    return `M ${w*0.5 + translateX},${0 + translateY}
+            C ${w*0.1 + translateX},${0 + translateY} ${0 + translateX},${h*0.1 + translateY} ${0 + translateX},${h*0.5 + translateY}
+            S ${w*0.1 + translateX},${h + translateY} ${w*0.5 + translateX},${h + translateY}
+            S ${w*0.9 + translateX},${h + translateY} ${w + translateX},${h*0.5 + translateY}
+            S ${w*0.9 + translateX},${0 + translateY} ${w*0.5 + translateX},${0 + translateY} Z`;
   }
 };
 const frameShapeNames = Object.keys(frameShapes);
@@ -76,35 +80,51 @@ const FrameVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness
 
     const memoizedViz = useMemo(() => {
         const getPowerAtMeridian = (theta: number) => {
+            if (!cylinder) return sphere;
             const radAxis = ((axis || 0) * Math.PI) / 180;
             const radTheta = (theta * Math.PI) / 180;
             return sphere + (cylinder || 0) * Math.pow(Math.sin(radTheta - radAxis), 2);
         };
 
         const calculateThickness = (power: number) => {
-            if (power === 0) return minThickness;
-            const radius = Math.abs(((index - 1) / power) * 1000);
+            const isPlusLens = power > 0;
             const semiDiameter = diameter / 2;
+            
+            // For plus lenses, we calculate sag from the edge. For minus, from the center.
+            const baseThickness = minThickness;
+
+            if (power === 0) return baseThickness;
+
+            const radius = Math.abs(((index - 1) / power) * 1000);
+            
             if (radius <= semiDiameter) {
-                // This case should be handled gracefully.
-                // We'll return null and check for it.
                 return null;
             }
+            
             const sag = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
-            const isPlusLens = power > 0;
-            return isPlusLens ? sag + minThickness : sag + minThickness;
+
+            if(isPlusLens) {
+                // Center thickness is sag + min edge thickness
+                // We're showing edge thickness here, so it's the minimum.
+                return baseThickness; // This part is complex, for now we visualize relative thickness
+            } else {
+                 // Edge thickness is sag + min center thickness
+                return sag + baseThickness;
+            }
         };
+        
+        // We will visualize thickness at 4 points: 0, 90, 180, 270 degrees on the lens
+        const thicknessPoints = [
+            { angle: 0, power: getPowerAtMeridian(0) },
+            { angle: 90, power: getPowerAtMeridian(90) },
+            { angle: 180, power: getPowerAtMeridian(180) },
+            { angle: 270, power: getPowerAtMeridian(270) }
+        ].map(p => ({
+            ...p,
+            thickness: calculateThickness(p.power)
+        }));
 
-        const powers = [
-            getPowerAtMeridian(0),
-            getPowerAtMeridian(45),
-            getPowerAtMeridian(90),
-            getPowerAtMeridian(135),
-        ];
-
-        const thicknesses = powers.map(calculateThickness);
-
-        if (thicknesses.some(t => t === null)) {
+        if (thicknessPoints.some(p => p.thickness === null)) {
             toast({
                 variant: "destructive",
                 title: "Invalid Calculation",
@@ -113,54 +133,37 @@ const FrameVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness
             return <p className="text-destructive text-center p-4">Invalid calculation. Power may be too high for the diameter.</p>;
         }
 
-        const maxThickness = Math.max(...(thicknesses as number[]));
-        const thicknessScale = 100 / maxThickness;
-
         const pathData = frameShapes[frameShape as keyof typeof frameShapes](100);
 
-        const thicknessPoints = [
-            { angle: 0, thickness: thicknesses[0], pos: {x: 100, y: 50} },
-            { angle: 45, thickness: thicknesses[1], pos: {x: 85.35, y: 85.35} },
-            { angle: 90, thickness: thicknesses[2], pos: {x: 50, y: 100} },
-            { angle: 135, thickness: thicknesses[3], pos: {x: 14.65, y: 85.35} },
-            { angle: 180, thickness: thicknesses[0], pos: {x: 0, y: 50} },
-            { angle: 225, thickness: thicknesses[1], pos: {x: 14.65, y: 14.65} },
-            { angle: 270, thickness: thicknesses[2], pos: {x: 50, y: 0} },
-            { angle: 315, thickness: thicknesses[3], pos: {x: 85.35, y: 14.65} },
-        ];
-
+        // Positions for labels (x, y)
+        const positions = {
+          nasal: { x: -25, y: 50 },
+          temporal: { x: 125, y: 50 },
+          top: { x: 50, y: -15 },
+          bottom: { x: 50, y: 115 },
+        };
 
         return (
             <div className="w-full max-w-sm mx-auto p-4">
-                <svg viewBox="-20 -20 140 140" className="w-full h-auto">
+                <svg viewBox="-30 -30 160 160" className="w-full h-auto font-sans">
+                    {/* Frame Shape */}
                     <path
                         d={pathData}
                         fill="hsl(var(--accent) / 0.05)"
                         stroke="hsl(var(--accent) / 0.5)"
                         strokeWidth="1"
                     />
-                    <g className="opacity-70 group-hover:opacity-100 transition-opacity">
-                        {thicknessPoints.map(p => (
-                            <g key={p.angle}>
-                                <circle 
-                                    cx={p.pos.x} 
-                                    cy={p.pos.y} 
-                                    r={(p.thickness || 0) * thicknessScale * 0.15}
-                                    fill="hsl(var(--primary) / 0.7)"
-                                />
-                                <text
-                                    x={p.pos.x}
-                                    y={p.pos.y}
-                                    textAnchor="middle"
-                                    dominantBaseline="middle"
-                                    fontSize="5"
-                                    className="fill-primary-foreground font-semibold"
-                                >
-                                    {(p.thickness || 0).toFixed(1)}
-                                </text>
-                            </g>
-                        ))}
-                    </g>
+
+                    {/* Thickness Labels */}
+                    <text x={positions.temporal.x + 5} y={positions.temporal.y} textAnchor="start" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[0].thickness ?? 0).toFixed(1)}mm</text>
+                    <text x={positions.top.x} y={positions.top.y} textAnchor="middle" dominantBaseline="auto" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[1].thickness ?? 0).toFixed(1)}mm</text>
+                    <text x={positions.nasal.x - 5} y={positions.nasal.y} textAnchor="end" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[2].thickness ?? 0).toFixed(1)}mm</text>
+                    <text x={positions.bottom.x} y={positions.bottom.y} textAnchor="middle" dominantBaseline="hanging" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[3].thickness ?? 0).toFixed(1)}mm</text>
+                    
+                    {/* Nasal/Temporal Labels */}
+                    <text x={positions.temporal.x + 5} y={positions.temporal.y + 12} textAnchor="start" dominantBaseline="middle" fontSize="8" fill="hsl(var(--muted-foreground))">Temporal</text>
+                    <text x={positions.nasal.x - 5} y={positions.nasal.y + 12} textAnchor="end" dominantBaseline="middle" fontSize="8" fill="hsl(var(--muted-foreground))">Nasal</text>
+
                 </svg>
             </div>
         );
@@ -219,7 +222,6 @@ export default function LensThicknessPage() {
                                 min={-20}
                                 max={20}
                                 step={0.25}
-                                className="[--slider-connect-color:hsl(var(--primary))]"
                             />
                         </div>
                       </FormControl>
@@ -347,7 +349,7 @@ export default function LensThicknessPage() {
                  <Card>
                     <CardHeader>
                         <CardTitle>Thickness Visualization</CardTitle>
-                         <CardDescription>Estimated thickness (mm) at key points on the lens shape.</CardDescription>
+                         <CardDescription>Estimated edge thickness (mm) at key points on the lens shape.</CardDescription>
                     </CardHeader>
                     <CardContent>
                        <FrameVisualizer {...submittedValues} />
@@ -362,5 +364,3 @@ export default function LensThicknessPage() {
     </ToolPageLayout>
   );
 }
-
-    
