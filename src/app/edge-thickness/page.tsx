@@ -42,10 +42,10 @@ const lensMaterials = [
 
 const LensDiagram = ({ edge, center, diameter, power }: { edge: number; center: number; diameter: number, power: number }) => {
     const memoizedDiagram = useMemo(() => {
-        const viewboxWidth = 100;
-        const scale = viewboxWidth / diameter;
-        const maxThicknessForScaling = Math.max(edge, center, 3);
-        const viewboxHeight = maxThicknessForScaling * scale * 2.5;
+        const viewboxWidth = 120; // Increased width for more space
+        const scale = viewboxWidth / (diameter * 1.2); // Adjust scale for padding
+        const maxThicknessForScaling = Math.max(edge, center, 4);
+        const viewboxHeight = maxThicknessForScaling * scale * 3;
 
         const centerY = viewboxHeight / 2;
         const halfWidth = viewboxWidth / 2;
@@ -54,26 +54,36 @@ const LensDiagram = ({ edge, center, diameter, power }: { edge: number; center: 
         const centerHeight = center * scale / 2;
 
         const curveFactor = power * scale * 0.4;
+        const lensWidth = 100;
+        const lensStartX = (viewboxWidth - lensWidth) / 2;
+        const lensEndX = lensStartX + lensWidth;
 
-        const path = `M 0,${centerY - edgeHeight} Q ${halfWidth},${centerY - centerHeight - curveFactor} ${viewboxWidth},${centerY - edgeHeight} L ${viewboxWidth},${centerY + edgeHeight} Q ${halfWidth},${centerY + centerHeight - curveFactor} 0,${centerY + edgeHeight} Z`;
+        const path = `M ${lensStartX},${centerY - edgeHeight} Q ${halfWidth},${centerY - centerHeight - curveFactor} ${lensEndX},${centerY - edgeHeight} L ${lensEndX},${centerY + edgeHeight} Q ${halfWidth},${centerY + centerHeight - curveFactor} ${lensStartX},${centerY + edgeHeight} Z`;
 
         return (
-            <div className="w-full max-w-sm mx-auto p-4 flex items-center justify-center">
+            <div className="w-full max-w-sm mx-auto p-2 flex items-center justify-center">
                 <svg viewBox={`0 0 ${viewboxWidth} ${viewboxHeight}`} className="w-full h-auto">
+                    {/* Lens Body */}
                     <path
                         d={path}
-                        fill="hsl(var(--accent) / 0.2)"
-                        stroke="hsl(var(--accent))"
-                        strokeWidth="0.75"
+                        fill="hsl(var(--accent) / 0.3)"
+                        stroke="hsl(var(--accent-foreground))"
+                        strokeWidth="1"
                     />
 
-                    {/* Center thickness line and label */}
-                    <line x1={halfWidth} y1={centerY - centerHeight} x2={halfWidth} y2={centerY + centerHeight} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="1.5 1.5" />
-                    <text x={halfWidth + 3} y={centerY} fill="hsl(var(--foreground))" fontSize="4" textAnchor="start" dominantBaseline="middle">{center.toFixed(1)}mm</text>
-
-                    {/* Edge thickness line and label */}
-                    <line x1={2} y1={centerY - edgeHeight} x2={2} y2={centerY + edgeHeight} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="1.5 1.5" />
-                    <text x={5} y={centerY} fill="hsl(var(--foreground))" fontSize="4" textAnchor="start" dominantBaseline="middle">{edge.toFixed(1)}mm</text>
+                    {/* Center thickness line, label and value */}
+                    <g className="text-xs font-medium" fill="hsl(var(--foreground))">
+                        <line x1={halfWidth} y1={centerY - centerHeight} x2={halfWidth} y2={centerY + centerHeight} stroke="hsl(var(--foreground) / 0.7)" strokeWidth="0.5" strokeDasharray="2 2" />
+                        <text x={halfWidth + 4} y={centerY - 6} textAnchor="start">Center</text>
+                        <text x={halfWidth + 4} y={centerY + 6} textAnchor="start" className="font-bold">{center.toFixed(1)}mm</text>
+                    </g>
+                    
+                    {/* Edge thickness line, label and value */}
+                    <g className="text-xs font-medium" fill="hsl(var(--foreground))">
+                        <line x1={lensStartX} y1={centerY - edgeHeight} x2={lensStartX} y2={centerY + edgeHeight} stroke="hsl(var(--foreground) / 0.7)" strokeWidth="0.5" strokeDasharray="2 2" />
+                        <text x={lensStartX - 4} y={centerY - 6} textAnchor="end">Edge</text>
+                        <text x={lensStartX - 4} y={centerY + 6} textAnchor="end" className="font-bold">{edge.toFixed(1)}mm</text>
+                    </g>
                 </svg>
             </div>
         )
