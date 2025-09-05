@@ -75,15 +75,15 @@ const materialIndices = [
     { name: 'High-Index 1.74', value: 1.74 },
 ];
 
-const FrameVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness, frameShape }: FormValues) => {
+const LensVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness, frameShape }: FormValues) => {
     const { toast } = useToast();
 
     const memoizedViz = useMemo(() => {
         const getPowerAtMeridian = (theta: number) => {
-            if (!cylinder) return sphere;
+            if (!cylinder || cylinder === 0) return sphere;
             const radAxis = ((axis || 0) * Math.PI) / 180;
             const radTheta = (theta * Math.PI) / 180;
-            return sphere + (cylinder || 0) * Math.pow(Math.sin(radTheta - radAxis), 2);
+            return sphere + cylinder * Math.pow(Math.sin(radTheta - radAxis), 2);
         };
 
         const calculateThickness = (power: number) => {
@@ -111,17 +111,17 @@ const FrameVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness
             }
         };
         
-        // We will visualize thickness at 4 points: 0, 90, 180, 270 degrees on the lens
         const thicknessPoints = [
-            { angle: 0, power: getPowerAtMeridian(0) },
-            { angle: 90, power: getPowerAtMeridian(90) },
-            { angle: 180, power: getPowerAtMeridian(180) },
-            { angle: 270, power: getPowerAtMeridian(270) }
+            { angle: 0, power: getPowerAtMeridian(0) }, // Temporal
+            { angle: 90, power: getPowerAtMeridian(90) }, // Top
+            { angle: 180, power: getPowerAtMeridian(180) }, // Nasal
+            { angle: 270, power: getPowerAtMeridian(270) } // Bottom
         ].map(p => ({
             ...p,
             thickness: calculateThickness(p.power),
             isPlus: p.power > 0,
         }));
+
 
         if (thicknessPoints.some(p => p.thickness === null)) {
             toast({
@@ -134,18 +134,9 @@ const FrameVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness
 
         const pathData = frameShapes[frameShape as keyof typeof frameShapes](100);
 
-        // Positions for labels (x, y)
-        const positions = {
-          nasal: { x: -25, y: 50 },
-          temporal: { x: 125, y: 50 },
-          top: { x: 50, y: -15 },
-          bottom: { x: 50, y: 115 },
-        };
-
         return (
             <div className="w-full max-w-sm mx-auto p-4">
                 <svg viewBox="-30 -30 160 160" className="w-full h-auto font-sans">
-                    {/* Frame Shape */}
                     <path
                         d={pathData}
                         fill="hsl(var(--accent) / 0.05)"
@@ -154,15 +145,14 @@ const FrameVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness
                     />
 
                     {/* Thickness Labels */}
-                    <text x={positions.temporal.x + 5} y={positions.temporal.y} textAnchor="start" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[0].thickness ?? 0).toFixed(1)}mm</text>
-                    <text x={positions.top.x} y={positions.top.y} textAnchor="middle" dominantBaseline="auto" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[1].thickness ?? 0).toFixed(1)}mm</text>
-                    <text x={positions.nasal.x - 5} y={positions.nasal.y} textAnchor="end" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[2].thickness ?? 0).toFixed(1)}mm</text>
-                    <text x={positions.bottom.x} y={positions.bottom.y} textAnchor="middle" dominantBaseline="hanging" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[3].thickness ?? 0).toFixed(1)}mm</text>
+                    <text x={105} y={50} textAnchor="start" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[0].thickness ?? 0).toFixed(1)}mm</text>
+                    <text x={50} y={-5} textAnchor="middle" dominantBaseline="auto" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[1].thickness ?? 0).toFixed(1)}mm</text>
+                    <text x={-5} y={50} textAnchor="end" dominantBaseline="middle" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[2].thickness ?? 0).toFixed(1)}mm</text>
+                    <text x={50} y={105} textAnchor="middle" dominantBaseline="hanging" fontSize="10" fill="hsl(var(--foreground))">{(thicknessPoints[3].thickness ?? 0).toFixed(1)}mm</text>
                     
                     {/* Nasal/Temporal Labels */}
-                    <text x={positions.temporal.x + 5} y={positions.temporal.y + 12} textAnchor="start" dominantBaseline="middle" fontSize="8" fill="hsl(var(--muted-foreground))">Temporal</text>
-                    <text x={positions.nasal.x - 5} y={positions.nasal.y + 12} textAnchor="end" dominantBaseline="middle" fontSize="8" fill="hsl(var(--muted-foreground))">Nasal</text>
-
+                    <text x={105} y={62} textAnchor="start" dominantBaseline="middle" fontSize="8" fill="hsl(var(--muted-foreground))">Temporal</text>
+                    <text x={-5} y={62} textAnchor="end" dominantBaseline="middle" fontSize="8" fill="hsl(var(--muted-foreground))">Nasal</text>
                 </svg>
             </div>
         );
@@ -221,6 +211,7 @@ export default function LensThicknessPage() {
                                 min={-20}
                                 max={20}
                                 step={0.25}
+                                className="[--slider-connect-color:hsl(var(--primary))]"
                             />
                         </div>
                       </FormControl>
@@ -351,7 +342,7 @@ export default function LensThicknessPage() {
                          <CardDescription>Estimated thickness (mm) at key points. For plus powers, this is center thickness; for minus, edge thickness.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                       <FrameVisualizer {...submittedValues} />
+                       <LensVisualizer {...submittedValues} />
                     </CardContent>
                 </Card>
             ) : (
