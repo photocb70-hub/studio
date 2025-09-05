@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
-import { Calculator, PlusCircle, MinusCircle } from 'lucide-react';
+import { Calculator } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -27,8 +27,28 @@ import {
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Slider } from '@/components/ui/slider';
-import { cn } from '@/lib/utils';
 
+
+const frameShapes = {
+  round: (size: number) => {
+    const r = size / 2;
+    return `M ${r},0 A ${r},${r} 0 1,1 ${r},-0.01 Z`;
+  },
+  square: (size: number) => {
+    const r = 8; // corner radius
+    return `M ${r},0 L ${size-r},0 A ${r},${r} 0 0 1 ${size},${r} L ${size},${size-r} A ${r},${r} 0 0 1 ${size-r},${size} L ${r},${size} A ${r},${r} 0 0 1 0,${size-r} L 0,${r} A ${r},${r} 0 0 1 ${r},0 Z`;
+  },
+  aviator: (size: number) => {
+    const w = size;
+    const h = size * 0.8;
+    return `M ${w*0.5},0
+            C ${w*0.1},0 ${0},${h*0.1} ${0},${h*0.5}
+            S ${w*0.1},${h} ${w*0.5},${h}
+            S ${w*0.9},${h} ${w},${h*0.5}
+            S ${w*0.9},0 ${w*0.5},0 Z`;
+  }
+};
+const frameShapeNames = Object.keys(frameShapes);
 
 const formSchema = z.object({
   sphere: z.coerce.number(),
@@ -37,6 +57,7 @@ const formSchema = z.object({
   index: z.coerce.number().min(1.4).max(2.0),
   diameter: z.coerce.number().min(30).max(90),
   minThickness: z.coerce.number().min(0.1).max(10),
+  frameShape: z.enum(frameShapeNames as [string, ...string[]]),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -50,108 +71,108 @@ const materialIndices = [
     { name: 'High-Index 1.74', value: 1.74 },
 ];
 
-const LensVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness }: FormValues) => {
-    const calculateThickness = (power: number) => {
-        if (power === 0) return minThickness;
-        const radius = Math.abs(((index - 1) / power) * 1000);
-        const semiDiameter = diameter / 2;
-        if (radius <= semiDiameter) return null;
-        const sag = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
-        return sag + minThickness;
-    };
+const FrameVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness, frameShape }: FormValues) => {
+    const { toast } = useToast();
 
-    const power1 = sphere;
-    const power2 = sphere + (cylinder || 0);
+    const memoizedViz = useMemo(() => {
+        const getPowerAtMeridian = (theta: number) => {
+            const radAxis = ((axis || 0) * Math.PI) / 180;
+            const radTheta = (theta * Math.PI) / 180;
+            return sphere + (cylinder || 0) * Math.pow(Math.sin(radTheta - radAxis), 2);
+        };
 
-    const thickness1 = calculateThickness(power1);
-    const thickness2 = calculateThickness(power2);
+        const calculateThickness = (power: number) => {
+            if (power === 0) return minThickness;
+            const radius = Math.abs(((index - 1) / power) * 1000);
+            const semiDiameter = diameter / 2;
+            if (radius <= semiDiameter) {
+                // This case should be handled gracefully.
+                // We'll return null and check for it.
+                return null;
+            }
+            const sag = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
+            const isPlusLens = power > 0;
+            return isPlusLens ? sag + minThickness : sag + minThickness;
+        };
 
-    if (thickness1 === null || thickness2 === null) {
-        return <p className="text-destructive text-center">Invalid calculation. Power may be too high for the diameter.</p>;
-    }
-    
-    const isPlusLens1 = power1 > 0;
-    const isPlusLens2 = power2 > 0;
+        const powers = [
+            getPowerAtMeridian(0),
+            getPowerAtMeridian(45),
+            getPowerAtMeridian(90),
+            getPowerAtMeridian(135),
+        ];
 
-    const center1 = isPlusLens1 ? thickness1 : minThickness;
-    const edge1 = isPlusLens1 ? minThickness : thickness1;
-    const center2 = isPlusLens2 ? thickness2 : minThickness;
-    const edge2 = isPlusLens2 ? minThickness : thickness2;
-    
-    const axis1 = axis || 0;
-    const axis2 = (axis1 + 90) % 180;
+        const thicknesses = powers.map(calculateThickness);
 
-    return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center justify-items-center">
-            <LensDiagram 
-                power={power1}
-                axis={axis1}
-                center={center1}
-                edge={edge1}
-                diameter={diameter}
-            />
-            <LensDiagram 
-                power={power2}
-                axis={axis2}
-                center={center2}
-                edge={edge2}
-                diameter={diameter}
-            />
-        </div>
-    );
-};
+        if (thicknesses.some(t => t === null)) {
+            toast({
+                variant: "destructive",
+                title: "Invalid Calculation",
+                description: "Lens power is too high for the given diameter. Cannot visualize."
+            });
+            return <p className="text-destructive text-center p-4">Invalid calculation. Power may be too high for the diameter.</p>;
+        }
 
-const LensDiagram = ({ power, axis, center, edge, diameter }: { power: number; axis: number; center: number; edge: number; diameter: number; }) => {
-    const viewboxWidth = 100;
-    const maxThickness = Math.max(edge, center, 5); 
-    const scale = viewboxWidth / diameter;
-    const viewboxHeight = maxThickness * scale * 2.5;
+        const maxThickness = Math.max(...(thicknesses as number[]));
+        const thicknessScale = 100 / maxThickness;
 
-    const curveFactor = power * scale * 0.5;
+        const pathData = frameShapes[frameShape as keyof typeof frameShapes](100);
 
-    return (
-        <Card className="w-full bg-card/50 overflow-hidden">
-            <CardHeader className="p-4 border-b">
-                <CardTitle className="text-base text-center">
-                    {power.toFixed(2)} D @ {axis}°
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4">
-                 <div className="text-center mb-4">
-                    <p className="text-sm text-muted-foreground">{power > 0 ? "Center Thickness" : "Edge Thickness"}</p>
-                    <p className="text-3xl font-bold tracking-tight text-accent-foreground">
-                        {(power > 0 ? center : edge).toFixed(2)}
-                        <span className="text-xl font-medium text-muted-foreground"> mm</span>
-                    </p>
-                </div>
-                <div className="w-full max-w-sm mx-auto">
-                    <svg viewBox={`0 0 ${viewboxWidth} ${viewboxHeight}`} className="w-full h-auto">
-                        <path
-                            d={`M 0,${viewboxHeight / 2 - (edge * scale)}
-                                Q ${viewboxWidth / 2},${viewboxHeight / 2 - (center * scale) - curveFactor} ${viewboxWidth},${viewboxHeight / 2 - (edge * scale)}
-                                L ${viewboxWidth},${viewboxHeight / 2 + (edge * scale)}
-                                Q ${viewboxWidth / 2},${viewboxHeight / 2 + (center * scale) + curveFactor} 0,${viewboxHeight / 2 + (edge * scale)}
-                                Z`}
-                            fill="hsl(var(--accent) / 0.1)"
-                            stroke="hsl(var(--accent))"
-                            strokeWidth="0.5"
-                        />
-                        <line x1={viewboxWidth/2} y1={viewboxHeight/2 - center*scale} x2={viewboxWidth/2} y2={viewboxHeight/2 + center*scale} stroke="hsl(var(--primary))" strokeWidth="0.25" strokeDasharray="1 1" />
-                        <text x={viewboxWidth/2 + 2} y={viewboxHeight/2} fill="hsl(var(--foreground))" fontSize="3" textAnchor="start" dominantBaseline="middle">{center.toFixed(1)}mm</text>
+        const thicknessPoints = [
+            { angle: 0, thickness: thicknesses[0], pos: {x: 100, y: 50} },
+            { angle: 45, thickness: thicknesses[1], pos: {x: 85.35, y: 85.35} },
+            { angle: 90, thickness: thicknesses[2], pos: {x: 50, y: 100} },
+            { angle: 135, thickness: thicknesses[3], pos: {x: 14.65, y: 85.35} },
+            { angle: 180, thickness: thicknesses[0], pos: {x: 0, y: 50} },
+            { angle: 225, thickness: thicknesses[1], pos: {x: 14.65, y: 14.65} },
+            { angle: 270, thickness: thicknesses[2], pos: {x: 50, y: 0} },
+            { angle: 315, thickness: thicknesses[3], pos: {x: 85.35, y: 14.65} },
+        ];
 
-                        <line x1={1} y1={viewboxHeight/2 - edge*scale} x2={1} y2={viewboxHeight/2 + edge*scale} stroke="hsl(var(--primary))" strokeWidth="0.25" strokeDasharray="1 1" />
-                        <text x={3} y={viewboxHeight/2} fill="hsl(var(--foreground))" fontSize="3" textAnchor="start" dominantBaseline="middle">{edge.toFixed(1)}mm</text>
-                    </svg>
-                </div>
-            </CardContent>
-        </Card>
-    );
+
+        return (
+            <div className="w-full max-w-sm mx-auto p-4">
+                <svg viewBox="-20 -20 140 140" className="w-full h-auto">
+                    <path
+                        d={pathData}
+                        fill="hsl(var(--accent) / 0.05)"
+                        stroke="hsl(var(--accent) / 0.5)"
+                        strokeWidth="1"
+                    />
+                    <g className="opacity-70 group-hover:opacity-100 transition-opacity">
+                        {thicknessPoints.map(p => (
+                            <g key={p.angle}>
+                                <circle 
+                                    cx={p.pos.x} 
+                                    cy={p.pos.y} 
+                                    r={(p.thickness || 0) * thicknessScale * 0.15}
+                                    fill="hsl(var(--primary) / 0.7)"
+                                />
+                                <text
+                                    x={p.pos.x}
+                                    y={p.pos.y}
+                                    textAnchor="middle"
+                                    dominantBaseline="middle"
+                                    fontSize="5"
+                                    className="fill-primary-foreground font-semibold"
+                                >
+                                    {(p.thickness || 0).toFixed(1)}
+                                </text>
+                            </g>
+                        ))}
+                    </g>
+                </svg>
+            </div>
+        );
+
+    }, [sphere, cylinder, axis, diameter, index, minThickness, frameShape, toast]);
+
+    return memoizedViz;
 };
 
 
 export default function LensThicknessPage() {
   const [submittedValues, setSubmittedValues] = useState<FormValues | null>(null);
-  const { toast } = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -162,6 +183,7 @@ export default function LensThicknessPage() {
       index: 1.586,
       diameter: 70,
       minThickness: 1.0,
+      frameShape: "round",
     },
   });
 
@@ -232,30 +254,56 @@ export default function LensThicknessPage() {
                         )}
                         />
                 </div>
-                 <FormField
-                    control={form.control}
-                    name="index"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Refractive Index (n)</FormLabel>
-                        <Select onValueChange={(value) => field.onChange(parseFloat(value))} defaultValue={String(field.value)}>
-                            <FormControl>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select a material" />
-                            </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                            {materialIndices.map((mat) => (
-                                <SelectItem key={mat.name} value={String(mat.value)}>
-                                {mat.name} ({mat.value})
-                                </SelectItem>
-                            ))}
-                            </SelectContent>
-                        </Select>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <FormField
+                        control={form.control}
+                        name="index"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Refractive Index (n)</FormLabel>
+                            <Select onValueChange={(value) => field.onChange(parseFloat(value))} defaultValue={String(field.value)}>
+                                <FormControl>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a material" />
+                                </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                {materialIndices.map((mat) => (
+                                    <SelectItem key={mat.name} value={String(mat.value)}>
+                                    {mat.name} ({mat.value})
+                                    </SelectItem>
+                                ))}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                     <FormField
+                        control={form.control}
+                        name="frameShape"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Frame Shape</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a frame shape" />
+                                </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                {frameShapeNames.map((shape) => (
+                                    <SelectItem key={shape} value={shape} className="capitalize">
+                                    {shape}
+                                    </SelectItem>
+                                ))}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <FormField
                     control={form.control}
@@ -298,10 +346,10 @@ export default function LensThicknessPage() {
                  <Card>
                     <CardHeader>
                         <CardTitle>Thickness Visualization</CardTitle>
-                         <CardDescription>Cross-sections of the two principal meridians.</CardDescription>
+                         <CardDescription>Estimated thickness (mm) at key points on the lens shape.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                       <LensVisualizer {...submittedValues} />
+                       <FrameVisualizer {...submittedValues} />
                     </CardContent>
                 </Card>
             ) : (
@@ -313,3 +361,5 @@ export default function LensThicknessPage() {
     </ToolPageLayout>
   );
 }
+
+    
