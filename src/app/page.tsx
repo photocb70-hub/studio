@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -38,6 +38,12 @@ const menuItems = [
     title: 'Step-Along Vergence',
     description: 'Calculate vergence through an optical system.',
     icon: <Footprints className="size-8 text-primary" />,
+  },
+  {
+    href: '/progressive-power',
+    title: 'Progressive Power',
+    description: 'Calculate effective power in a progressive lens.',
+    icon: <ChevronsUpDown className="size-8 text-primary" />,
   },
 ];
 
