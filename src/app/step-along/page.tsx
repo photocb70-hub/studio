@@ -20,9 +20,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Calculator } from 'lucide-react';
 
 const formSchema = z.object({
-  distance: z.coerce.number().min(0, { message: 'Must be a positive number.' }),
-  targetSize: z.coerce.number().min(0, { message: 'Must be a positive number.' }),
-  imageSize: z.coerce.number().min(0, { message: 'Must be a positive number.' }),
+  objectDistance: z.coerce.number().min(0, { message: 'Must be a positive number.' }),
+  imageDistance: z.coerce.number().min(0, { message: 'Must be a positive number.' }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -33,27 +32,23 @@ export default function StepAlongPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      distance: 50,
-      targetSize: 10,
-      imageSize: 5,
+      objectDistance: 50,
+      imageDistance: 50,
     },
   });
 
   function onSubmit(values: FormValues) {
-    const { distance, targetSize, imageSize } = values;
-    // magnification (m) = image size / target size
-    const magnification = imageSize / targetSize;
-    // focal length (f) = distance / ( (1/m) -1)
-    const focalLength = distance / (1 / magnification - 1);
-    // power (D) = 1 / focal length in meters
-    const power = 1 / (focalLength / 100); 
+    const { objectDistance, imageDistance } = values;
+    // Thin lens equation: 1/f = 1/do + 1/di
+    // Power (D) = 1 / f (in meters)
+    const power = (1 / (objectDistance / 100)) + (1 / (imageDistance / 100));
     setResult(power);
   }
 
   return (
     <ToolPageLayout
       title="Step-Along Calculator"
-      description="Calculate a lens's focal power using the step-along method by measuring vergence."
+      description="Calculate a lens's focal power using the thin lens equation."
     >
       <div className="grid gap-8 md:grid-cols-2">
         <Card>
@@ -65,10 +60,10 @@ export default function StepAlongPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
-                  name="distance"
+                  name="objectDistance"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Distance from target to lens (cm)</FormLabel>
+                      <FormLabel>Object Distance (do) (cm)</FormLabel>
                       <FormControl>
                         <Input type="number" step="0.1" placeholder="e.g., 50" {...field} />
                       </FormControl>
@@ -78,25 +73,12 @@ export default function StepAlongPage() {
                 />
                 <FormField
                   control={form.control}
-                  name="targetSize"
+                  name="imageDistance"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Target Size (mm)</FormLabel>
+                      <FormLabel>Image Distance (di) (cm)</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.1" placeholder="e.g., 10" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="imageSize"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Image Size (mm)</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="0.1" placeholder="e.g., 5" {...field} />
+                        <Input type="number" step="0.1" placeholder="e.g., 50" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -125,7 +107,7 @@ export default function StepAlongPage() {
                     </CardContent>
                      <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
-                            P = 1 / (d / ( (i/o)⁻¹ - 1) / 100)
+                           P = 1/f = 1/do + 1/di
                         </p>
                     </CardFooter>
                 </Card>
