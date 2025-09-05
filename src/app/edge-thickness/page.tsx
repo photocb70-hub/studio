@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Calculator } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Slider } from '@/components/ui/slider';
 
 const formSchema = z.object({
   power: z.coerce.number().max(0, { message: 'Power must be zero or negative for this tool.' }),
@@ -42,9 +43,9 @@ const LensDiagram = ({ edge, center, diameter }: { edge: number; center: number;
         return (
             <div className="w-full max-w-sm mx-auto p-4">
                 <svg viewBox={`0 0 ${viewboxWidth} ${viewboxHeight}`} className="w-full h-auto">
-                    <path 
-                        d={`M 0,${viewboxHeight / 2 - (edge * scale)} 
-                             Q ${viewboxWidth / 2},${viewboxHeight / 2 - (center * scale) - curve} ${viewboxWidth},${viewboxHeight / 2 - (edge * scale)} 
+                    <path
+                        d={`M 0,${viewboxHeight / 2 - (edge * scale)}
+                             Q ${viewboxWidth / 2},${viewboxHeight / 2 - (center * scale) - curve} ${viewboxWidth},${viewboxHeight / 2 - (edge * scale)}
                              L ${viewboxWidth},${viewboxHeight / 2 + (edge * scale)}
                              Q ${viewboxWidth / 2},${viewboxHeight / 2 + (center * scale) + curve} 0,${viewboxHeight / 2 + (edge * scale)}
                              Z`}
@@ -55,7 +56,7 @@ const LensDiagram = ({ edge, center, diameter }: { edge: number; center: number;
 
                     <line x1={viewboxWidth/2} y1={viewboxHeight/2 - center*scale} x2={viewboxWidth/2} y2={viewboxHeight/2 + center*scale} stroke="hsl(var(--primary))" strokeWidth="0.25" strokeDasharray="1 1" />
                     <text x={viewboxWidth/2 + 2} y={viewboxHeight/2} fill="hsl(var(--foreground))" fontSize="3" textAnchor="start" dominantBaseline="middle">{center.toFixed(1)}mm</text>
-                    
+
                     <line x1={1} y1={viewboxHeight/2 - edge*scale} x2={1} y2={viewboxHeight/2 + edge*scale} stroke="hsl(var(--primary))" strokeWidth="0.25" strokeDasharray="1 1" />
                     <text x={3} y={viewboxHeight/2} fill="hsl(var(--foreground))" fontSize="3" textAnchor="start" dominantBaseline="middle">{edge.toFixed(1)}mm</text>
                 </svg>
@@ -80,6 +81,8 @@ export default function EdgeThicknessPage() {
     },
   });
 
+  const powerValue = form.watch('power');
+
   function onSubmit(values: FormValues) {
     const { power, index, diameter, centerThickness } = values;
 
@@ -100,7 +103,7 @@ export default function EdgeThicknessPage() {
         setResult(null);
         return;
     }
-    
+
     const sag = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
     const edgeThickness = sag + centerThickness;
 
@@ -119,20 +122,26 @@ export default function EdgeThicknessPage() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid gap-6 sm:grid-cols-2">
-                    <FormField
-                    control={form.control}
-                    name="power"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Sphere Power (D)</FormLabel>
-                        <FormControl>
-                            <Input type="number" step="0.01" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
+                <FormField
+                  control={form.control}
+                  name="power"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sphere Power (D): {powerValue.toFixed(2)}</FormLabel>
+                      <FormControl>
+                          <Slider
+                              value={[field.value]}
+                              onValueChange={(value) => field.onChange(value[0])}
+                              min={-20}
+                              max={0}
+                              step={0.25}
+                          />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid gap-6 sm:grid-cols-3">
                     <FormField
                     control={form.control}
                     name="index"
@@ -181,7 +190,7 @@ export default function EdgeThicknessPage() {
             </Form>
           </CardContent>
         </Card>
-        
+
         <div className="mt-8">
             {result ? (
                 <Card>
