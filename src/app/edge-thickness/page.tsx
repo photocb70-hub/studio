@@ -22,6 +22,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const formSchema = z.object({
   sphere: z.coerce.number().min(-20).max(20),
@@ -30,6 +31,7 @@ const formSchema = z.object({
   index: z.coerce.number().min(1.4).max(2.0),
   diameter: z.coerce.number().min(30).max(90),
   centerThickness: z.coerce.number().min(0.1).max(10),
+  eye: z.enum(['OD', 'OS']),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -43,7 +45,7 @@ const lensMaterials = [
     { name: 'High-Index (1.74)', index: 1.74 },
 ];
 
-const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, maxAxis }: { minThickness: number, maxThickness: number, centerThickness: number, minAxis: number, maxAxis: number }) => {
+const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, maxAxis, eye }: { minThickness: number, maxThickness: number, centerThickness: number, minAxis: number, maxAxis: number, eye: 'OD' | 'OS' }) => {
   const isPlusLens = (minThickness + maxThickness) / 2 < centerThickness;
   
   const memoizedDiagrams = useMemo(() => {
@@ -59,6 +61,9 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, max
     const maxTextY = 50 + Math.sin(maxAngleRad) * 58;
     const minTextX = 50 + Math.cos(minAngleRad) * 58;
     const minTextY = 50 + Math.sin(minAngleRad) * 58;
+
+    const nasalX = eye === 'OD' ? -10 : 110;
+    const templeX = eye === 'OD' ? 110 : -10;
 
     return (
       <div className="w-full max-w-[250px] mx-auto p-4 flex flex-col items-center justify-center gap-6">
@@ -119,17 +124,21 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, max
 
                 <text x={minTextX} y={minTextY - 5} textAnchor="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{minThickness.toFixed(2)}mm</text>
                 <text x={minTextX} y={minTextY + 7} textAnchor="middle" fontSize="7" fill="hsl(var(--muted-foreground))">({minAxis}°)</text>
+
+                 {/* Nasal/Temple indicators */}
+                <text x={nasalX} y="55" textAnchor="middle" fontSize="10" fill="hsl(var(--muted-foreground))" className="font-bold">N</text>
+                <text x={templeX} y="55" textAnchor="middle" fontSize="10" fill="hsl(var(--muted-foreground))" className="font-bold">T</text>
             </svg>
         </div>
       </div>
     )
-  }, [isPlusLens, minThickness, maxThickness, centerThickness, minAxis, maxAxis]);
+  }, [isPlusLens, minThickness, maxThickness, centerThickness, minAxis, maxAxis, eye]);
 
   return memoizedDiagrams;
 }
 
 export default function EdgeThicknessPage() {
-  const [result, setResult] = useState<{ minThickness: number; maxThickness: number; centerThickness: number; minAxis: number; maxAxis: number; } | null>(null);
+  const [result, setResult] = useState<{ minThickness: number; maxThickness: number; centerThickness: number; minAxis: number; maxAxis: number; eye: 'OD' | 'OS' } | null>(null);
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -141,6 +150,7 @@ export default function EdgeThicknessPage() {
       index: 1.498,
       diameter: 70,
       centerThickness: 2.0,
+      eye: 'OD',
     },
   });
 
@@ -169,7 +179,7 @@ export default function EdgeThicknessPage() {
   }
   
   function onSubmit(values: FormValues) {
-    const { sphere, cylinder = 0, axis = 90, index, diameter, centerThickness } = values;
+    const { sphere, cylinder = 0, axis = 90, index, diameter, centerThickness, eye } = values;
 
     const cyl = cylinder || 0;
     const power1 = sphere;
@@ -202,7 +212,7 @@ export default function EdgeThicknessPage() {
     const minAxis = thickness1 < thickness2 ? axis : (axis + 90 > 180 ? axis - 90 : axis + 90);
     const maxAxis = thickness1 > thickness2 ? axis : (axis + 90 > 180 ? axis - 90 : axis + 90);
 
-    setResult({ minThickness, maxThickness, centerThickness: finalCenterThickness, minAxis, maxAxis });
+    setResult({ minThickness, maxThickness, centerThickness: finalCenterThickness, minAxis, maxAxis, eye });
   }
 
   const formatPower = (power?: number) => {
@@ -223,6 +233,42 @@ export default function EdgeThicknessPage() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                
+                <FormField
+                  control={form.control}
+                  name="eye"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Lens</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex items-center space-x-4"
+                        >
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="OD" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Right (OD)
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="OS" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Left (OS)
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <FormField
                   control={form.control}
                   name="sphere"
@@ -375,6 +421,7 @@ export default function EdgeThicknessPage() {
                             centerThickness={result.centerThickness}
                             minAxis={result.minAxis}
                             maxAxis={result.maxAxis}
+                            eye={result.eye}
                         />
                     </CardContent>
                     <CardFooter>
@@ -393,3 +440,5 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
+
+    
