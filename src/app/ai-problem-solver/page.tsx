@@ -1,8 +1,7 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -18,11 +17,10 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Bot, Loader2, Lock } from 'lucide-react';
+import { Sparkles, Bot, Loader2 } from 'lucide-react';
 import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flow';
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -76,9 +74,6 @@ function AiProblemSolverContent() {
   const [result, setResult] = useState<ProblemSolverOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   
-  const searchParams = useSearchParams();
-  const isEnabled = useMemo(() => searchParams.get('enabled') === 'true', [searchParams]);
-
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -98,7 +93,6 @@ function AiProblemSolverContent() {
   const previousCylinder = form.watch('previousPrescription.cylinder');
 
   async function onSubmit(values: FormValues) {
-    if (!isEnabled) return;
     setIsLoading(true);
     setResult(null);
 
@@ -239,20 +233,7 @@ function AiProblemSolverContent() {
       description="Describe a complex optical problem, and the AI will provide a step-by-step solution."
     >
       <div className="grid gap-8">
-        {!isEnabled && (
-            <Alert variant="default" className="border-accent/50 bg-accent/10 text-accent-foreground">
-                <Lock className="size-4" />
-                <AlertTitle>Testing Mode</AlertTitle>
-                <AlertDescription>
-                    This feature is currently under development and is not yet available for general use.
-                </AlertDescription>
-            </Alert>
-        )}
-
-        <Card className="relative overflow-hidden border-accent/50">
-            <div className="absolute -right-11 top-10 z-10 w-[160px] rotate-45 bg-accent py-1 text-center text-sm font-semibold text-accent-foreground shadow-lg">
-                In Testing
-            </div>
+        <Card>
           <CardHeader>
             <CardTitle>Describe the Scenario</CardTitle>
           </CardHeader>
@@ -305,15 +286,13 @@ function AiProblemSolverContent() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" disabled={isLoading || !isEnabled} className="w-full sm:w-auto">
+                <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                   {isLoading ? (
                     <Loader2 className="mr-2 size-4 animate-spin" />
-                  ) : !isEnabled ? (
-                    <Lock className="mr-2 size-4" />
                   ) : (
                     <Sparkles className="mr-2 size-4" />
                   )}
-                  {isEnabled ? 'Solve Problem' : 'Feature Disabled'}
+                  Solve Problem
                 </Button>
               </form>
             </Form>
