@@ -53,7 +53,7 @@ const LensDiagram = ({ edgeThickness, centerThickness, isPlusLens }: { edgeThick
     const curve = (ctVis - etVis) * 0.5;
 
     const path = isPlusLens
-      ? `M ${center - lensRadius},${center} C ${center - lensRadius},${center - etVis} ${center + lensRadius},${center - etVis} ${center + lensRadius},${center} C ${center + lensRadius},${center + etVis} ${center - lensRadius},${center + etVis} ${center - lensaurus},${center} Z`
+      ? `M ${center - lensRadius},${center} C ${center - lensRadius},${center - etVis} ${center + lensRadius},${center - etVis} ${center + lensRadius},${center} C ${center + lensRadius},${center + etVis} ${center - lensRadius},${center + etVis} ${center - lensRadius},${center} Z`
       : `M ${center - lensRadius},${center - etVis/2} C ${center - lensRadius/2},${center - ctVis/2 - curve} ${center + lensRadius/2},${center - ctVis/2 - curve} ${center + lensRadius},${center - etVis/2} L ${center + lensRadius},${center + etVis/2} C ${center + lensRadius/2},${center + ctVis/2 + curve} ${center - lensRadius/2},${center + ctVis/2 + curve} ${center - lensRadius},${center + etVis/2} Z`;
 
     const plusPath = `M 15,50 C 30,30 70,30 85,50 C 70,70 30,70 15,50 Z`;
@@ -288,3 +288,5 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
+
+    
