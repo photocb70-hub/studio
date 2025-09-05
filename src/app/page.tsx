@@ -12,7 +12,7 @@ const menuItems = [
   {
     href: '/lens-thickness',
     title: 'Lens Thickness',
-    description: 'Calculate lens thickness based on prescription and frame.',
+    description: 'Estimate lens thickness for spherical and spherocylindrical lenses.',
     icon: <Layers className="size-8 text-primary" />,
   },
   {
