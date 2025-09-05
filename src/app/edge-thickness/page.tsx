@@ -136,8 +136,7 @@ export default function EdgeThicknessPage() {
                                 min={-20}
                                 max={0}
                                 step={0.25}
-                                className="[&>span:first-child]:bg-secondary [&>span:first-child>span]:bg-primary"
-                                dir="rtl"
+                                className="[--slider-connect-color:hsl(var(--primary))]"
                             />
                         </div>
                       </FormControl>

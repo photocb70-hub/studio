@@ -219,6 +219,7 @@ export default function LensThicknessPage() {
                                 min={-20}
                                 max={20}
                                 step={0.25}
+                                className="[--slider-connect-color:hsl(var(--primary))]"
                             />
                         </div>
                       </FormControl>
