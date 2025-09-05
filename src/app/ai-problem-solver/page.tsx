@@ -129,10 +129,16 @@ function AiProblemSolverContent() {
   }
 
   const handleCopyToPrevious = () => {
-    const currentValues = form.getValues();
-    form.setValue('previousPrescription', currentValues.currentPrescription);
-    form.setValue('previousMeasurements', currentValues.currentMeasurements);
-    form.setValue('previousFrame', currentValues.currentFrame);
+    const { currentPrescription, currentMeasurements, currentFrame } = form.getValues();
+    
+    // Set prescription values individually to trigger re-render of watched labels
+    form.setValue('previousPrescription.sphere', currentPrescription.sphere);
+    form.setValue('previousPrescription.cylinder', currentPrescription.cylinder);
+    form.setValue('previousPrescription.axis', currentPrescription.axis);
+    form.setValue('previousPrescription.add', currentPrescription.add);
+
+    form.setValue('previousMeasurements', currentMeasurements);
+    form.setValue('previousFrame', currentFrame);
   };
   
   const formatPower = (power?: number) => {
