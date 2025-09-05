@@ -202,7 +202,7 @@ function AiProblemSolverContent() {
                     <SelectTrigger><SelectValue placeholder="Select a material" /></SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {lensMaterials.map(m => <SelectItem key={m.value} value={m.value}>{m.name}</SelectItem>)}
+                    {lensMaterials.map(m => m && <SelectItem key={m.value} value={m.value}>{m.name}</SelectItem>)}
                   </SelectContent>
                 </Select>
             </FormItem>
