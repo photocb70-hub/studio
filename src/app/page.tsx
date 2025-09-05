@@ -39,6 +39,12 @@ const menuItems = [
     description: 'Compensate lens power for a new vertex distance.',
     icon: <ArrowRightLeft className="size-8 text-primary" />,
   },
+  {
+    href: '/edge-thickness',
+    title: 'Lens Thickness',
+    description: 'Calculate edge and center thickness for a lens.',
+    icon: <Layers className="size-8 text-primary" />,
+  },
 ];
 
 export default function Home() {
