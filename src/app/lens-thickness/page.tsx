@@ -197,7 +197,6 @@ export default function LensThicknessPage() {
                                 min={-20}
                                 max={20}
                                 step={0.25}
-                                className="flex-1 [&>span:first-child]:bg-primary [&>span>span]:bg-secondary"
                             />
                         </div>
                       </FormControl>
@@ -314,5 +313,3 @@ export default function LensThicknessPage() {
     </ToolPageLayout>
   );
 }
-
-    
