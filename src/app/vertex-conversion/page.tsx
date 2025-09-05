@@ -47,6 +47,13 @@ export default function VertexConversionPage() {
     // Formula: Fc = F / (1 - dF)
     // where d is the change in distance in meters.
     const distanceChange = (originalDistance - newDistance) / 1000;
+    
+    // Avoid division by zero or near-zero, which happens if (1 - dF) is close to 0
+    if (Math.abs(1 - distanceChange * power) < 1e-9) {
+        setResult(power > 0 ? Infinity : -Infinity);
+        return;
+    }
+
     const compensatedPower = power / (1 - distanceChange * power);
     setResult(compensatedPower);
   }
