@@ -51,6 +51,15 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, max
     const minusPath = `M 20,35 C 45,45 65,45 90,35 L 90,65 C 65,55 45,55 20,65 Z`;
     const etRotation = `rotate(${maxAxis} 50 50)`;
 
+    // Calculate positions for text so it doesn't rotate
+    const maxAngleRad = (maxAxis - 90) * Math.PI / 180;
+    const minAngleRad = (minAxis - 90) * Math.PI / 180;
+
+    const maxTextX = 50 + Math.cos(maxAngleRad) * 58;
+    const maxTextY = 50 + Math.sin(maxAngleRad) * 58;
+    const minTextX = 50 + Math.cos(minAngleRad) * 58;
+    const minTextY = 50 + Math.sin(minAngleRad) * 58;
+
     return (
       <div className="w-full max-w-[250px] mx-auto p-4 flex flex-col items-center justify-center gap-6">
         {/* 2D Cross-section */}
@@ -78,7 +87,7 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, max
         
         {/* 3D Perspective */}
         <div className="w-full">
-             <svg viewBox="0 0 100 100" className="w-full h-auto overflow-visible">
+             <svg viewBox="-20 -20 140 140" className="w-full h-auto overflow-visible">
                 <defs>
                     <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
                         <stop offset="0%" style={{stopColor: 'hsl(var(--primary) / 0.2)', stopOpacity: 1}} />
@@ -95,18 +104,21 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, max
                 {/* Front curve highlight */}
                 <path d="M 20 40 C 40 25, 60 25, 80 40" fill="none" stroke="hsl(var(--background) / 0.5)" strokeWidth="2.5" strokeLinecap="round" />
             
-                {/* Thickness indicators */}
+                {/* Rotated Indicator Lines */}
                 <g transform={etRotation}>
-                    {/* Max Thickness */}
+                    {/* Max Thickness Line */}
                     <line x1="50" y1="20" x2="50" y2="0" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
-                    <text x="50" y="-4" textAnchor="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{maxThickness.toFixed(2)}mm</text>
-                    <text x="50" y="8" textAnchor="middle" fontSize="7" fill="hsl(var(--muted-foreground))">({maxAxis}°)</text>
 
-                    {/* Min Thickness */}
+                    {/* Min Thickness Line */}
                     <line x1="5" y1="50" x2="-10" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
-                    <text x="-12" y="50" textAnchor="end" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{minThickness.toFixed(2)}mm</text>
-                     <text x="-12" y="60" textAnchor="end" dominantBaseline="middle" fontSize="7" fill="hsl(var(--muted-foreground))">({minAxis}°)</text>
                 </g>
+                
+                {/* Non-rotated Text Labels */}
+                <text x={maxTextX} y={maxTextY - 5} textAnchor="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{maxThickness.toFixed(2)}mm</text>
+                <text x={maxTextX} y={maxTextY + 7} textAnchor="middle" fontSize="7" fill="hsl(var(--muted-foreground))">({maxAxis}°)</text>
+
+                <text x={minTextX} y={minTextY - 5} textAnchor="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{minThickness.toFixed(2)}mm</text>
+                <text x={minTextX} y={minTextY + 7} textAnchor="middle" fontSize="7" fill="hsl(var(--muted-foreground))">({minAxis}°)</text>
             </svg>
         </div>
       </div>
