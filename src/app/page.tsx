@@ -7,6 +7,7 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
+import { AppFooter } from '@/components/app-footer';
 
 const menuItems = [
   {
@@ -93,10 +94,7 @@ export default function Home() {
           ))}
         </div>
         
-        <footer className="mt-12 text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} Optical Prime. All Rights Reserved.</p>
-            {appVersion && <p className="mt-1 opacity-75">Version {appVersion}</p>}
-        </footer>
+        <AppFooter version={appVersion} />
       </div>
     </main>
   );
