@@ -1,8 +1,7 @@
-
-'use client';
-
 import Link from 'next/link';
 import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat } from 'lucide-react';
+import { promises as fs } from 'fs';
+import path from 'path';
 import {
   Card,
   CardHeader,
@@ -55,7 +54,21 @@ const menuItems = [
   },
 ];
 
-export default function Home() {
+async function getAppVersion() {
+    try {
+        const changelogPath = path.join(process.cwd(), 'CHANGELOG.txt');
+        const changelogContent = await fs.readFile(changelogPath, 'utf-8');
+        const match = changelogContent.match(/## \[([^\]]+)\]/);
+        return match ? match[1] : null;
+    } catch (error) {
+        console.error("Could not read version from CHANGELOG.txt", error);
+        return null;
+    }
+}
+
+export default async function Home() {
+  const appVersion = await getAppVersion();
+
   return (
     <main 
         className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000"
@@ -101,7 +114,8 @@ export default function Home() {
         </div>
         
         <footer className="mt-12 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Optical Prime. All Rights Reserved.
+            <p>© {new Date().getFullYear()} Optical Prime. All Rights Reserved.</p>
+            {appVersion && <p className="mt-1 opacity-75">Version {appVersion}</p>}
         </footer>
       </div>
     </main>
