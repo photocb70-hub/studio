@@ -40,6 +40,7 @@ const frameSchema = z.object({
   lensMaterial: z.string().optional(),
   lensType: z.string().optional(),
   frameDetails: z.string().optional(),
+  minFittingHeight: z.coerce.number().optional(),
 });
 
 const formSchema = z.object({
@@ -91,6 +92,9 @@ function AiProblemSolverContent() {
   const currentCylinder = form.watch('currentPrescription.cylinder');
   const previousSphere = form.watch('previousPrescription.sphere');
   const previousCylinder = form.watch('previousPrescription.cylinder');
+  
+  const currentLensType = form.watch('currentFrame.lensType');
+  const previousLensType = form.watch('previousFrame.lensType');
 
   async function onSubmit(values: FormValues) {
     setIsLoading(true);
@@ -104,14 +108,14 @@ function AiProblemSolverContent() {
       Current Measurements:
       PD: ${values.currentMeasurements.pd || 'N/A'}, Fitting Height: ${values.currentMeasurements.fittingHeight || 'N/A'}
       Current Frame/Lens:
-      Material: ${values.currentFrame.lensMaterial || 'N/A'}, Type: ${values.currentFrame.lensType || 'N/A'}, Details: ${values.currentFrame.frameDetails || 'N/A'}
+      Material: ${values.currentFrame.lensMaterial || 'N/A'}, Type: ${values.currentFrame.lensType || 'N/A'}, Details: ${values.currentFrame.frameDetails || 'N/A'}, Minimum Fitting Height: ${values.currentFrame.minFittingHeight || 'N/A'}
       ---
       Previous Prescription:
       Sphere: ${values.previousPrescription.sphere || 'N/A'}, Cylinder: ${values.previousPrescription.cylinder || 'N/A'}, Axis: ${values.previousPrescription.axis || 'N/A'}, Add: ${values.previousPrescription.add || 'N/A'}
       Previous Measurements:
       PD: ${values.previousMeasurements.pd || 'N/A'}, Fitting Height: ${values.previousMeasurements.fittingHeight || 'N/A'}
       Previous Frame/Lens:
-      Material: ${values.previousFrame.lensMaterial || 'N/A'}, Type: ${values.previousFrame.lensType || 'N/A'}, Details: ${values.previousFrame.frameDetails || 'N/A'}
+      Material: ${values.previousFrame.lensMaterial || 'N/A'}, Type: ${values.previousFrame.lensType || 'N/A'}, Details: ${values.previousFrame.frameDetails || 'N/A'}, Minimum Fitting Height: ${values.previousFrame.minFittingHeight || 'N/A'}
     `;
 
     try {
@@ -188,7 +192,7 @@ function AiProblemSolverContent() {
     </div>
   );
 
-  const renderFrameFields = (prefix: 'currentFrame' | 'previousFrame') => (
+  const renderFrameFields = (prefix: 'currentFrame' | 'previousFrame', lensType?: string) => (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <FormField control={form.control} name={`${prefix}.lensMaterial`} render={({ field }) => (
             <FormItem>
@@ -216,6 +220,14 @@ function AiProblemSolverContent() {
                 </Select>
             </FormItem>
         )} />
+        {(lensType === 'Progressive' || lensType === 'Bifocal') && (
+            <FormField control={form.control} name={`${prefix}.minFittingHeight`} render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Minimum Fitting Height</FormLabel>
+                    <FormControl><Input type="number" placeholder="14" {...field} value={field.value ?? ''} /></FormControl>
+                </FormItem>
+            )} />
+        )}
         <div className="sm:col-span-2">
             <FormField control={form.control} name={`${prefix}.frameDetails`} render={({ field }) => (
                 <FormItem>
@@ -248,7 +260,7 @@ function AiProblemSolverContent() {
                         <hr/>
                         {renderMeasurementsFields('currentMeasurements')}
                         <hr/>
-                        {renderFrameFields('currentFrame')}
+                        {renderFrameFields('currentFrame', currentLensType)}
                     </div>
                 </div>
 
@@ -263,7 +275,7 @@ function AiProblemSolverContent() {
                           <hr/>
                           {renderMeasurementsFields('previousMeasurements')}
                           <hr/>
-                          {renderFrameFields('previousFrame')}
+                          {renderFrameFields('previousFrame', previousLensType)}
                       </div>
                     </AccordionContent>
                   </AccordionItem>
