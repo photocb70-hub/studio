@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -43,6 +43,12 @@ const menuItems = [
     title: 'Blank Size',
     description: 'Calculate the minimum lens blank size needed.',
     icon: <Maximize className="size-8 text-primary" />,
+  },
+  {
+    href: '/step-along',
+    title: 'Step-Along',
+    description: 'Calculate focal power by measuring vergence.',
+    icon: <Footprints className="size-8 text-primary" />,
   }
 ];
 
