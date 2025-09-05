@@ -196,7 +196,10 @@ function AiProblemSolverContent() {
             </Alert>
         )}
 
-        <Card>
+        <Card className="relative overflow-hidden border-accent/50">
+            <div className="absolute -right-11 top-10 z-10 w-[160px] rotate-45 bg-accent py-1 text-center text-sm font-semibold text-accent-foreground shadow-lg">
+                In Testing
+            </div>
           <CardHeader>
             <CardTitle>Describe the Scenario</CardTitle>
           </CardHeader>
@@ -302,5 +305,3 @@ export default function AiProblemSolverPage() {
         </React.Suspense>
     )
 }
-
-    
