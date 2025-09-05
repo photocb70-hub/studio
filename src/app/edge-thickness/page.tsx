@@ -77,14 +77,20 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, max
                     strokeWidth="1.5"
                 />
                 
-                {/* Center thickness line and label */}
-                <line x1="55" y1={isPlusLens ? 30 : 45} x2="55" y2={isPlusLens ? 70 : 55} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
-                <line x1="55" y1={isPlusLens ? 50 : 35} x2="70" y2="15" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5"/>
-                <text x="72" y="15" textAnchor="start" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{centerThickness.toFixed(2)}mm</text>
-                
-                {/* Edge thickness line and label */}
-                <line x1="20" y1="50" x2="10" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
-                <text x="8" y="50" textAnchor="end" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{minThickness.toFixed(2)}mm</text>
+                {isPlusLens ? (
+                  <>
+                    {/* Center thickness line and label for Plus Lens */}
+                    <line x1="55" y1={30} x2="55" y2={70} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
+                    <line x1="55" y1={50} x2="70" y2="15" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5"/>
+                    <text x="72" y="15" textAnchor="start" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{centerThickness.toFixed(2)}mm</text>
+                  </>
+                ) : (
+                   <>
+                    {/* Edge thickness line and label for Minus Lens */}
+                    <line x1="20" y1="50" x2="10" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
+                    <text x="8" y="50" textAnchor="end" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{minThickness.toFixed(2)}mm</text>
+                  </>
+                )}
             </svg>
         </div>
         
@@ -440,5 +446,3 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
-
-    
