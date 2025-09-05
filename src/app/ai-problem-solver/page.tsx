@@ -1,7 +1,8 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -17,10 +18,12 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Bot, Loader2 } from 'lucide-react';
+import { Sparkles, Bot, Loader2, Lock } from 'lucide-react';
 import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flow';
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+
 
 const prescriptionSchema = z.object({
   sphere: z.coerce.number().optional(),
@@ -52,9 +55,12 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function AiProblemSolverPage() {
+function AiProblemSolverContent() {
   const [result, setResult] = useState<ProblemSolverOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const searchParams = useSearchParams();
+  const isEnabled = useMemo(() => searchParams.get('enabled') === 'true', [searchParams]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -70,6 +76,7 @@ export default function AiProblemSolverPage() {
   });
 
   async function onSubmit(values: FormValues) {
+    if (!isEnabled) return;
     setIsLoading(true);
     setResult(null);
 
@@ -179,6 +186,16 @@ export default function AiProblemSolverPage() {
       description="Describe a complex optical problem, and the AI will provide a step-by-step solution."
     >
       <div className="grid gap-8">
+        {!isEnabled && (
+            <Alert variant="default" className="border-accent/50 bg-accent/10 text-accent-foreground">
+                <Lock className="size-4" />
+                <AlertTitle>Testing Mode</AlertTitle>
+                <AlertDescription>
+                    This feature is currently under development and is not yet available for general use.
+                </AlertDescription>
+            </Alert>
+        )}
+
         <Card>
           <CardHeader>
             <CardTitle>Describe the Scenario</CardTitle>
@@ -232,13 +249,15 @@ export default function AiProblemSolverPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
+                <Button type="submit" disabled={isLoading || !isEnabled} className="w-full sm:w-auto">
                   {isLoading ? (
                     <Loader2 className="mr-2 size-4 animate-spin" />
+                  ) : !isEnabled ? (
+                    <Lock className="mr-2 size-4" />
                   ) : (
                     <Sparkles className="mr-2 size-4" />
                   )}
-                  Solve Problem
+                  {isEnabled ? 'Solve Problem' : 'Feature Disabled'}
                 </Button>
               </form>
             </Form>
@@ -272,4 +291,14 @@ export default function AiProblemSolverPage() {
       </div>
     </ToolPageLayout>
   );
+}
+
+
+// Suspense boundary is required for useSearchParams
+export default function AiProblemSolverPage() {
+    return (
+        <React.Suspense fallback={<div>Loading...</div>}>
+            <AiProblemSolverContent />
+        </React.Suspense>
+    )
 }
