@@ -151,7 +151,7 @@ export default function LensThicknessPage() {
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a material" />
-                                        </SelectTrigger>
+                                        </Trigger>
                                     </FormControl>
                                     <SelectContent>
                                         {lensMaterials.map((material) => (
@@ -242,5 +242,3 @@ export default function LensThicknessPage() {
     </ToolPageLayout>
   );
 }
-
-    
