@@ -19,10 +19,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Calculator, Footprints } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { Slider } from '@/components/ui/slider';
 
 const formSchema = z.object({
   objectVergence: z.coerce.number(),
-  surfacePower1: z.coerce.number(),
+  surfacePower1: z.coerce.number().min(-20).max(20),
   surfacePower2: z.coerce.number().optional(),
   distance: z.coerce.number().min(0),
   refractiveIndex: z.coerce.number().min(1),
@@ -37,11 +38,13 @@ export default function StepAlongPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       objectVergence: -5.00,
-      surfacePower1: 6.00,
+      surfacePower1: 0,
       distance: 0,
       refractiveIndex: 1.33,
     },
   });
+
+  const surfacePower1Value = form.watch('surfacePower1');
 
   function onSubmit(values: FormValues) {
     const { objectVergence, surfacePower1, surfacePower2, distance, refractiveIndex } = values;
@@ -54,8 +57,10 @@ export default function StepAlongPage() {
     let L2_prime;
     let l2_prime;
 
-    if (surfacePower2 !== undefined) {
-      L2_prime = objectVergence + surfacePower2;
+    if (surfacePower2 !== undefined && surfacePower2 !== null && surfacePower2 !== 0) {
+      // If there's an astigmatic power, calculate the second meridian
+      const L2 = objectVergence; // Object vergence is the same for both meridians
+      L2_prime = L2 + surfacePower2;
       l2_prime = refractiveIndex / L2_prime;
     }
     
@@ -66,8 +71,6 @@ export default function StepAlongPage() {
 
     setResult({ L_prime, l_prime, L2_prime, l2_prime });
   }
-
-  const isAstigmatic = form.watch('surfacePower2') !== undefined && form.watch('surfacePower2') !== null;
 
   return (
     <ToolPageLayout
@@ -100,9 +103,15 @@ export default function StepAlongPage() {
                   name="surfacePower1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Surface Power (F1, in Diopters)</FormLabel>
+                      <FormLabel>Surface Power (F1, in Diopters): {surfacePower1Value.toFixed(2)}</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" {...field} />
+                        <Slider
+                            value={[field.value]}
+                            onValueChange={(value) => field.onChange(value[0])}
+                            min={-20}
+                            max={20}
+                            step={0.25}
+                        />
                       </FormControl>
                        <FormMessage />
                     </FormItem>
