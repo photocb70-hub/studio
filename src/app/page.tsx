@@ -10,9 +10,9 @@ import {
 
 const menuItems = [
   {
-    href: '/edge-thickness',
-    title: 'Edge Thickness',
-    description: 'Calculate edge thickness and visualize the lens profile.',
+    href: '/lens-thickness',
+    title: 'Lens Thickness',
+    description: 'Calculate lens thickness based on prescription.',
     icon: <Scissors className="size-8 text-primary" />,
   },
   {
