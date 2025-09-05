@@ -135,6 +135,7 @@ export default function EdgeThicknessPage() {
                               min={-20}
                               max={0}
                               step={0.25}
+                              dir="rtl"
                           />
                       </FormControl>
                       <FormMessage />
