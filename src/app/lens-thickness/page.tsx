@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Calculator } from 'lucide-react';
 import {
   Select,
@@ -48,109 +48,9 @@ const materialIndices = [
     { name: 'High-Index 1.74', value: 1.74 },
 ];
 
-const LensVisualizer = ({ sphere, cylinder, axis, diameter, index, minThickness }: FormValues) => {
-    const { toast } = useToast();
-
-    const memoizedViz = useMemo(() => {
-        const getPowerAtMeridian = (theta: number) => {
-            if (!cylinder || cylinder === 0) return sphere;
-            const radAxis = ((axis || 0) * Math.PI) / 180;
-            const radTheta = (theta * Math.PI) / 180;
-            return sphere + cylinder * Math.pow(Math.sin(radTheta - radAxis), 2);
-        };
-
-        const calculateThickness = (power: number) => {
-            const isPlusLens = power > 0;
-            const semiDiameter = diameter / 2;
-            
-            const baseThickness = minThickness;
-
-            if (power === 0) return baseThickness;
-
-            const radius = Math.abs(((index - 1) / power) * 1000);
-            
-            if (radius <= semiDiameter) {
-                return null;
-            }
-            
-            const sag = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
-
-            if(isPlusLens) {
-                // For a plus lens, we calculate center thickness. The minimum thickness is at the edge.
-                return sag + baseThickness;
-            } else {
-                 // For a minus lens, we calculate edge thickness. The minimum thickness is at the center.
-                return sag + baseThickness;
-            }
-        };
-        
-        const thicknessPoints = [
-            { angle: 0, power: getPowerAtMeridian(0) }, // Temporal
-            { angle: 90, power: getPowerAtMeridian(90) }, // Top
-            { angle: 180, power: getPowerAtMeridian(180) }, // Nasal
-            { angle: 270, power: getPowerAtMeridian(270) } // Bottom
-        ].map(p => ({
-            ...p,
-            thickness: calculateThickness(p.power),
-            isPlus: p.power > 0,
-        }));
-
-
-        if (thicknessPoints.some(p => p.thickness === null)) {
-            toast({
-                variant: "destructive",
-                title: "Invalid Calculation",
-                description: "Lens power is too high for the given diameter. Cannot visualize."
-            });
-            return <p className="text-destructive text-center p-4">Invalid calculation. Power may be too high for the diameter.</p>;
-        }
-        
-        const maxThickness = Math.max(...thicknessPoints.map(p => p.thickness ?? 0), 2);
-        const scale = 50 / maxThickness;
-
-        return (
-            <div className="w-full max-w-sm mx-auto p-4">
-                 <svg viewBox="-60 -60 120 120" className="w-full h-auto font-sans">
-                    {/* Lens Outline */}
-                    <circle cx="0" cy="0" r="50" fill="hsl(var(--accent) / 0.1)" stroke="hsl(var(--accent))" strokeWidth="0.5" />
-
-                    {/* Axis Rotation Group */}
-                    <g transform={`rotate(${axis ?? 0})`}>
-                        {thicknessPoints.map((p, i) => (
-                           <g key={i} transform={`rotate(${p.angle})`}>
-                                <circle cx="0" cy="0" r={(p.thickness ?? 0) * scale} fill="hsl(var(--primary) / 0.2)" />
-                               <text
-                                    x="55"
-                                    y="0"
-                                    textAnchor="start"
-                                    dominantBaseline="middle"
-                                    fontSize="8"
-                                    fill="hsl(var(--foreground))"
-                                    transform="rotate(0 55 0)"
-                                >
-                                    {(p.thickness ?? 0).toFixed(1)}mm
-                                </text>
-                            </g>
-                        ))}
-                         {/* Axis Line */}
-                        {cylinder && cylinder !== 0 && (
-                            <line x1="-50" y1="0" x2="50" y2="0" stroke="hsl(var(--primary) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-                        )}
-                    </g>
-                     {/* Center point */}
-                    <circle cx="0" cy="0" r="1" fill="hsl(var(--primary))" />
-                </svg>
-            </div>
-        );
-
-    }, [sphere, cylinder, axis, diameter, index, minThickness, toast]);
-
-    return memoizedViz;
-};
-
-
 export default function LensThicknessPage() {
-  const [submittedValues, setSubmittedValues] = useState<FormValues | null>(null);
+  const [result, setResult] = useState<{max: number; min: number} | null>(null);
+  const { toast } = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -165,7 +65,76 @@ export default function LensThicknessPage() {
   });
 
   function onSubmit(values: FormValues) {
-    setSubmittedValues(values);
+    const { sphere, cylinder, axis, index, diameter, minThickness } = values;
+
+    const getPowerAtMeridian = (theta: number) => {
+        if (!cylinder || cylinder === 0) return sphere;
+        const radAxis = ((axis || 0) * Math.PI) / 180;
+        const radTheta = (theta * Math.PI) / 180;
+        return sphere + cylinder * Math.pow(Math.sin(radTheta - radAxis), 2);
+    };
+
+    const calculateThickness = (power: number) => {
+        const isPlusLens = power > 0;
+        const semiDiameter = diameter / 2;
+        const baseThickness = minThickness;
+
+        if (power === 0) return baseThickness;
+
+        const radius = Math.abs(((index - 1) / power) * 1000);
+        
+        if (radius <= semiDiameter) {
+            return null;
+        }
+        
+        const sag = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
+
+        if(isPlusLens) {
+            return sag + baseThickness;
+        } else {
+            return sag + baseThickness;
+        }
+    };
+    
+    // Calculate thickness at 1 degree intervals to find min/max
+    const thicknessPoints = [];
+    for (let i = 0; i < 180; i++) {
+        const power = getPowerAtMeridian(i);
+        const thickness = calculateThickness(power);
+        if (thickness === null) {
+            toast({
+                variant: "destructive",
+                title: "Invalid Calculation",
+                description: "Lens power is too high for the given diameter."
+            });
+            setResult(null);
+            return;
+        }
+        thicknessPoints.push(thickness);
+    }
+    
+    const spherePower = getPowerAtMeridian(axis ?? 0);
+    const cylinderPower = getPowerAtMeridian((axis ?? 0) + 90);
+
+    const sphereThickness = calculateThickness(spherePower);
+    const cylinderThickness = calculateThickness(cylinderPower);
+
+    if (sphereThickness === null || cylinderThickness === null) {
+      setResult(null);
+      return;
+    }
+
+    if (sphere > 0) { // Plus lens
+      setResult({
+        max: Math.max(sphereThickness, cylinderThickness),
+        min: minThickness,
+      });
+    } else { // Minus lens
+      setResult({
+        max: Math.max(sphereThickness, cylinderThickness),
+        min: minThickness,
+      });
+    }
   }
 
   const sphereValue = form.watch('sphere');
@@ -173,7 +142,7 @@ export default function LensThicknessPage() {
   return (
     <ToolPageLayout
       title="Lens Thickness Calculator"
-      description="Estimate and visualize lens thickness for spherical and spherocylindrical lenses."
+      description="Estimate lens thickness for spherical and spherocylindrical lenses."
     >
         <Card>
           <CardHeader>
@@ -196,7 +165,6 @@ export default function LensThicknessPage() {
                                 min={-20}
                                 max={20}
                                 step={0.25}
-                                className="[--slider-connect-color:hsl(var(--primary))]"
                             />
                         </div>
                       </FormControl>
@@ -289,7 +257,7 @@ export default function LensThicknessPage() {
                 </div>
                 <Button type="submit" className="w-full sm:w-auto">
                   <Calculator className="mr-2 size-4" />
-                  Calculate & Visualize
+                  Calculate
                 </Button>
               </form>
             </Form>
@@ -297,22 +265,31 @@ export default function LensThicknessPage() {
         </Card>
         
         <div className="mt-8">
-            {submittedValues ? (
+            {result ? (
                  <Card>
                     <CardHeader>
-                        <CardTitle>Thickness Visualization</CardTitle>
-                         <CardDescription>Estimated thickness (mm) at key meridians. For plus powers, this is center thickness; for minus, edge thickness.</CardDescription>
+                        <CardTitle>Calculated Thickness</CardTitle>
+                         <CardDescription>Estimated thickness values for the given lens.</CardDescription>
                     </CardHeader>
-                    <CardContent>
-                       <LensVisualizer {...submittedValues} />
+                    <CardContent className="grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <p className="text-sm text-muted-foreground">Maximum Thickness</p>
+                            <p className="text-3xl font-bold">{result.max.toFixed(2)} mm</p>
+                        </div>
+                         <div>
+                            <p className="text-sm text-muted-foreground">Minimum Thickness</p>
+                            <p className="text-3xl font-bold">{result.min.toFixed(2)} mm</p>
+                        </div>
                     </CardContent>
                 </Card>
             ) : (
-                <div className="flex h-full min-h-[200px] w-full items-center justify-center rounded-lg border border-dashed bg-card p-8 text-center text-muted-foreground">
-                    <p>Results and visualization will be displayed here.</p>
+                <div className="flex h-full min-h-[150px] w-full items-center justify-center rounded-lg border border-dashed bg-card p-8 text-center text-muted-foreground">
+                    <p>Results will be displayed here.</p>
                 </div>
             )}
         </div>
     </ToolPageLayout>
   );
 }
+
+    

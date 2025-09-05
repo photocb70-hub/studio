@@ -14,7 +14,8 @@ const Slider = React.forwardRef<
   const min = props.min || 0;
   const max = props.max || 100;
   const isBipolar = min < 0 && max > 0;
-  
+  const isStrongRx = Math.abs(value[0]) > 0;
+
   const rangeStyle = isBipolar
     ? {
         left: `${value[0] < 0 ? 50 - (Math.abs(value[0]) / (Math.abs(min))) * 50 : 50}%`,
@@ -33,7 +34,10 @@ const Slider = React.forwardRef<
     >
       <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-secondary">
         <SliderPrimitive.Range 
-          className="absolute h-full bg-[var(--slider-connect-color,hsl(var(--primary)))]"
+          className={cn(
+            "absolute h-full",
+            isStrongRx ? "bg-green-500" : "bg-primary"
+          )}
           style={rangeStyle}
         />
       </SliderPrimitive.Track>
@@ -49,3 +53,5 @@ const Slider = React.forwardRef<
 Slider.displayName = SliderPrimitive.Root.displayName
 
 export { Slider }
+
+    
