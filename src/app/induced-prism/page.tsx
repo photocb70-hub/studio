@@ -33,7 +33,7 @@ export default function InducedPrismPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      power: -4.50,
+      power: 0,
       decentration: 3,
     },
   });

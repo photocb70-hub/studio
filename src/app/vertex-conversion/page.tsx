@@ -34,7 +34,7 @@ export default function VertexConversionPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      power: -8.00,
+      power: 0,
       originalBVD: 12,
       newBVD: 10,
     },
