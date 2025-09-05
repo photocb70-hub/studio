@@ -39,7 +39,7 @@ const menuItems = [
     icon: <MoveHorizontal className="size-8 text-primary" />,
   },
   {
-    href: '/blanket-size',
+    href: '/blank-size',
     title: 'Blank Size',
     description: 'Calculate the minimum lens blank size needed.',
     icon: <Maximize className="size-8 text-primary" />,
