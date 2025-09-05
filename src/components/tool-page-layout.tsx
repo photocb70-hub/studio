@@ -15,10 +15,10 @@ export function ToolPageLayout({ title, description, children }: ToolPageLayoutP
       <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="icon" asChild>
+            <Button variant="outline" asChild className="pl-2.5 pr-3">
               <Link href="/">
                 <ArrowLeft className="size-4" />
-                <span className="sr-only">Back</span>
+                Back
               </Link>
             </Button>
             <div className="flex items-center gap-2">
