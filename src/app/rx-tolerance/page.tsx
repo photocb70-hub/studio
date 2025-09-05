@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -138,7 +139,7 @@ export default function RxTolerancePage() {
                     <FormItem>
                       <FormLabel>Add (D, optional)</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder="e.g., 2.25" {...field} />
+                        <Input type="number" step="0.01" placeholder="e.g., 2.25" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -151,7 +152,7 @@ export default function RxTolerancePage() {
                     <FormItem>
                       <FormLabel>Prism (Δ, optional)</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder="e.g., 1.0" {...field} />
+                        <Input type="number" step="0.01" placeholder="e.g., 1.0" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -164,7 +165,7 @@ export default function RxTolerancePage() {
                     <FormItem>
                       <FormLabel>Base (optional)</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., BU, BI, BD, BO" {...field} />
+                        <Input placeholder="e.g., BU, BI, BD, BO" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
