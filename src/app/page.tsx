@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Focus } from 'lucide-react';
 import { promises as fs } from 'fs';
 import path from 'path';
 import {
@@ -56,12 +56,14 @@ const menuItems = [
 
 async function getAppVersion() {
     try {
+        // Correctly locate the file in the project directory
         const changelogPath = path.join(process.cwd(), 'CHANGELOG.txt');
         const changelogContent = await fs.readFile(changelogPath, 'utf-8');
         const match = changelogContent.match(/## \[([^\]]+)\]/);
         return match ? match[1] : null;
     } catch (error) {
-        console.error("Could not read version from CHANGELOG.txt", error);
+        // Log the error for debugging, but don't break the page
+        console.error("Could not read app version from CHANGELOG.txt", error);
         return null;
     }
 }
