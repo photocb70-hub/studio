@@ -51,7 +51,7 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness }: { minThick
 
     return (
       <div className="w-full max-w-[250px] mx-auto p-4 flex items-center justify-center">
-        <svg viewBox="0 0 100 100" className="w-full h-auto">
+        <svg viewBox="0 0 110 100" className="w-full h-auto overflow-visible">
           <path
             d={isPlusLens ? plusPath : minusPath}
             fill="hsl(var(--primary) / 0.1)"
@@ -60,16 +60,13 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness }: { minThick
           />
           {/* Center thickness */}
           <line x1="55" y1={isPlusLens ? 30 : 45} x2="55" y2={isPlusLens ? 70 : 55} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-          <text x="58" y="52" fontSize="7" fill="hsl(var(--foreground))">{centerThickness.toFixed(1)}mm</text>
           
           {/* Edge thickness lines */}
           <g transform="rotate(90 55 50)">
             <line x1="20" y1="50" x2="90" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2"/>
-            <text x="15" y="53" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Min: {minThickness.toFixed(1)}mm</text>
           </g>
           <g>
             <line x1="20" y1="50" x2="90" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-            <text x="15" y="38" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Max: {maxThickness.toFixed(1)}mm</text>
           </g>
         </svg>
       </div>
@@ -165,7 +162,7 @@ export default function EdgeThicknessPage() {
   const formatPower = (power?: number) => {
     if (power === undefined || power === null) return '0.00';
     return (power > 0 ? '+' : '') + power.toFixed(2);
-  }
+  };
 
   return (
     <ToolPageLayout
@@ -342,5 +339,3 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
-
-    
