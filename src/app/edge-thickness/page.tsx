@@ -92,7 +92,7 @@ export default function EdgeThicknessPage() {
       power: 0,
       index: 1.498,
       diameter: 70,
-      thickness: 1.5,
+      thickness: 2.0,
     },
   });
 
