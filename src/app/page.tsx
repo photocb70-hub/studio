@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -32,6 +32,12 @@ const menuItems = [
     title: 'Progressive Power',
     description: 'Calculate effective power in a progressive lens.',
     icon: <ChevronsUpDown className="size-8 text-primary" />,
+  },
+  {
+    href: '/vertex-conversion',
+    title: 'BVD Conversion',
+    description: 'Compensate lens power for a new vertex distance.',
+    icon: <ArrowRightLeft className="size-8 text-primary" />,
   },
 ];
 
