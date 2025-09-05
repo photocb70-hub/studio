@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -15,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Calculator } from 'lucide-react';
 
 const formSchema = z.object({
@@ -97,12 +98,17 @@ export default function InducedPrismPage() {
                     <CardHeader className="items-center text-center">
                         <CardTitle>Induced Prism</CardTitle>
                     </CardHeader>
-                    <CardContent className="text-center">
+                    <CardContent className="text-center pb-2">
                         <p className="text-5xl font-bold tracking-tight text-accent-foreground">
                         {result.toFixed(2)}
                         <span className="text-3xl font-medium text-muted-foreground"> Δ</span>
                         </p>
                     </CardContent>
+                    <CardFooter>
+                        <p className="text-xs text-muted-foreground/80 text-center w-full">
+                            Prism (Δ) = Power (D) × Decentration (cm)
+                        </p>
+                    </CardFooter>
                 </Card>
             ) : (
                 <div className="flex h-full min-h-[200px] w-full items-center justify-center rounded-lg border border-dashed bg-card p-8 text-center text-muted-foreground">

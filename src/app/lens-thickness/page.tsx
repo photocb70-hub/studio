@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -15,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Calculator } from 'lucide-react';
 import {
   Select,
@@ -97,6 +98,7 @@ export default function LensThicknessPage() {
   }
 
   const powerValue = form.watch('power');
+  const formula = powerValue > 0 ? "Center Thickness = Sag + Min. Edge Thickness" : "Edge Thickness = Sag + Min. Center Thickness";
 
   return (
     <ToolPageLayout
@@ -198,12 +200,17 @@ export default function LensThicknessPage() {
                     <CardHeader className="items-center text-center">
                         <CardTitle>{result.type}</CardTitle>
                     </CardHeader>
-                    <CardContent className="text-center">
+                    <CardContent className="text-center pb-2">
                         <p className="text-5xl font-bold tracking-tight text-accent-foreground">
                         {result.thickness.toFixed(2)}
                         <span className="text-3xl font-medium text-muted-foreground"> mm</span>
                         </p>
                     </CardContent>
+                    <CardFooter>
+                        <p className="text-xs text-muted-foreground/80 text-center w-full">
+                           {formula}
+                        </p>
+                    </CardFooter>
                 </Card>
             ) : (
                 <div className="flex h-full min-h-[200px] w-full items-center justify-center rounded-lg border border-dashed bg-card p-8 text-center text-muted-foreground">

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -15,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Calculator } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -199,6 +200,11 @@ export default function EdgeThicknessPage() {
                         </div>
                         <LensDiagram edge={result.edgeThickness} center={result.centerThickness} diameter={result.diameter} />
                     </CardContent>
+                    <CardFooter>
+                        <p className="text-xs text-muted-foreground/80 text-center w-full">
+                            Edge Thickness = Sag + Center Thickness
+                        </p>
+                    </CardFooter>
                 </Card>
             ) : (
                 <div className="flex min-h-[200px] w-full items-center justify-center rounded-lg border border-dashed bg-card p-8 text-center text-muted-foreground">
