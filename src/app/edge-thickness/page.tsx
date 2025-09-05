@@ -77,7 +77,7 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness }: { minThick
 }
 
 export default function EdgeThicknessPage() {
-  const [result, setResult] = useState<{ minThickness: number; maxThickness: number; centerThickness: number; } | null>(null);
+  const [result, setResult] = useState<{ minThickness: number; maxThickness: number; centerThickness: number; minAxis: number; maxAxis: number; } | null>(null);
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -137,7 +137,8 @@ export default function EdgeThicknessPage() {
     let finalCenterThickness = centerThickness;
     
     // For a plus lens, ensure the thinnest edge is not below a minimum (e.g. 1.0mm)
-    if (sphere >= 0) {
+    // The thinnest part of a plus lens is on the edge.
+    if (sphere > 0) {
       const minEdgeThicknessAtPeriphery = 1.0;
       // Tentative edge thicknesses
       const tempEt1 = centerThickness - sag1;
@@ -155,8 +156,11 @@ export default function EdgeThicknessPage() {
 
     const maxThickness = Math.max(thickness1, thickness2);
     const minThickness = Math.min(thickness1, thickness2);
+    
+    const minAxis = thickness1 < thickness2 ? axis : (axis + 90 > 180 ? axis - 90 : axis + 90);
+    const maxAxis = thickness1 > thickness2 ? axis : (axis + 90 > 180 ? axis - 90 : axis + 90);
 
-    setResult({ minThickness, maxThickness, centerThickness: finalCenterThickness });
+    setResult({ minThickness, maxThickness, centerThickness: finalCenterThickness, minAxis, maxAxis });
   }
 
   const formatPower = (power?: number) => {
@@ -305,6 +309,7 @@ export default function EdgeThicknessPage() {
                                     {result.minThickness.toFixed(2)}
                                     <span className="text-xl font-medium text-muted-foreground"> mm</span>
                                 </p>
+                                <p className="text-xs text-muted-foreground">at {result.minAxis}°</p>
                             </div>
                              <div>
                                 <p className="text-sm text-muted-foreground">Max Edge Thickness</p>
@@ -312,6 +317,7 @@ export default function EdgeThicknessPage() {
                                     {result.maxThickness.toFixed(2)}
                                     <span className="text-xl font-medium text-muted-foreground"> mm</span>
                                 </p>
+                                <p className="text-xs text-muted-foreground">at {result.maxAxis}°</p>
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Final Center Thickness</p>
@@ -325,7 +331,7 @@ export default function EdgeThicknessPage() {
                     </CardContent>
                     <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
-                            Calculations are an approximation. Assumes minus cylinder format.
+                           Formula: ET = CT ± Sagittal Depth. Assumes minus cylinder format.
                         </p>
                     </CardFooter>
                 </Card>
