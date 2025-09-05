@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Calculator } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import { Slider } from '@/components/ui/slider';
 
 const formSchema = z.object({
   power: z.coerce.number(),
@@ -102,20 +103,26 @@ export default function LensThicknessPage() {
             <CardContent>
                 <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid gap-6 sm:grid-cols-2">
-                        <FormField
-                            control={form.control}
-                            name="power"
-                            render={({ field }) => (
-                                <FormItem>
-                                <FormLabel>Sphere Power (D)</FormLabel>
-                                <FormControl>
-                                    <Input type="number" step="0.25" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    <FormField
+                        control={form.control}
+                        name="power"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Sphere Power (D): {powerValue.toFixed(2)}</FormLabel>
+                            <FormControl>
+                                <Slider
+                                    value={[field.value]}
+                                    onValueChange={(value) => field.onChange(value[0])}
+                                    min={-10}
+                                    max={10}
+                                    step={0.25}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <div className="grid gap-6 sm:grid-cols-3">
                         <FormField
                             control={form.control}
                             name="index"
