@@ -101,7 +101,7 @@ export default function LensThicknessPage() {
   return (
     <ToolPageLayout
       title="Lens Thickness Calculator"
-      description="Estimate the center (for plus lenses) or edge (for minus lenses) thickness. Assumes a simple spherical lens with a flat back surface."
+      description="Estimate lens thickness and blanket size. Assumes a simple spherical lens with a flat back surface."
     >
       <div className="grid gap-8 md:grid-cols-2">
         <Card>
