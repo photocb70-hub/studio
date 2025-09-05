@@ -46,6 +46,9 @@ export default function RxTolerancePage() {
       sphere: -2.50,
       cylinder: -1.00,
       axis: 180,
+      add: '',
+      prism: '',
+      base: '',
     },
   });
 
