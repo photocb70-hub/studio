@@ -24,7 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 const formSchema = z.object({
   sphere: z.coerce.number().min(-20).max(20),
-  cylinder: z.coerce.number().min(-10).max(0).optional(),
+  cylinder: z.coerce.number().min(-10).max(0),
   axis: z.coerce.number().min(1).max(180).optional(),
   index: z.coerce.number().min(1.4).max(2.0),
   diameter: z.coerce.number().min(30).max(90),
@@ -46,8 +46,8 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness }: { minThick
   const isPlusLens = (minThickness + maxThickness) / 2 < centerThickness;
   
   const memoizedDiagram = useMemo(() => {
-    const plusPath = `M 15,50 C 30,30 70,30 85,50 C 70,70 30,70 15,50 Z`;
-    const minusPath = `M 15,35 C 40,45 60,45 85,35 L 85,65 C 60,55 40,55 15,65 Z`;
+    const plusPath = `M 20,50 C 35,30 75,30 90,50 C 75,70 35,70 20,50 Z`;
+    const minusPath = `M 20,35 C 45,45 65,45 90,35 L 90,65 C 65,55 45,55 20,65 Z`;
 
     return (
       <div className="w-full max-w-[250px] mx-auto p-4 flex items-center justify-center">
@@ -59,17 +59,17 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness }: { minThick
             strokeWidth="1.5"
           />
           {/* Center thickness */}
-          <line x1="50" y1={isPlusLens ? 30 : 45} x2="50" y2={isPlusLens ? 70 : 55} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-          <text x="53" y="52" fontSize="7" fill="hsl(var(--foreground))">{centerThickness.toFixed(1)}mm</text>
+          <line x1="55" y1={isPlusLens ? 30 : 45} x2="55" y2={isPlusLens ? 70 : 55} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
+          <text x="58" y="52" fontSize="7" fill="hsl(var(--foreground))">{centerThickness.toFixed(1)}mm</text>
           
           {/* Edge thickness lines */}
-          <g transform="rotate(90 50 50)">
-            <line x1="15" y1="50" x2="85" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2"/>
-            <text x="8" y="53" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Min: {minThickness.toFixed(1)}mm</text>
+          <g transform="rotate(90 55 50)">
+            <line x1="20" y1="50" x2="90" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2"/>
+            <text x="15" y="53" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Min: {minThickness.toFixed(1)}mm</text>
           </g>
           <g>
-            <line x1="15" y1="50" x2="85" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-            <text x="8" y="38" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Max: {maxThickness.toFixed(1)}mm</text>
+            <line x1="20" y1="50" x2="90" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
+            <text x="15" y="38" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Max: {maxThickness.toFixed(1)}mm</text>
           </g>
         </svg>
       </div>
@@ -97,6 +97,8 @@ export default function EdgeThicknessPage() {
 
   const sphereValue = form.watch('sphere');
   const cylinderValue = form.watch('cylinder');
+  const invertedCylinderValue = cylinderValue !== undefined ? Math.abs(cylinderValue) : 0;
+
 
   function calculateSag(power: number, index: number, diameter: number): number | null {
     if (Math.abs(power) < 0.01) return 0;
@@ -112,7 +114,9 @@ export default function EdgeThicknessPage() {
       });
       return null;
     }
+    // Sag = r - sqrt(r^2 - (d/2)^2)
     const sag = Math.abs(radius) - Math.sqrt(Math.pow(Math.abs(radius), 2) - Math.pow(semiDiameter, 2));
+    // Return sag with the correct sign based on power
     return power > 0 ? sag : -sag;
   }
   
@@ -120,6 +124,7 @@ export default function EdgeThicknessPage() {
     const { sphere, cylinder = 0, axis = 90, index, diameter, centerThickness } = values;
 
     const cyl = cylinder || 0;
+    // Power in the two principal meridians
     const power1 = sphere;
     const power2 = sphere + cyl;
 
@@ -131,22 +136,25 @@ export default function EdgeThicknessPage() {
       return;
     }
 
-    const isPlusLens = sphere >= 0;
     let finalCenterThickness = centerThickness;
-
-    let thickness1 = isPlusLens ? finalCenterThickness - sag1 : finalCenterThickness + Math.abs(sag1);
-    let thickness2 = isPlusLens ? finalCenterThickness - sag2 : finalCenterThickness + Math.abs(sag2);
-
-    if (isPlusLens) {
-        const minEdge = 1.0;
-        const thinnestEdge = Math.min(thickness1, thickness2);
-        if (thinnestEdge < minEdge) {
-            finalCenterThickness += minEdge - thinnestEdge;
-            thickness1 = finalCenterThickness - sag1;
-            thickness2 = finalCenterThickness - sag2;
-        }
+    
+    // For a plus lens, ensure the thinnest edge is not below a minimum (e.g. 1.0mm)
+    if (sphere >= 0) {
+      const minEdgeThicknessAtPeriphery = 1.0;
+      // Tentative edge thicknesses
+      const tempEt1 = centerThickness - sag1;
+      const tempEt2 = centerThickness - sag2;
+      const thinnestEdge = Math.min(tempEt1, tempEt2);
+      
+      if (thinnestEdge < minEdgeThicknessAtPeriphery) {
+        finalCenterThickness += minEdgeThicknessAtPeriphery - thinnestEdge;
+      }
     }
     
+    // Final edge thickness calculations based on the (potentially adjusted) center thickness
+    const thickness1 = finalCenterThickness - sag1;
+    const thickness2 = finalCenterThickness - sag2;
+
     const maxThickness = Math.max(thickness1, thickness2);
     const minThickness = Math.min(thickness1, thickness2);
 
@@ -154,7 +162,7 @@ export default function EdgeThicknessPage() {
   }
 
   const formatPower = (power?: number) => {
-    if (power === undefined) return '0.00';
+    if (power === undefined || power === null) return '0.00';
     return (power > 0 ? '+' : '') + power.toFixed(2);
   }
 
@@ -189,7 +197,7 @@ export default function EdgeThicknessPage() {
                 />
                 
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-4">
-                  <FormField
+                   <FormField
                     control={form.control}
                     name="cylinder"
                     render={({ field }) => (
@@ -197,9 +205,9 @@ export default function EdgeThicknessPage() {
                         <FormLabel>Cylinder Power (D): {formatPower(cylinderValue)}</FormLabel>
                         <FormControl>
                           <Slider
-                              value={[field.value ?? 0]}
-                              onValueChange={(value) => field.onChange(value[0])}
-                              min={-10} max={0} step={0.25}
+                              value={[invertedCylinderValue]}
+                              onValueChange={(value) => field.onChange(-value[0])}
+                              min={0} max={10} step={0.25}
                           />
                         </FormControl>
                       </FormItem>
@@ -323,3 +331,5 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
+
+    
