@@ -42,20 +42,6 @@ const lensMaterials = [
 
 const LensDiagram = ({ edgeThickness, centerThickness, isPlusLens }: { edgeThickness: number, centerThickness: number, isPlusLens: boolean }) => {
   const memoizedDiagram = useMemo(() => {
-    const viewboxSize = 100;
-    const center = viewboxSize / 2;
-    const lensRadius = viewboxSize / 2 - 10;
-    
-    // Simple scaling for visualization
-    const ctVis = Math.min(Math.max(isPlusLens ? centerThickness : edgeThickness, 1), 10) * 1.5;
-    const etVis = Math.min(Math.max(isPlusLens ? edgeThickness : centerThickness, 1), 10) * 1.5;
-    
-    const curve = (ctVis - etVis) * 0.5;
-
-    const path = isPlusLens
-      ? `M ${center - lensRadius},${center} C ${center - lensRadius},${center - etVis} ${center + lensRadius},${center - etVis} ${center + lensRadius},${center} C ${center + lensRadius},${center + etVis} ${center - lensRadius},${center + etVis} ${center - lensRadius},${center} Z`
-      : `M ${center - lensRadius},${center - etVis/2} C ${center - lensRadius/2},${center - ctVis/2 - curve} ${center + lensRadius/2},${center - ctVis/2 - curve} ${center + lensRadius},${center - etVis/2} L ${center + lensRadius},${center + etVis/2} C ${center + lensRadius/2},${center + ctVis/2 + curve} ${center - lensRadius/2},${center + ctVis/2 + curve} ${center - lensRadius},${center + etVis/2} Z`;
-
     const plusPath = `M 15,50 C 30,30 70,30 85,50 C 70,70 30,70 15,50 Z`;
     const minusPath = `M 15,35 C 40,45 60,45 85,35 L 85,65 C 60,55 40,55 15,65 Z`;
 
@@ -64,9 +50,9 @@ const LensDiagram = ({ edgeThickness, centerThickness, isPlusLens }: { edgeThick
         <svg viewBox="0 0 100 100" className="w-full h-auto">
           <path
             d={isPlusLens ? plusPath : minusPath}
-            fill="hsl(var(--primary) / 0.1)"
+            fill="hsl(var(--primary) / 0.2)"
             stroke="hsl(var(--primary))"
-            strokeWidth="1"
+            strokeWidth="2"
           />
           {/* Center thickness line */}
           <line x1="50" y1={isPlusLens ? 30 : 45} x2="50" y2={isPlusLens ? 70 : 55} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
@@ -101,16 +87,10 @@ export default function EdgeThicknessPage() {
   function calculateSag(power: number, index: number, diameter: number): number | null {
     if (power === 0) return 0;
     
-    // Base curve is F1, so R1 = (n-1)/F1
-    // We assume F2 is plano for simplicity in this spherical calculator.
-    // Let's use the lensmaker's equation for a thin lens as an approximation.
-    // F = (n-1) * (1/R1 - 1/R2). Assuming a plano-convex/concave lens, R2 is infinity.
-    // So, F = (n-1)/R1  => R1 = (n-1)/F
-    
     const radius = ((index - 1) / power) * 1000; // in mm
     const semiDiameter = diameter / 2;
 
-    if (Math.abs(radius) <= semiDiameter) {
+    if (Math.abs(radius) < semiDiameter) {
         toast({
             variant: "destructive",
             title: "Invalid Calculation",
@@ -119,7 +99,8 @@ export default function EdgeThicknessPage() {
         return null;
     }
     // Sagitta formula: s = r - sqrt(r^2 - y^2)
-    return radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
+    const sag = radius - Math.sqrt(Math.pow(radius, 2) - Math.pow(semiDiameter, 2));
+    return sag;
   }
 
   function onSubmit(values: FormValues) {
@@ -133,25 +114,26 @@ export default function EdgeThicknessPage() {
     }
 
     let edgeThickness;
-    let finalCenterThickness = centerThickness;
+    let finalCenterThickness;
     const isPlusLens = power > 0;
 
     if (isPlusLens) {
-      // For plus lenses, center thickness is given, edge is calculated
-      // Edge = Center - Sag. But this can be negative.
-      // Let's assume minimum edge is 1.0mm
-      const minEdge = 1.0;
+      // For plus lenses, center is thicker than the edge.
+      // ET = CT - Sag
+      const minEdge = 1.0; // A reasonable minimum edge thickness
       finalCenterThickness = sag + minEdge;
       edgeThickness = minEdge;
-       // If the user's desired center thickness is higher, we use it.
+      
+      // If user's desired center thickness is higher, use it and recalculate edge.
       if (centerThickness > finalCenterThickness) {
         finalCenterThickness = centerThickness;
         edgeThickness = finalCenterThickness - sag;
       }
     } else {
-      // For minus lenses, center thickness is given, edge is calculated
-      // Edge = Center + Sag
-      edgeThickness = Math.abs(sag) + centerThickness;
+      // For minus lenses, edge is thicker than the center.
+      // ET = CT + Sag
+      finalCenterThickness = centerThickness;
+      edgeThickness = finalCenterThickness + Math.abs(sag);
     }
     
     setResult({ edgeThickness, centerThickness: finalCenterThickness, isPlusLens });
@@ -193,7 +175,7 @@ export default function EdgeThicknessPage() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Refractive Index (n)</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={String(field.value)}>
+                          <Select onValueChange={(e) => field.onChange(parseFloat(e))} defaultValue={String(field.value)}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select a material" />
@@ -288,5 +270,3 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
-
-    
