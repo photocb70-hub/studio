@@ -64,7 +64,7 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, max
                 />
                 
                 {/* Center thickness line and label */}
-                <line x1="55" y1={isPlusLens ? 30 : 45} x2="55" y2={isPluslens ? 70 : 55} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
+                <line x1="55" y1={isPlusLens ? 30 : 45} x2="55" y2={isPlusLens ? 70 : 55} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
                 <line x1="55" y1={isPlusLens ? 50 : 35} x2="70" y2="15" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5"/>
                 <text x="72" y="15" textAnchor="start" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{centerThickness.toFixed(2)}mm</text>
                 
@@ -381,5 +381,3 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
-
-    
