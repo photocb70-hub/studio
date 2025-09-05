@@ -167,7 +167,7 @@ export default function StepAlongPage() {
                         </FormControl>
                         <SelectContent>
                           {lensMaterials.map((material) => (
-                            <SelectItem key={material.name + material.index} value={String(material.index)}>
+                            <SelectItem key={`${material.name}-${material.index}`} value={String(material.index)}>
                               {material.name} ({material.index})
                             </SelectItem>
                           ))}
