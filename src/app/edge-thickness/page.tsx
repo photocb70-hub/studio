@@ -45,6 +45,8 @@ const lensMaterials = [
     { name: 'High-Index (1.74)', index: 1.74 },
 ];
 
+const diameterOptions = [55, 60, 65, 70, 75, 80];
+
 const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, maxAxis, eye }: { minThickness: number, maxThickness: number, centerThickness: number, minAxis: number, maxAxis: number, eye: 'OD' | 'OS' }) => {
   const isPlusLens = (minThickness + maxThickness) / 2 < centerThickness;
   
@@ -162,7 +164,7 @@ export default function EdgeThicknessPage() {
 
   const sphereValue = form.watch('sphere');
   const cylinderValue = form.watch('cylinder');
-  const invertedCylinderValue = cylinderValue !== undefined ? Math.abs(cylinderValue) : 0;
+  const invertedCylinderValue = cylinderValue !== undefined ? -cylinderValue : 0;
   const axisValue = form.watch('axis');
 
 
@@ -354,17 +356,28 @@ export default function EdgeThicknessPage() {
                       )}
                     />
                     <FormField
-                    control={form.control}
-                    name="diameter"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Lens Diameter (mm)</FormLabel>
-                        <FormControl>
-                            <Input type="number" step="1" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
+                      control={form.control}
+                      name="diameter"
+                      render={({ field }) => (
+                          <FormItem>
+                          <FormLabel>Lens Diameter (mm)</FormLabel>
+                          <Select onValueChange={(e) => field.onChange(parseFloat(e))} defaultValue={String(field.value)}>
+                              <FormControl>
+                              <SelectTrigger>
+                                  <SelectValue placeholder="Select a diameter" />
+                              </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {diameterOptions.map((diameter) => (
+                                    <SelectItem key={diameter} value={String(diameter)}>
+                                    {diameter} mm
+                                    </SelectItem>
+                                ))}
+                              </SelectContent>
+                          </Select>
+                          <FormMessage />
+                          </FormItem>
+                      )}
                     />
                 </div>
                  <FormField
