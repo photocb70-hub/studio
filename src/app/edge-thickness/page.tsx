@@ -329,6 +329,20 @@ export default function EdgeThicknessPage() {
                     )}
                   />
                 </div>
+                
+                 <FormField
+                    control={form.control}
+                    name="centerThickness"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Minimum Center Thickness (mm)</FormLabel>
+                        <FormControl>
+                            <Input type="number" step="0.1" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
 
                 <div className="grid gap-4 sm:grid-cols-2">
                     <FormField
@@ -380,19 +394,6 @@ export default function EdgeThicknessPage() {
                       )}
                     />
                 </div>
-                 <FormField
-                    control={form.control}
-                    name="centerThickness"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Minimum Center Thickness (mm)</FormLabel>
-                        <FormControl>
-                            <Input type="number" step="0.1" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
                 <Button type="submit" className="w-full sm:w-auto">
                   <Calculator className="mr-2 size-4" />
                   Calculate Thickness
