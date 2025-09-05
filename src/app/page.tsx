@@ -68,7 +68,7 @@ export default function Home() {
       <div className="w-full max-w-4xl z-10">
         <header className="mb-12 text-center">
           <div className="mb-4 inline-flex items-center gap-3">
-            <Eye className="size-10 text-primary" />
+            <Focus className="size-10 text-primary" />
             <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
               Optical Prime
             </h1>
