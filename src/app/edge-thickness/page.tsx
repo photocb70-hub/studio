@@ -136,7 +136,7 @@ export default function EdgeThicknessPage() {
                                 min={-15}
                                 max={0}
                                 step={0.25}
-                                dir="rtl"
+                                className="[&>span:first-child]:bg-primary [&>span:first-child>span]:bg-secondary"
                             />
                         </div>
                       </FormControl>
