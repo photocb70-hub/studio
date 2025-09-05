@@ -23,7 +23,8 @@ import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flo
 import { Input } from '@/components/ui/input';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-
+import { Slider } from '@/components/ui/slider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const prescriptionSchema = z.object({
   sphere: z.coerce.number().optional(),
@@ -55,6 +56,22 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+const lensMaterials = [
+    { name: 'Standard Index (1.50)', value: '1.50' },
+    { name: 'Polycarbonate (1.59)', value: 'Polycarbonate' },
+    { name: 'Trivex (1.53)', value: 'Trivex' },
+    { name: 'Mid-Index (1.60)', value: '1.60' },
+    { name: 'High-Index (1.67)', value: '1.67' },
+    { name: 'High-Index (1.74)', value: '1.74' },
+];
+
+const lensTypes = [
+    { name: 'Single Vision', value: 'Single Vision' },
+    { name: 'Bifocal', value: 'Bifocal' },
+    { name: 'Progressive', value: 'Progressive' },
+    { name: 'Occupational', value: 'Occupational' },
+];
+
 function AiProblemSolverContent() {
   const [result, setResult] = useState<ProblemSolverOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,14 +83,19 @@ function AiProblemSolverContent() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       problem: '',
-      currentPrescription: {},
+      currentPrescription: { sphere: 0, cylinder: 0 },
       currentMeasurements: {},
       currentFrame: {},
-      previousPrescription: {},
+      previousPrescription: { sphere: 0, cylinder: 0 },
       previousMeasurements: {},
       previousFrame: {},
     },
   });
+
+  const currentSphere = form.watch('currentPrescription.sphere');
+  const currentCylinder = form.watch('currentPrescription.cylinder');
+  const previousSphere = form.watch('previousPrescription.sphere');
+  const previousCylinder = form.watch('previousPrescription.cylinder');
 
   async function onSubmit(values: FormValues) {
     if (!isEnabled) return;
@@ -108,31 +130,48 @@ function AiProblemSolverContent() {
       setIsLoading(false);
     }
   }
+  
+  const formatPower = (power?: number) => {
+    if (power === undefined) return '0.00';
+    return (power > 0 ? '+' : '') + power.toFixed(2);
+  }
 
-  const renderPrescriptionFields = (prefix: 'currentPrescription' | 'previousPrescription') => (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+  const renderPrescriptionFields = (prefix: 'currentPrescription' | 'previousPrescription', sphereValue?: number, cylinderValue?: number) => (
+    <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
       <FormField control={form.control} name={`${prefix}.sphere`} render={({ field }) => (
         <FormItem>
-          <FormLabel>Sphere</FormLabel>
-          <FormControl><Input type="number" step="0.25" placeholder="-2.50" {...field} /></FormControl>
+          <FormLabel>Sphere: {formatPower(sphereValue)}</FormLabel>
+          <FormControl>
+            <Slider
+                value={[field.value ?? 0]}
+                onValueChange={(value) => field.onChange(value[0])}
+                min={-20} max={20} step={0.25}
+            />
+          </FormControl>
         </FormItem>
       )} />
       <FormField control={form.control} name={`${prefix}.cylinder`} render={({ field }) => (
         <FormItem>
-          <FormLabel>Cylinder</FormLabel>
-          <FormControl><Input type="number" step="0.25" placeholder="-1.00" {...field} /></FormControl>
+          <FormLabel>Cylinder: {formatPower(cylinderValue)}</FormLabel>
+          <FormControl>
+            <Slider
+                value={[field.value ?? 0]}
+                onValueChange={(value) => field.onChange(value[0])}
+                min={-10} max={10} step={0.25}
+            />
+          </FormControl>
         </FormItem>
       )} />
       <FormField control={form.control} name={`${prefix}.axis`} render={({ field }) => (
         <FormItem>
           <FormLabel>Axis</FormLabel>
-          <FormControl><Input type="number" placeholder="90" {...field} /></FormControl>
+          <FormControl><Input type="number" min="1" max="180" placeholder="90" {...field} value={field.value ?? ''} /></FormControl>
         </FormItem>
       )} />
       <FormField control={form.control} name={`${prefix}.add`} render={({ field }) => (
         <FormItem>
           <FormLabel>Add</FormLabel>
-          <FormControl><Input type="number" step="0.25" placeholder="+2.00" {...field} /></FormControl>
+          <FormControl><Input type="number" step="0.25" placeholder="+2.00" {...field} value={field.value ?? ''} /></FormControl>
         </FormItem>
       )} />
     </div>
@@ -143,13 +182,13 @@ function AiProblemSolverContent() {
         <FormField control={form.control} name={`${prefix}.pd`} render={({ field }) => (
             <FormItem>
                 <FormLabel>Patient PD</FormLabel>
-                <FormControl><Input type="number" placeholder="64" {...field} /></FormControl>
+                <FormControl><Input type="number" placeholder="64" {...field} value={field.value ?? ''} /></FormControl>
             </FormItem>
         )} />
         <FormField control={form.control} name={`${prefix}.fittingHeight`} render={({ field }) => (
             <FormItem>
                 <FormLabel>Fitting Height</FormLabel>
-                <FormControl><Input type="number" placeholder="22" {...field} /></FormControl>
+                <FormControl><Input type="number" placeholder="22" {...field} value={field.value ?? ''} /></FormControl>
             </FormItem>
         )} />
     </div>
@@ -160,20 +199,34 @@ function AiProblemSolverContent() {
         <FormField control={form.control} name={`${prefix}.lensMaterial`} render={({ field }) => (
             <FormItem>
                 <FormLabel>Lens Material</FormLabel>
-                <FormControl><Input placeholder="e.g., Polycarbonate" {...field} /></FormControl>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger><SelectValue placeholder="Select a material" /></SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {lensMaterials.map(m => <SelectItem key={m.value} value={m.value}>{m.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
             </FormItem>
         )} />
         <FormField control={form.control} name={`${prefix}.lensType`} render={({ field }) => (
             <FormItem>
                 <FormLabel>Lens Type</FormLabel>
-                <FormControl><Input placeholder="e.g., Progressive" {...field} /></FormControl>
+                 <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger><SelectValue placeholder="Select a lens type" /></SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {lensTypes.map(t => <SelectItem key={t.value} value={t.value}>{t.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
             </FormItem>
         )} />
         <div className="sm:col-span-2">
             <FormField control={form.control} name={`${prefix}.frameDetails`} render={({ field }) => (
                 <FormItem>
                     <FormLabel>Frame Details</FormLabel>
-                    <FormControl><Input placeholder="e.g., Zyl, 52-18-140" {...field} /></FormControl>
+                    <FormControl><Input placeholder="e.g., Zyl, 52-18-140" {...field} value={field.value ?? ''} /></FormControl>
                 </FormItem>
             )} />
         </div>
@@ -210,7 +263,7 @@ function AiProblemSolverContent() {
                 <div className="space-y-4">
                     <h3 className="text-lg font-medium text-foreground">Current Details</h3>
                     <div className="space-y-6 rounded-md border p-4">
-                        {renderPrescriptionFields('currentPrescription')}
+                        {renderPrescriptionFields('currentPrescription', currentSphere, currentCylinder)}
                         <hr/>
                         {renderMeasurementsFields('currentMeasurements')}
                         <hr/>
@@ -225,7 +278,7 @@ function AiProblemSolverContent() {
                     </AccordionTrigger>
                     <AccordionContent>
                       <div className="space-y-6 rounded-md border p-4 mt-4">
-                          {renderPrescriptionFields('previousPrescription')}
+                          {renderPrescriptionFields('previousPrescription', previousSphere, previousCylinder)}
                           <hr/>
                           {renderMeasurementsFields('previousMeasurements')}
                           <hr/>
