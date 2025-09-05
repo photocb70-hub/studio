@@ -43,8 +43,8 @@ const lensMaterials = [
     { name: 'Crown Glass', index: 1.523 },
     { name: 'Polycarbonate', index: 1.586 },
     { name: 'Mid-Index', index: 1.60 },
-    { name: 'High-Index', index: 1.67 },
-    { name: 'High-Index', index: 1.74 },
+    { name: 'High-Index (1.67)', index: 1.67 },
+    { name: 'High-Index (1.74)', index: 1.74 },
 ];
 
 export default function StepAlongPage() {
