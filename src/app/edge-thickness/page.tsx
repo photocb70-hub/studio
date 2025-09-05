@@ -20,6 +20,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Calculator } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Slider } from '@/components/ui/slider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formSchema = z.object({
   power: z.coerce.number().min(-20).max(20),
@@ -29,6 +30,16 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+const lensMaterials = [
+    { name: 'CR-39', index: 1.498 },
+    { name: 'Crown Glass', index: 1.523 },
+    { name: 'Trivex', index: 1.53 },
+    { name: 'Polycarbonate', index: 1.586 },
+    { name: 'Mid-Index', index: 1.60 },
+    { name: 'High-Index', index: 1.67 },
+    { name: 'High-Index', index: 1.74 },
+];
 
 const LensDiagram = ({ edge, center, diameter }: { edge: number; center: number; diameter: number }) => {
     const memoizedDiagram = useMemo(() => {
@@ -74,7 +85,7 @@ export default function EdgeThicknessPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      power: -2.0,
+      power: 0,
       index: 1.586,
       diameter: 70,
       thickness: 1.5,
@@ -152,17 +163,28 @@ export default function EdgeThicknessPage() {
                 />
                 <div className="grid gap-6 sm:grid-cols-3">
                     <FormField
-                    control={form.control}
-                    name="index"
-                    render={({ field }) => (
+                      control={form.control}
+                      name="index"
+                      render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Refractive Index (n)</FormLabel>
-                        <FormControl>
-                            <Input type="number" step="0.001" placeholder="e.g., 1.586" {...field} />
-                        </FormControl>
-                        <FormMessage />
+                          <FormLabel>Refractive Index (n)</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={String(field.value)}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a material" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {lensMaterials.map((material) => (
+                                <SelectItem key={material.name + material.index} value={String(material.index)}>
+                                  {material.name} ({material.index})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
                         </FormItem>
-                    )}
+                      )}
                     />
                     <FormField
                     control={form.control}
@@ -240,3 +262,5 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
+
+    

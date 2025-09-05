@@ -20,6 +20,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Calculator, Footprints } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 
 const formSchema = z.object({
   objectVergence: z.coerce.number(),
@@ -30,6 +32,23 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+const lensMaterials = [
+    { name: 'Air', index: 1.000 },
+    { name: 'Water', index: 1.333 },
+    { name: 'Aqueous', index: 1.336 },
+    { name: 'Vitreous', index: 1.336 },
+    { name: 'Cornea', index: 1.376 },
+    { name: 'Lens Cortex', index: 1.386 },
+    { name: 'Lens Nucleus', index: 1.406 },
+    { name: 'CR-39', index: 1.498 },
+    { name: 'Crown Glass', index: 1.523 },
+    { name: 'Trivex', index: 1.53 },
+    { name: 'Polycarbonate', index: 1.586 },
+    { name: 'Mid-Index', index: 1.60 },
+    { name: 'High-Index', index: 1.67 },
+    { name: 'High-Index', index: 1.74 },
+];
 
 export default function StepAlongPage() {
   const [result, setResult] = useState<{ L_prime: number; l_prime: number; L2_prime?: number; l2_prime?: number; } | null>(null);
@@ -143,10 +162,21 @@ export default function StepAlongPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Refractive Index of Final Medium (n')</FormLabel>
-                      <FormControl>
-                        <Input type="number" step="0.001" {...field} />
-                      </FormControl>
-                       <FormMessage />
+                      <Select onValueChange={field.onChange} defaultValue={String(field.value)}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a material" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {lensMaterials.map((material) => (
+                            <SelectItem key={material.name + material.index} value={String(material.index)}>
+                              {material.name} ({material.index})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -209,3 +239,5 @@ export default function StepAlongPage() {
     </ToolPageLayout>
   );
 }
+
+    
