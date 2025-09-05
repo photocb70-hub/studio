@@ -33,8 +33,8 @@ type FormValues = z.infer<typeof formSchema>;
 
 const lensMaterials = [
     { name: 'Standard Index', index: 1.498 },
-    { name: 'Crown Glass', index: 1.523 },
     { name: 'Polycarbonate', index: 1.586 },
+    { name: 'Crown Glass', index: 1.523 },
     { name: 'Mid-Index', index: 1.60 },
     { name: 'High-Index', index: 1.67 },
     { name: 'High-Index', index: 1.74 },
@@ -44,33 +44,24 @@ const LensDiagram = ({ edge, center, diameter, power }: { edge: number; center: 
     const memoizedDiagram = useMemo(() => {
         const viewboxWidth = 100;
         const scale = viewboxWidth / diameter;
-        
-        // Determine the maximum thickness for scaling the height, with a minimum value for plano lenses
         const maxThicknessForScaling = Math.max(edge, center, 3);
         const viewboxHeight = maxThicknessForScaling * scale * 2.5;
-
-        // Simplified curve calculation based on power
-        // A more pronounced curve for higher powers
-        const curveFactor = power * scale * 0.4;
 
         const centerY = viewboxHeight / 2;
         const halfWidth = viewboxWidth / 2;
         
-        const edgeHeight = edge * scale;
-        const centerHeight = center * scale;
+        const edgeHeight = edge * scale / 2;
+        const centerHeight = center * scale / 2;
 
-        // Path for the front surface
-        const frontCurvePath = `M 0,${centerY - edgeHeight} Q ${halfWidth},${centerY - centerHeight - curveFactor} ${viewboxWidth},${centerY - edgeHeight}`;
-        // Path for the back surface (often flat for simplicity, but we can make it curved too)
-        const backCurvePath = `M 0,${centerY + edgeHeight} Q ${halfWidth},${centerY + centerHeight - curveFactor} ${viewboxWidth},${centerY + edgeHeight}`;
+        const curveFactor = power * scale * 0.4;
 
-        const lensPath = `${frontCurvePath} L ${viewboxWidth},${centerY + edgeHeight} ${backCurvePath.replace('M 0,','L ')} Z`;
+        const path = `M 0,${centerY - edgeHeight} Q ${halfWidth},${centerY - centerHeight - curveFactor} ${viewboxWidth},${centerY - edgeHeight} L ${viewboxWidth},${centerY + edgeHeight} Q ${halfWidth},${centerY + centerHeight - curveFactor} 0,${centerY + edgeHeight} Z`;
 
         return (
             <div className="w-full max-w-sm mx-auto p-4 flex items-center justify-center">
                 <svg viewBox={`0 0 ${viewboxWidth} ${viewboxHeight}`} className="w-full h-auto">
                     <path
-                        d={lensPath}
+                        d={path}
                         fill="hsl(var(--accent) / 0.2)"
                         stroke="hsl(var(--accent))"
                         strokeWidth="0.75"
