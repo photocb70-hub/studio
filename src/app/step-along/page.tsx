@@ -39,11 +39,8 @@ const lensMaterials = [
     { name: 'Aqueous', index: 1.336 },
     { name: 'Vitreous', index: 1.336 },
     { name: 'Cornea', index: 1.376 },
-    { name: 'Lens Cortex', index: 1.386 },
-    { name: 'Lens Nucleus', index: 1.406 },
-    { name: 'CR-39', index: 1.498 },
+    { name: 'Standard Index', index: 1.498 },
     { name: 'Crown Glass', index: 1.523 },
-    { name: 'Trivex', index: 1.53 },
     { name: 'Polycarbonate', index: 1.586 },
     { name: 'Mid-Index', index: 1.60 },
     { name: 'High-Index', index: 1.67 },
@@ -239,5 +236,3 @@ export default function StepAlongPage() {
     </ToolPageLayout>
   );
 }
-
-    

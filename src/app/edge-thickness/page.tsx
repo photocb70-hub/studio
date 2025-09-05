@@ -32,9 +32,8 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const lensMaterials = [
-    { name: 'CR-39', index: 1.498 },
+    { name: 'Standard Index', index: 1.498 },
     { name: 'Crown Glass', index: 1.523 },
-    { name: 'Trivex', index: 1.53 },
     { name: 'Polycarbonate', index: 1.586 },
     { name: 'Mid-Index', index: 1.60 },
     { name: 'High-Index', index: 1.67 },
@@ -262,5 +261,3 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
-
-    
