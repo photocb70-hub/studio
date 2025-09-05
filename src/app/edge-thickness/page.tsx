@@ -65,11 +65,11 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness }: { minThick
           {/* Edge thickness lines */}
           <g transform="rotate(90 50 50)">
             <line x1="15" y1="50" x2="85" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2"/>
-            <text x="12" y="53" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Min: {minThickness.toFixed(1)}mm</text>
+            <text x="8" y="53" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Min: {minThickness.toFixed(1)}mm</text>
           </g>
           <g>
             <line x1="15" y1="50" x2="85" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" strokeDasharray="2 2" />
-            <text x="12" y="38" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Max: {maxThickness.toFixed(1)}mm</text>
+            <text x="8" y="38" fontSize="7" fill="hsl(var(--foreground))" textAnchor="end" dominantBaseline="middle">Max: {maxThickness.toFixed(1)}mm</text>
           </g>
         </svg>
       </div>
