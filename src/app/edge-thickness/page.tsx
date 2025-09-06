@@ -281,7 +281,7 @@ export default function EdgeThicknessPage() {
                     name="cylinder"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Cylinder Power (D): {formatPower(cylinderValue)}</FormLabel>
+                        <FormLabel>Cylinder (D): {formatPower(cylinderValue)}</FormLabel>
                         <FormControl>
                           <Slider
                               value={[invertedCylinderValue]}
@@ -289,6 +289,7 @@ export default function EdgeThicknessPage() {
                               min={0} max={10} step={0.25}
                           />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
