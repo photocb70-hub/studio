@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles, Pill } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -53,6 +53,12 @@ const menuItems = [
     title: 'Step-Along Vergence',
     description: 'Calculate vergence through an optical system.',
     icon: <Footprints className="size-8 text-primary" />,
+  },
+   {
+    href: '/ocular-drugs',
+    title: 'Ocular Drugs Guide',
+    description: 'Quick reference for drugs with ocular side effects.',
+    icon: <Pill className="size-8 text-primary" />,
   },
    {
     href: '/ai-problem-solver',
