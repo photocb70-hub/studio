@@ -66,7 +66,7 @@ export default function Home() {
   return (
     <>
       <main 
-          className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000" style={{ backgroundColor: 'hsl(200 80% 96%)' }}
+          className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000"
       >
         <div 
           className="absolute inset-0 bg-background/80 backdrop-blur-sm z-0"
