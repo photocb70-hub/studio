@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Workflow, Search } from 'lucide-react';
+import { Workflow, Search, AlertTriangle } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -77,6 +77,13 @@ const staticFlowchart: FlowchartStep[] = [
       description: 'If issues persist, consider a re-check with the optometrist or a trial with the previous prescription.',
     },
 ];
+
+type AnalysisResult = {
+  primaryConcern: string;
+  keyFinding: string;
+  investigationPoint: string;
+  isKnob: boolean;
+};
 
 const formatPower = (power?: number) => {
     if (power === undefined || power === null) return '0.00';
@@ -208,8 +215,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
 };
 
 export default function DispensingTroubleshooterPage() {
-    const [result, setResult] = useState<FlowchartStep[] | null>(null);
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
     const [showRefundAlert, setShowRefundAlert] = useState(false);
 
     const form = useForm<FormValues>({
@@ -240,8 +246,29 @@ export default function DispensingTroubleshooterPage() {
     };
 
     const onSubmit = async (values: FormValues) => {
-        setIsSubmitted(true);
-        setResult(staticFlowchart);
+        const { currentRx, previousRx, lens, isKnob, problem } = values;
+
+        const sphDiff = Math.abs((currentRx?.sphere ?? 0) - (previousRx?.sphere ?? 0));
+        const cylDiff = Math.abs((currentRx?.cylinder ?? 0) - (previousRx?.cylinder ?? 0));
+        const axisDiff = Math.abs((currentRx?.axis ?? 0) - (previousRx?.axis ?? 0));
+
+        let keyFinding = "The previous and current prescriptions are identical. The issue may lie with dispensing parameters or lens type.";
+        let investigationPoint = "Focus on Step 2: Check Dispensing Parameters.";
+
+        if (sphDiff > 0.5 || cylDiff > 0.5 || axisDiff > 10) {
+            keyFinding = "There is a significant change in the prescription (sphere, cylinder, or axis) compared to the previous pair.";
+            investigationPoint = "Focus on Step 3: Analyze Rx Change.";
+        } else if (lens?.type) {
+            keyFinding = `The lens type is a '${lens.type}'. If this is a new design for the patient, adaptation may be the primary factor.`;
+            investigationPoint = "Focus on Step 4: Assess Lens Type.";
+        }
+
+        setAnalysisResult({
+            primaryConcern: problem,
+            keyFinding: keyFinding,
+            investigationPoint: investigationPoint,
+            isKnob: isKnob ?? false,
+        });
     };
 
     return (
@@ -386,7 +413,7 @@ export default function DispensingTroubleshooterPage() {
                                     
                                     <Button type="submit" className="w-full sm:w-auto">
                                         <Search className="mr-2 size-4" />
-                                        Show Troubleshooting Steps
+                                        Analyze Scenario
                                     </Button>
                                 </form>
                             </Form>
@@ -394,20 +421,55 @@ export default function DispensingTroubleshooterPage() {
                     </CardContent>
                 </Card>
 
-                {isSubmitted && result && (
-                    <Card className="bg-accent/10 border-accent/50">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Workflow />
-                                Standard Investigation Flowchart
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <Flowchart steps={result} />
-                        </CardContent>
-                    </Card>
+                {analysisResult && (
+                    <div className="space-y-8">
+                        <Card className="border-accent/60">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 text-accent-foreground">
+                                    <AlertTriangle />
+                                    Analysis Summary
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div>
+                                    <h4 className="font-semibold">Primary Concern</h4>
+                                    <p className="text-muted-foreground">"{analysisResult.primaryConcern}"</p>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold">Key Finding</h4>
+                                    <p className="text-muted-foreground">{analysisResult.keyFinding}</p>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold">Suggested Starting Point</h4>
+                                    <p className="text-muted-foreground">{analysisResult.investigationPoint}</p>
+                                </div>
+                                {analysisResult.isKnob && (
+                                    <>
+                                     <Separator />
+                                     <div>
+                                        <h4 className="font-semibold">Additional Consideration</h4>
+                                        <p className="text-muted-foreground">The "knob head" factor is enabled. Remember, clear communication and empathy are your best tools in complex cases!</p>
+                                     </div>
+                                    </>
+                                )}
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-accent/10 border-accent/50">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Workflow />
+                                    Standard Investigation Flowchart
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Flowchart steps={staticFlowchart} />
+                            </CardContent>
+                        </Card>
+                    </div>
                 )}
             </div>
         </ToolPageLayout>
     );
 }
+
+    
