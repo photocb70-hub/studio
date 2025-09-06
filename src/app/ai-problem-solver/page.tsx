@@ -155,9 +155,9 @@ export default function AiProblemSolverPage() {
             return null;
         }
         
-        let rxString = `${hasValue(sph) ? sph?.toFixed(2) : '0.00'} / ${hasValue(cyl) ? cyl?.toFixed(2) : '0.00'} x ${hasValue(axis) ? axis : '0'}`;
-        if (hasValue(add)) rxString += ` Add: ${add?.toFixed(2)}`;
-        if (hasValue(prism) && base) rxString += ` Prism: ${prism?.toFixed(2)} Base ${base}`;
+        let rxString = `${hasValue(sph) ? Number(sph).toFixed(2) : '0.00'} / ${hasValue(cyl) ? Number(cyl).toFixed(2) : '0.00'} x ${hasValue(axis) ? axis : '0'}`;
+        if (hasValue(add)) rxString += ` Add: ${Number(add).toFixed(2)}`;
+        if (hasValue(prism) && base) rxString += ` Prism: ${Number(prism).toFixed(2)} Base ${base}`;
 
         return rxString;
     }
@@ -322,5 +322,4 @@ export default function AiProblemSolverPage() {
         </div>
         </ToolPageLayout>
     );
-
-    
+}
