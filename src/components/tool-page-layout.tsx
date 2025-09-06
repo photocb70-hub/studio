@@ -27,9 +27,9 @@ export function ToolPageLayout({ title, description, children }: ToolPageLayoutP
               Back
             </Button>
             <Link href="/" className="flex items-center gap-2">
-                <Eye className="size-6 text-primary" />
-                <h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
-                    Optical Prime
+                <h1 className="flex items-center text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+                    <Eye className="size-6 text-primary" />
+                    <span>ptical Prime</span>
                 </h1>
             </Link>
           </div>
