@@ -211,12 +211,17 @@ export default function AiProblemSolverPage() {
             description="Describe a complex optical scenario, provide any relevant data, and the AI will provide an analysis and potential solutions."
         >
             <AlertDialog open={showRefundAlert}>
-                <AlertDialogContent className="border-destructive bg-destructive/90 text-destructive-foreground">
-                    <AlertDialogHeader>
-                        <AlertDialogTitle className="text-center text-4xl font-extrabold tracking-widest">
-                            REFUND ! CLOSED !
-                        </AlertDialogTitle>
-                    </AlertDialogHeader>
+                 <AlertDialogContent 
+                    className="border-destructive bg-cover bg-center text-destructive-foreground p-0"
+                    style={{ backgroundImage: "url('/2poundprofit.jpg')" }}
+                >
+                    <div className="bg-black/60 p-6 rounded-lg">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle className="text-center text-4xl font-extrabold tracking-widest text-white">
+                                REFUND ! CLOSED !
+                            </AlertDialogTitle>
+                        </AlertDialogHeader>
+                    </div>
                 </AlertDialogContent>
             </AlertDialog>
 
