@@ -146,7 +146,7 @@ export default function StepAlongPage() {
                     <FormItem>
                       <FormLabel>Astigmatic Surface Power (F2, optional)</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder="Enter for astigmatic systems" {...field} />
+                        <Input type="number" step="0.01" placeholder="Enter for astigmatic systems" {...field} onChange={(e) => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}/>
                       </FormControl>
                        <FormMessage />
                     </FormItem>
