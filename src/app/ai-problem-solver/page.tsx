@@ -70,7 +70,7 @@ const lensMaterials = [
 const prismBases = ["Up", "Down", "In", "Out"];
 
 const formatPower = (power?: number) => {
-    if (power === undefined || power === null) return '';
+    if (power === undefined || power === null) return '0.00';
     return (power > 0 ? '+' : '') + power.toFixed(2);
 }
 
@@ -83,7 +83,6 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
     const add = watch(`${nestName}.add`);
     const prism = watch(`${nestName}.prism`);
 
-
     return (
         <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
             <FormField
@@ -91,7 +90,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.sphere`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Sphere: {formatPower(sphere)}</FormLabel>
+                        <FormLabel>Sphere: {formatPower(field.value)}</FormLabel>
                         <FormControl>
                             <Slider
                                 value={[field.value ?? 0]}
@@ -107,10 +106,10 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.cylinder`}
                 render={({ field }) => (
                      <FormItem>
-                        <FormLabel>Cylinder: {formatPower(cylinder)}</FormLabel>
+                        <FormLabel>Cylinder: {formatPower(field.value)}</FormLabel>
                         <FormControl>
                           <Slider
-                              value={[invertedCylinder]}
+                              value={[field.value ? -field.value : 0]}
                               onValueChange={(value) => field.onChange(-value[0])}
                               min={0} max={10} step={0.25}
                           />
@@ -123,7 +122,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.axis`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Axis: {axis ?? 'N/A'}</FormLabel>
+                        <FormLabel>Axis: {field.value ?? 'N/A'}</FormLabel>
                         <FormControl>
                             <Slider
                                 value={[field.value ?? 90]}
@@ -139,7 +138,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.add`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Add: {formatPower(add)}</FormLabel>
+                        <FormLabel>Add: {formatPower(field.value)}</FormLabel>
                         <FormControl>
                            <Slider
                                 value={[field.value ?? 0]}
@@ -155,7 +154,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.prism`}
                 render={({ field }) => (
                      <FormItem>
-                        <FormLabel>Prism: {prism?.toFixed(2) ?? '0.00'}</FormLabel>
+                        <FormLabel>Prism: {field.value?.toFixed(2) ?? '0.00'}</FormLabel>
                         <FormControl>
                            <Slider
                                 value={[field.value ?? 0]}
@@ -201,8 +200,8 @@ export default function AiProblemSolverPage() {
         defaultValues: {
             problem: '',
             isKnob: false,
-            currentRx: { sphere: 0, cylinder: 0, axis: 90, add: 0, prism: 0 },
-            previousRx: { sphere: 0, cylinder: 0, axis: 90, add: 0, prism: 0 },
+            currentRx: { sphere: 0, cylinder: 0, axis: 90, add: 0, prism: 0, base: '' },
+            previousRx: { sphere: 0, cylinder: 0, axis: 90, add: 0, prism: 0, base: '' },
             lens: { type: '', material: ''},
             frame: { type: '', measurements: ''},
         },
