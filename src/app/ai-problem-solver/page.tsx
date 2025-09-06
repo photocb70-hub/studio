@@ -34,6 +34,8 @@ const rxSchema = z.object({
     add: z.string().optional(),
     prism: z.string().optional(),
     base: z.string().optional(),
+    pd: z.string().optional(),
+    hts: z.string().optional(),
 });
 
 const formSchema = z.object({
@@ -43,9 +45,6 @@ const formSchema = z.object({
   lens: z.object({
     type: z.string().optional(),
     material: z.string().optional(),
-  }).optional(),
-  measurements: z.object({
-    pd: z.string().optional(),
   }).optional(),
   isKnob: z.boolean().optional(),
 });
@@ -109,7 +108,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 control={control}
                 name={`${nestName}.axis`}
                 render={({ field }) => (
-                    <FormItem className="md:col-span-2">
+                    <FormItem>
                         <FormLabel>Axis (°): {axisValue}</FormLabel>
                         <FormControl>
                             <Slider
@@ -121,15 +120,39 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                     </FormItem>
                 )}
             />
-            <div className="grid grid-cols-1 gap-4 md:col-span-2 md:grid-cols-3">
-                <FormField
+            <FormField
+                control={control}
+                name={`${nestName}.add`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Add</FormLabel>
+                        <FormControl>
+                        <Input placeholder="+2.00" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                    </FormItem>
+                )}
+            />
+            <div className="grid grid-cols-2 gap-4 md:col-span-2 md:grid-cols-4">
+                 <FormField
                     control={control}
-                    name={`${nestName}.add`}
+                    name={`${nestName}.pd`}
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Add</FormLabel>
+                            <FormLabel>PD (mm)</FormLabel>
                             <FormControl>
-                            <Input placeholder="+2.00" {...field} value={field.value ?? ''} />
+                            <Input placeholder="e.g., 64" {...field} value={field.value ?? ''} />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={control}
+                    name={`${nestName}.hts`}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Heights (mm)</FormLabel>
+                            <FormControl>
+                            <Input placeholder="e.g., 22" {...field} value={field.value ?? ''} />
                             </FormControl>
                         </FormItem>
                     )}
@@ -174,8 +197,8 @@ export default function AiProblemSolverPage() {
         defaultValues: {
             problem: '',
             isKnob: false,
-            currentRx: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '' },
-            previousRx: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '' },
+            currentRx: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
+            previousRx: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
         },
     });
 
@@ -340,18 +363,6 @@ export default function AiProblemSolverPage() {
                                                                     <SelectItem value="1.74">High-Index (1.74)</SelectItem>
                                                                 </SelectContent>
                                                             </Select>
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                                 <FormField
-                                                    control={form.control}
-                                                    name="measurements.pd"
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>PD / Hts (if needed)</FormLabel>
-                                                            <FormControl>
-                                                                <Input placeholder="e.g., R: 32/20, L: 33/20" {...field} value={field.value ?? ''} />
-                                                            </FormControl>
                                                         </FormItem>
                                                     )}
                                                 />
