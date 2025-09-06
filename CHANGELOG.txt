@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2.0 alpha]
 ### Added
-- *Work on the next milestone will be documented here.*
+- Implemented the initial framework for a new "AI Image Analyzer" tool in the Clinical section. This experimental feature allows users to upload an ocular image for an AI-powered analysis.
 
 ## [1.9.1]
 ### Fixed
