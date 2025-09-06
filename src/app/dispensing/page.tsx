@@ -86,7 +86,7 @@ export default function DispensingPage() {
       description="A collection of calculators for lens fitting and measurements."
     >
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {dispensingMenuItems.sort((a,b) => a.title.localeCompare(b.title)).map((item) => (
+            {dispensingMenuItems.map((item) => (
                 <Link
                   href={item.href}
                   key={item.href}
