@@ -23,8 +23,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { TriangleAlert } from 'lucide-react';
 
 const formSchema = z.object({
-  sphere: z.coerce.number().min(-25).max(25),
-  cylinder: z.coerce.number().min(-15).max(15).optional().default(0),
+  sphere: z.coerce.number().min(-20).max(20),
+  cylinder: z.coerce.number().min(-10).max(0).optional().default(0),
   axis: z.coerce.number().min(1).max(180).optional(),
   bvd: z.coerce.number().min(0).max(20).default(12),
 }).refine(data => (data.cylinder ?? 0) !== 0 ? data.axis !== undefined : true, {
@@ -50,6 +50,9 @@ export default function ContactLensConverterPage() {
 
   const sphereValue = form.watch('sphere');
   const cylinderValue = form.watch('cylinder');
+  const invertedCylinderValue = cylinderValue !== undefined ? -cylinderValue : 0;
+  const axisValue = form.watch('axis');
+
 
   function onSubmit(values: FormValues) {
     const { sphere, cylinder = 0, axis, bvd } = values;
@@ -128,13 +131,11 @@ export default function ContactLensConverterPage() {
                         <FormItem>
                         <FormLabel>Cylinder (D): {formatPower(cylinderValue)}</FormLabel>
                         <FormControl>
-                            <Slider
-                                value={[field.value ?? 0]}
-                                onValueChange={(value) => field.onChange(value[0])}
-                                min={-10}
-                                max={0}
-                                step={0.25}
-                            />
+                          <Slider
+                              value={[invertedCylinderValue]}
+                              onValueChange={(value) => field.onChange(-value[0])}
+                              min={0} max={10} step={0.25}
+                          />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -146,9 +147,13 @@ export default function ContactLensConverterPage() {
                             name="axis"
                             render={({ field }) => (
                                 <FormItem>
-                                <FormLabel>Axis (°)</FormLabel>
+                                <FormLabel>Axis (°): {axisValue}</FormLabel>
                                 <FormControl>
-                                    <Input type="number" min="1" max="180" placeholder="1-180" {...field} value={field.value ?? ''} />
+                                    <Slider
+                                      value={[field.value ?? 90]}
+                                      onValueChange={(value) => field.onChange(value[0])}
+                                      min={1} max={180} step={1}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                                 </FormItem>
