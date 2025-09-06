@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Configured the Next.js project to support static exports (`output: 'export'`) in preparation for integration with Capacitor to build for native mobile platforms.
 
 ## [2.2 alpha]
+- This is the point to rollback to if wrapper fails!
 ### Added
 - Added a new "Contact Lens Rx Converter" to the Clinical Tools section to compensate spectacle prescriptions for vertex distance.
 
