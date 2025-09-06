@@ -75,7 +75,7 @@ const imageAnalyzerFlow = ai.defineFlow(
           { text: "Analyze this ocular fundus image. Draw a clear, thin, yellow circle around the optic disc. Draw a clear, thin, light-blue circle around the macula. If you see any clear anomalies like hemorrhages or exudates, draw a thin red arrow pointing to one of them. The annotations should be precise and not obscure the underlying features. Return only the annotated image." }
         ],
         config: {
-          responseModalities: ['IMAGE'],
+          responseModalities: ['TEXT', 'IMAGE'],
         }
       })
     ]);
