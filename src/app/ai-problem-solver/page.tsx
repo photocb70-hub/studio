@@ -24,12 +24,15 @@ import { useToast } from '@/hooks/use-toast';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const rxSchema = z.object({
     sphere: z.string().optional(),
     cylinder: z.string().optional(),
     axis: z.string().optional(),
     add: z.string().optional(),
+    prism: z.string().optional(),
+    base: z.string().optional(),
 });
 
 const formSchema = z.object({
@@ -58,7 +61,7 @@ type ProblemSolverOutput = {
 const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) => {
     const { control } = useFormContext<FormValues>();
     return (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
             <FormField
                 control={control}
                 name={`${nestName}.sphere`}
@@ -107,6 +110,30 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                     </FormItem>
                 )}
             />
+             <FormField
+                control={control}
+                name={`${nestName}.prism`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Prism</FormLabel>
+                        <FormControl>
+                           <Input placeholder="2.00" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                    </FormItem>
+                )}
+            />
+             <FormField
+                control={control}
+                name={`${nestName}.base`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Base</FormLabel>
+                        <FormControl>
+                           <Input placeholder="UP" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                    </FormItem>
+                )}
+            />
         </div>
     );
 };
@@ -134,7 +161,7 @@ export default function AiProblemSolverPage() {
         }
         return {
             analysis: "This is a placeholder analysis. The AI model is currently being updated. Your input has been received, but this response is pre-configured. It seems you've described a dispensing problem.",
-            solution: "1. Double-check all measurements, including monocular PDs and fitting heights.\\n2. Verify the prescription was ordered and dispensed correctly.\\n3. Consider the new frame's wrap, size, and vertex distance compared to the previous pair.",
+            solution: "1. Double-check all measurements, including monocular PDs and fitting heights.\n2. Verify the prescription was ordered and dispensed correctly.\n3. Consider the new frame's wrap, size, and vertex distance compared to the previous pair.",
             considerations: "This is a temporary response. Factors like lens material, base curve, and asphericity could be relevant. The full AI will provide a more detailed analysis based on the specific inputs provided.",
         };
     };
@@ -142,7 +169,6 @@ export default function AiProblemSolverPage() {
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);
         setResult(null);
-        // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         try {
@@ -217,9 +243,19 @@ export default function AiProblemSolverPage() {
                                                   render={({ field }) => (
                                                       <FormItem>
                                                           <FormLabel>Lens Type/Design</FormLabel>
-                                                          <FormControl>
-                                                              <Input placeholder="e.g., Varilux Physio 3.0" {...field} value={field.value ?? ''} />
-                                                          </FormControl>
+                                                           <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                              <FormControl>
+                                                                  <SelectTrigger>
+                                                                      <SelectValue placeholder="Select a lens type" />
+                                                                  </SelectTrigger>
+                                                              </FormControl>
+                                                              <SelectContent>
+                                                                  <SelectItem value="sv">Single Vision</SelectItem>
+                                                                  <SelectItem value="bf">Bifocal</SelectItem>
+                                                                  <SelectItem value="var">Varifocal</SelectItem>
+                                                                  <SelectItem value="occ">Occupational</SelectItem>
+                                                              </SelectContent>
+                                                          </Select>
                                                       </FormItem>
                                                   )}
                                               />
@@ -229,9 +265,20 @@ export default function AiProblemSolverPage() {
                                                   render={({ field }) => (
                                                       <FormItem>
                                                           <FormLabel>Lens Material/Index</FormLabel>
-                                                           <FormControl>
-                                                              <Input placeholder="e.g., 1.67" {...field} value={field.value ?? ''} />
-                                                          </FormControl>
+                                                           <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                              <FormControl>
+                                                                  <SelectTrigger>
+                                                                      <SelectValue placeholder="Select a material" />
+                                                                  </SelectTrigger>
+                                                              </FormControl>
+                                                              <SelectContent>
+                                                                  <SelectItem value="1.50">Standard Index (1.50)</SelectItem>
+                                                                  <SelectItem value="1.59">Polycarbonate (1.59)</SelectItem>
+                                                                  <SelectItem value="1.60">Mid-Index (1.60)</SelectItem>
+                                                                  <SelectItem value="1.67">High-Index (1.67)</SelectItem>
+                                                                  <SelectItem value="1.74">High-Index (1.74)</SelectItem>
+                                                              </SelectContent>
+                                                          </Select>
                                                       </FormItem>
                                                   )}
                                               />
@@ -332,3 +379,5 @@ export default function AiProblemSolverPage() {
         </ToolPageLayout>
     );
 }
+
+    

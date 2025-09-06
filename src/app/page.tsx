@@ -41,7 +41,7 @@ const menuItems = [
   },
 ];
 
-const appVersion = "2.5 alpha";
+const appVersion = "2.6 alpha";
 
 const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
   <Card className="relative flex h-full items-center overflow-hidden bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-lg">
@@ -56,6 +56,11 @@ const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
 );
 
 const changelogContent = `# Changelog
+
+## [2.6 alpha]
+### Fixed
+- Stabilized the "AI Problem Solver" page to resolve a persistent and critical series of application crashes. The complex form with sliders has been reverted to a more robust, simple text-input version to ensure reliability.
+- The live AI connection on the problem solver page has been temporarily replaced with a placeholder response to guarantee a stable user experience.
 
 ## [2.5 alpha]
 ### Changed
@@ -180,3 +185,5 @@ export default function Home() {
     </>
   );
 }
+
+    

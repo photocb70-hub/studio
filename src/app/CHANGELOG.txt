@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.6 alpha]
+### Fixed
+- Stabilized the "AI Problem Solver" page to resolve a persistent and critical series of application crashes. The complex form with sliders has been reverted to a more robust, simple text-input version to ensure reliability.
+- The live AI connection on the problem solver page has been temporarily replaced with a placeholder response to guarantee a stable user experience.
+
 ## [2.5 alpha]
 ### Changed
 - Re-implemented the "AI Problem Solver" with a structured, flexible input form. The new design replaces the single text area with optional fields for current and previous prescriptions, measurements, and lens details. This allows the AI to provide a more detailed analysis while accommodating real-world scenarios where not all data is available.
@@ -185,3 +190,5 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Set the default refractive index to "Standard Index" across all relevant calculators for consistency.
+
+    
