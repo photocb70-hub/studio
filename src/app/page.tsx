@@ -23,18 +23,6 @@ import { AppFooter } from '@/components/app-footer';
 
 const menuItems = [
   {
-    href: '/prescription-transposer',
-    title: 'Prescription Transposer',
-    description: 'Convert between plus and minus cylinder formats.',
-    icon: <Repeat className="size-8 text-primary" />,
-  },
-  {
-    href: '/step-along',
-    title: 'Step-Along Vergence',
-    description: 'Calculate vergence through an optical system.',
-    icon: <Footprints className="size-8 text-primary" />,
-  },
-  {
     href: '/dispensing',
     title: 'Dispensing Tools',
     description: 'Calculators for lens fitting and measurements.',

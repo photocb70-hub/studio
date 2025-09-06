@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Layers, ArrowRightLeft, Triangle, Maximize, ChevronsUpDown } from 'lucide-react';
+import { Layers, ArrowRightLeft, Triangle, Maximize, ChevronsUpDown, Repeat, Footprints } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -13,36 +13,48 @@ import {
 import { ToolPageLayout } from '@/components/tool-page-layout';
 
 const dispensingMenuItems = [
-  {
-    href: '/vertex-conversion',
-    title: 'BVD Conversion',
-    description: 'Compensate lens power for a new vertex distance.',
-    icon: <ArrowRightLeft className="size-8 text-primary" />,
-  },
-  {
-    href: '/edge-thickness',
-    title: 'Lens Thickness',
-    description: 'Calculate edge and center thickness for a lens.',
-    icon: <Layers className="size-8 text-primary" />,
-  },
-  {
-    href: '/induced-prism',
-    title: 'Induced Prism',
-    description: 'Calculate induced prism from decentration and power.',
-    icon: <Triangle className="size-8 text-primary" />,
-  },
-  {
-    href: '/blank-size',
-    title: 'Blank Size',
-    description: 'Calculate the minimum lens blank size needed.',
-    icon: <Maximize className="size-8 text-primary" />,
-  },
-  {
-    href: '/progressive-power',
-    title: 'Progressive Power',
-    description: 'Calculate effective power in a progressive lens.',
-    icon: <ChevronsUpDown className="size-8 text-primary" />,
-  },
+    {
+        href: '/prescription-transposer',
+        title: 'Prescription Transposer',
+        description: 'Convert between plus and minus cylinder formats.',
+        icon: <Repeat className="size-8 text-primary" />,
+    },
+    {
+        href: '/step-along',
+        title: 'Step-Along Vergence',
+        description: 'Calculate vergence through an optical system.',
+        icon: <Footprints className="size-8 text-primary" />,
+    },
+    {
+        href: '/vertex-conversion',
+        title: 'BVD Conversion',
+        description: 'Compensate lens power for a new vertex distance.',
+        icon: <ArrowRightLeft className="size-8 text-primary" />,
+    },
+    {
+        href: '/edge-thickness',
+        title: 'Lens Thickness',
+        description: 'Calculate edge and center thickness for a lens.',
+        icon: <Layers className="size-8 text-primary" />,
+    },
+    {
+        href: '/induced-prism',
+        title: 'Induced Prism',
+        description: 'Calculate induced prism from decentration and power.',
+        icon: <Triangle className="size-8 text-primary" />,
+    },
+    {
+        href: '/blank-size',
+        title: 'Blank Size',
+        description: 'Calculate the minimum lens blank size needed.',
+        icon: <Maximize className="size-8 text-primary" />,
+    },
+    {
+        href: '/progressive-power',
+        title: 'Progressive Power',
+        description: 'Calculate effective power in a progressive lens.',
+        icon: <ChevronsUpDown className="size-8 text-primary" />,
+    },
 ];
 
 const MenuItemCard = ({ item }: { item: typeof dispensingMenuItems[0] }) => (
