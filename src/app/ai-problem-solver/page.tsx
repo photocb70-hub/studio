@@ -21,6 +21,7 @@ import { Sparkles, Bot, Loader2 } from 'lucide-react';
 import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flow';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const formSchema = z.object({
   complaint: z.string().min(10, "Please describe the primary complaint."),
@@ -254,7 +255,16 @@ export default function AiProblemSolverPage() {
                             )}
                         />
                     </div>
-
+                    
+                    <div className="flex items-center space-x-2">
+                        <Checkbox id="knob-checkbox" />
+                        <label
+                            htmlFor="knob-checkbox"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                            Is the px a knob?
+                        </label>
+                    </div>
 
                     <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                     {isLoading ? (
