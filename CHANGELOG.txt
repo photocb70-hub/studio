@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.5 alpha]
+
+### Changed
+- Reverted Next.js configuration to remove `output: 'export'` to allow for direct web publishing from Firebase Studio. This temporarily pauses native app preparation.
+
 ## [1.4 alpha]
 
 ### Changed
