@@ -22,7 +22,7 @@ const rxSchema = z.object({
     hts: z.string().optional(),
 });
 
-export const ProblemSolverInputSchema = z.object({
+const ProblemSolverInputSchema = z.object({
   problem: z.string().describe("The primary complaint or issue the patient is experiencing."),
   currentRx: rxSchema.optional().describe("The patient's current, new prescription details."),
   previousRx: rxSchema.optional().describe("The patient's previous prescription details, for comparison."),
@@ -34,7 +34,7 @@ export const ProblemSolverInputSchema = z.object({
 });
 export type ProblemSolverInput = z.infer<typeof ProblemSolverInputSchema>;
 
-export const ProblemSolverOutputSchema = z.object({
+const ProblemSolverOutputSchema = z.object({
   analysis: z.string().describe("A detailed analysis of the potential root causes of the problem, considering all provided data."),
   solution: z.string().describe("A step-by-step recommended solution or set of actions to resolve the issue. This should be formatted with markdown for lists."),
   considerations: z.string().describe("A list of other potential factors or further considerations the user should keep in mind."),
