@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Calculator, Footprints } from 'lucide-react';
+import { Footprints } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,7 +27,6 @@ const formSchema = z.object({
   objectVergence: z.coerce.number(),
   surfacePower1: z.coerce.number().min(-20).max(20),
   surfacePower2: z.coerce.number().optional(),
-  distance: z.coerce.number().min(0),
   refractiveIndex: z.coerce.number().min(1),
 });
 
@@ -55,7 +54,7 @@ export default function StepAlongPage() {
     defaultValues: {
       objectVergence: 0,
       surfacePower1: 0,
-      distance: 0,
+      surfacePower2: 0,
       refractiveIndex: 1.498,
     },
   });
@@ -64,7 +63,7 @@ export default function StepAlongPage() {
   const objectVergenceValue = form.watch('objectVergence');
 
   function onSubmit(values: FormValues) {
-    const { objectVergence, surfacePower1, surfacePower2, distance, refractiveIndex } = values;
+    const { objectVergence, surfacePower1, surfacePower2, refractiveIndex } = values;
 
     // L' = L + F
     const L_prime = objectVergence + surfacePower1;
@@ -239,5 +238,4 @@ export default function StepAlongPage() {
     </ToolPageLayout>
   );
 }
-
     
