@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.7 alpha]
+
+### Added
+- Created a new "Dispensing Tools" section to group related calculators like BVD, Lens Thickness, and Blank Size for better organization.
+- Updated the homepage to reflect the new "Dispensing Tools" category.
+
 ## [1.6 alpha]
 
 ### Changed
