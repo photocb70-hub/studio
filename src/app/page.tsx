@@ -246,23 +246,6 @@ All notable changes to this project will be documented in this file.
 export default function Home() {
   const [clicks, setClicks] = useState(0);
   const [isEasterEggVisible, setIsEasterEggVisible] = useState(false);
-  const [changelogHtml, setChangelogHtml] = useState('');
-
-  useEffect(() => {
-    // Basic markdown to HTML conversion
-    const html = changelogContent
-      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-      .replace(/<br \/>\n/g, '<br />')
-      .replace(/\n- /g, '<li>')
-      .replace(/\n/g, '<br />')
-      .replace(/<li>/g, '<ul><li>')
-      .replace(/<\/li><br \/>/g, '</li></ul>');
-    setChangelogHtml(html);
-  }, []);
-
-
 
   const handleTitleClick = () => {
     const newClicks = clicks + 1;
@@ -323,7 +306,9 @@ export default function Home() {
                   <DialogTitle>Application Changelog</DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-[60vh] pr-4">
-                    <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: changelogHtml }}/>
+                  <pre className="text-sm text-foreground whitespace-pre-wrap font-sans">
+                    {changelogContent}
+                  </pre>
                 </ScrollArea>
               </DialogContent>
             </Dialog>
