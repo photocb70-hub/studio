@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.8 alpha]
+
+### Added
+- Created a new "Clinical Tools" section to group clinical guides and assistants.
+- Moved the "Ocular Drugs Guide" and "AI Problem Solver" into the new "Clinical" section.
+- Added "Step-Along Vergence" and "Prescription Transposer" to the "Dispensing Tools" page.
+
+### Changed
+- Reorganized the homepage to link to the new "Dispensing Tools" and "Clinical Tools" pages for a cleaner interface.
+
 ## [1.7 alpha]
 
 ### Added

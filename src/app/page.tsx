@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Layers, Ruler, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles, Pill, Stethoscope } from 'lucide-react';
+import { Ruler, Eye } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -36,7 +36,7 @@ const menuItems = [
   },
 ];
 
-const appVersion = "1.7 alpha";
+const appVersion = "1.8 alpha";
 
 const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
   <Card className="relative flex h-full items-center overflow-hidden bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-lg">
@@ -66,7 +66,7 @@ export default function Home() {
   return (
     <>
       <main 
-          className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000" style={{ backgroundColor: 'hsl(207 90% 95%)' }}
+          className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000" style={{ backgroundColor: 'hsl(200 80% 96%)' }}
       >
         <div 
           className="absolute inset-0 bg-background/80 backdrop-blur-sm z-0"
