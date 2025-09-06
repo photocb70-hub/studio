@@ -2,12 +2,6 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.4 alpha]
-### Changed
-- Reverted Next.js configuration to remove `output: 'export'` to allow for web publishing and live preview.
-- Re-enabled AI features on the clinical tools page.
-- Removed Capacitor dependencies from the project to clean up the workspace for web development.
-
 ## [2.3 alpha]
 ### Changed
 - Configured the Next.js project to support static exports (`output: 'export'`) in preparation for integration with Capacitor to build for native mobile platforms.
