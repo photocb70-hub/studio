@@ -359,7 +359,7 @@ export default function EdgeThicknessPage() {
                             </FormControl>
                             <SelectContent>
                               {lensMaterials.map((material) => (
-                                <SelectItem key={material.name} value={String(material.index)}>
+                                <SelectItem key={`${material.name}-${material.index}`} value={String(material.index)}>
                                   {material.name}
                                 </SelectItem>
                               ))}
@@ -379,7 +379,7 @@ export default function EdgeThicknessPage() {
                               <FormControl>
                               <SelectTrigger>
                                   <SelectValue placeholder="Select a diameter" />
-                              </SelectTrigger>
+                              </Trigger>
                               </FormControl>
                               <SelectContent>
                                 {diameterOptions.map((diameter) => (
@@ -460,5 +460,3 @@ export default function EdgeThicknessPage() {
     </ToolPageLayout>
   );
 }
-
-    
