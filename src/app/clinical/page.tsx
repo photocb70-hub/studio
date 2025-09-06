@@ -23,13 +23,6 @@ const clinicalMenuItems = [
     inDevelopment: false,
   },
   {
-    href: '/rx-tolerance',
-    title: 'Rx Tolerance Checker',
-    description: 'Check if a final Rx is within manufacturing tolerance.',
-    icon: <ClipboardCheck className="size-8 text-primary" />,
-    inDevelopment: false,
-  },
-  {
     href: '/ocular-drugs',
     title: 'Ocular Drugs Guide',
     description: 'Quick reference for drugs with ocular side effects.',
@@ -37,17 +30,24 @@ const clinicalMenuItems = [
     inDevelopment: false,
   },
   {
-    href: '/ai-problem-solver',
-    title: 'AI Problem Solver',
-    description: 'Get AI-powered solutions for optical problems.',
-    icon: <Sparkles className="size-8 text-primary" />,
-    inDevelopment: true,
+    href: '/rx-tolerance',
+    title: 'Rx Tolerance Checker',
+    description: 'Check if a final Rx is within manufacturing tolerance.',
+    icon: <ClipboardCheck className="size-8 text-primary" />,
+    inDevelopment: false,
   },
   {
     href: '/ai-image-analyzer',
     title: 'AI Image Analyzer',
     description: 'Upload an ocular image for AI-powered analysis.',
     icon: <ScanEye className="size-8 text-primary" />,
+    inDevelopment: true,
+  },
+  {
+    href: '/ai-problem-solver',
+    title: 'AI Problem Solver',
+    description: 'Get AI-powered solutions for optical problems.',
+    icon: <Sparkles className="size-8 text-primary" />,
     inDevelopment: true,
   },
 ];
