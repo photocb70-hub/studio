@@ -24,12 +24,15 @@ import { useToast } from '@/hooks/use-toast';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const rxSchema = z.object({
     sphere: z.coerce.number().optional(),
     cylinder: z.coerce.number().optional(),
     axis: z.coerce.number().optional(),
     add: z.coerce.number().optional(),
+    prism: z.coerce.number().optional(),
+    base: z.string().optional(),
 });
 
 const formSchema = z.object({
@@ -55,10 +58,21 @@ type ProblemSolverOutput = {
     considerations: string;
 };
 
+const lensTypes = ["Single Vision", "Bifocal", "Varifocal", "Occupational"];
+const lensMaterials = [
+    { name: 'Standard Index (1.50)', value: '1.50' },
+    { name: 'Polycarbonate (1.59)', value: '1.59' },
+    { name: 'Mid-Index (1.60)', value: '1.60' },
+    { name: 'High-Index (1.67)', value: '1.67' },
+    { name: 'High-Index (1.74)', value: '1.74' },
+];
+const prismBases = ["Up", "Down", "In", "Out"];
+
+
 const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) => {
     const { control } = useFormContext<FormValues>();
     return (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             <FormField
                 control={control}
                 name={`${nestName}.sphere`}
@@ -107,6 +121,41 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                         <FormControl>
                             <Input type="number" step="0.25" placeholder="e.g., +2.00" {...field} value={field.value ?? ''} />
                         </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name={`${nestName}.prism`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Prism</FormLabel>
+                        <FormControl>
+                            <Input type="number" step="0.25" placeholder="e.g., 2.00" {...field} value={field.value ?? ''} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name={`${nestName}.base`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Base</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select Base" />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                {prismBases.map((base) => (
+                                    <SelectItem key={base} value={base.toLowerCase()}>{base}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                         <FormMessage />
                     </FormItem>
                 )}
@@ -221,9 +270,18 @@ export default function AiProblemSolverPage() {
                                                   render={({ field }) => (
                                                       <FormItem>
                                                           <FormLabel>Lens Type/Design</FormLabel>
-                                                          <FormControl>
-                                                              <Input placeholder="e.g., Zeiss SmartLife" {...field} />
-                                                          </FormControl>
+                                                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                            <FormControl>
+                                                                <SelectTrigger>
+                                                                    <SelectValue placeholder="Select a type" />
+                                                                </SelectTrigger>
+                                                            </FormControl>
+                                                            <SelectContent>
+                                                                {lensTypes.map((type) => (
+                                                                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                          </Select>
                                                       </FormItem>
                                                   )}
                                               />
@@ -233,9 +291,18 @@ export default function AiProblemSolverPage() {
                                                   render={({ field }) => (
                                                       <FormItem>
                                                           <FormLabel>Lens Material/Index</FormLabel>
-                                                          <FormControl>
-                                                              <Input placeholder="e.g., 1.67 Aspheric" {...field} />
-                                                          </FormControl>
+                                                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                            <FormControl>
+                                                                <SelectTrigger>
+                                                                    <SelectValue placeholder="Select a material" />
+                                                                </SelectTrigger>
+                                                            </FormControl>
+                                                            <SelectContent>
+                                                                {lensMaterials.map((material) => (
+                                                                    <SelectItem key={material.value} value={material.value}>{material.name}</SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                          </Select>
                                                       </FormItem>
                                                   )}
                                               />
@@ -246,7 +313,7 @@ export default function AiProblemSolverPage() {
                                                       <FormItem>
                                                           <FormLabel>Frame Type</FormLabel>
                                                           <FormControl>
-                                                              <Input placeholder="e.g., Full-rim metal" {...field} />
+                                                              <Input placeholder="e.g., Full-rim metal" {...field} value={field.value ?? ''} />
                                                           </FormControl>
                                                       </FormItem>
                                                   )}
@@ -258,7 +325,7 @@ export default function AiProblemSolverPage() {
                                                       <FormItem>
                                                           <FormLabel>Frame Measurements</FormLabel>
                                                           <FormControl>
-                                                              <Input placeholder="e.g., 54-18-145" {...field} />
+                                                              <Input placeholder="e.g., 54-18-145" {...field} value={field.value ?? ''} />
                                                           </FormControl>
                                                       </FormItem>
                                                   )}
@@ -336,4 +403,5 @@ export default function AiProblemSolverPage() {
         </ToolPageLayout>
     );
 }
+    
     
