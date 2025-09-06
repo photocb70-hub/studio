@@ -36,7 +36,7 @@ const menuItems = [
   },
 ];
 
-const appVersion = "1.9.1 alpha";
+const appVersion = "1.9.1";
 
 const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
   <Card className="relative flex h-full items-center overflow-hidden bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-lg">

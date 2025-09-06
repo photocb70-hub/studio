@@ -2,11 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.9.1 alpha]
+## [2.0 alpha]
+### Added
+- *Work on the next milestone will be documented here.*
 
+## [1.9.1]
 ### Fixed
 - Resolved a persistent build error on the "Lens Thickness Calculator" page by refactoring the component structure.
 - Corrected "duplicate key" errors in dropdown menus on the "Lens Thickness" and "Step-Along Vergence" calculators to improve UI stability.
+
+### Changed
+- Alphabetized drugs within each category in the Ocular Drugs Guide for easier reference.
 
 ## [1.9 alpha]
 
@@ -126,7 +132,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Updated the application's background to a subtle and thematic design featuring various optical formulas.
-- Renamed `CHANGELOG.md` to `CHANGELOG.txt` for easier file access.
+- Renamed `CHANGELOG.md` to `CHANGELog.txt` for easier file access.
 
 ## [0.3 alpha]
 
