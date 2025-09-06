@@ -53,7 +53,12 @@ const MenuItemCard = ({ item }: { item: typeof clinicalMenuItems[0] }) => (
         <div className="grid gap-1">
           <CardTitle className="font-headline flex items-center gap-2">
             {item.title}
-            {item.inDevelopment && <Badge variant="outline">In Development</Badge>}
+            {item.inDevelopment && (
+                <div className="inline-flex flex-col items-center justify-center rounded-full border px-2 py-1 text-xs font-semibold text-foreground leading-tight">
+                    <span>In</span>
+                    <span>Development</span>
+                </div>
+            )}
           </CardTitle>
           <CardDescription>{item.description}</CardDescription>
         </div>
