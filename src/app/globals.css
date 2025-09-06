@@ -56,6 +56,10 @@
   }
   body {
     @apply text-foreground;
-    background-color: hsl(var(--background));
+    background-image: url('/360_F_433007873_eBfV6yv9povlgY2KJkyqEXBlPhCfLUfq.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
   }
 }
