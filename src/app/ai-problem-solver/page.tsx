@@ -19,9 +19,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Bot, Loader2, ChevronsUpDown } from 'lucide-react';
+import { Sparkles, Bot, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -257,119 +256,114 @@ export default function AiProblemSolverPage() {
                                 
                                 <Separator />
 
-                                <div className="space-y-4">
-                                  <Collapsible>
-                                      <CollapsibleTrigger asChild>
-                                          <Button variant="link" className="p-0 text-base">
-                                              <ChevronsUpDown className="mr-2 size-4" />
-                                              Add Prescriptions & Lens Details (Optional)
-                                          </Button>
-                                      </CollapsibleTrigger>
-                                      <CollapsibleContent className="space-y-6 pt-4">
-                                          <div>
-                                              <h4 className="mb-2 font-medium">Current Prescription</h4>
-                                              <RxInputGroup nestName="currentRx" />
-                                          </div>
-                                          <div>
-                                              <h4 className="mb-2 font-medium">Previous Prescription</h4>
-                                              <RxInputGroup nestName="previousRx" />
-                                          </div>
-                                           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                              <FormField
-                                                  control={form.control}
-                                                  name="lens.type"
-                                                  render={({ field }) => (
-                                                      <FormItem>
-                                                          <FormLabel>Lens Type/Design</FormLabel>
-                                                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                               <FormControl>
-                                                                   <SelectTrigger>
-                                                                       <SelectValue placeholder="Select a lens type" />
-                                                                   </SelectTrigger>
-                                                               </FormControl>
-                                                               <SelectContent>
-                                                                   <SelectItem value="sv">Single Vision</SelectItem>
-                                                                   <SelectItem value="bf">Bifocal</SelectItem>
-                                                                   <SelectItem value="var">Varifocal</SelectItem>
-                                                                   <SelectItem value="occ">Occupational</SelectItem>
-                                                               </SelectContent>
-                                                           </Select>
-                                                      </FormItem>
-                                                  )}
-                                              />
-                                              <FormField
-                                                  control={form.control}
-                                                  name="lens.material"
-                                                  render={({ field }) => (
-                                                      <FormItem>
-                                                          <FormLabel>Lens Material/Index</FormLabel>
-                                                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                               <FormControl>
-                                                                   <SelectTrigger>
-                                                                       <SelectValue placeholder="Select a material" />
-                                                                   </SelectTrigger>
-                                                               </FormControl>
-                                                               <SelectContent>
-                                                                   <SelectItem value="1.50">Standard Index (1.50)</SelectItem>
-                                                                   <SelectItem value="1.59">Polycarbonate (1.59)</SelectItem>
-                                                                   <SelectItem value="1.60">Mid-Index (1.60)</SelectItem>
-                                                                   <SelectItem value="1.67">High-Index (1.67)</SelectItem>
-                                                                   <SelectItem value="1.74">High-Index (1.74)</SelectItem>
-                                                               </SelectContent>
-                                                           </Select>
-                                                      </FormItem>
-                                                  )}
-                                              />
-                                              <FormField
-                                                  control={form.control}
-                                                  name="frame.type"
-                                                  render={({ field }) => (
-                                                      <FormItem>
-                                                          <FormLabel>Frame Type</FormLabel>
-                                                          <FormControl>
-                                                              <Input placeholder="e.g., Full-rim metal" {...field} value={field.value ?? ''} />
-                                                          </FormControl>
-                                                      </FormItem>
-                                                  )}
-                                              />
-                                              <FormField
-                                                  control={form.control}
-                                                  name="frame.measurements"
-                                                  render={({ field }) => (
-                                                      <FormItem>
-                                                          <FormLabel>Frame Measurements</FormLabel>
-                                                          <FormControl>
-                                                              <Input placeholder="e.g., 54-18-145" {...field} value={field.value ?? ''} />
-                                                          </FormControl>
-                                                      </FormItem>
-                                                  )}
-                                              />
-                                          </div>
-                                           <Separator />
-                                            <FormField
-                                                control={form.control}
-                                                name="isKnob"
-                                                render={({ field }) => (
-                                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
-                                                        <FormControl>
-                                                            <Checkbox
-                                                                checked={field.value}
-                                                                onCheckedChange={handleKnobChange}
-                                                            />
-                                                        </FormControl>
-                                                        <div className="space-y-1 leading-none">
-                                                            <FormLabel>
-                                                                Is the px a knob head?
-                                                            </FormLabel>
-                                                            <FormDescription>
-                                                                Super-secret-diagnostic-tool for complex non-tolerance cases.
-                                                            </FormDescription>
-                                                        </div>
-                                                    </FormItem>
-                                                )}
-                                            />
-                                      </CollapsibleContent>
-                                  </Collapsible>
+                                <div className="space-y-6">
+                                    <div>
+                                        <h3 className="mb-4 text-lg font-medium">Prescriptions & Lens Details (Optional)</h3>
+                                        <div className="space-y-6">
+                                            <div>
+                                                <h4 className="mb-2 font-medium">Current Prescription</h4>
+                                                <RxInputGroup nestName="currentRx" />
+                                            </div>
+                                            <div>
+                                                <h4 className="mb-2 font-medium">Previous Prescription</h4>
+                                                <RxInputGroup nestName="previousRx" />
+                                            </div>
+                                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                                <FormField
+                                                    control={form.control}
+                                                    name="lens.type"
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Lens Type/Design</FormLabel>
+                                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                                <FormControl>
+                                                                    <SelectTrigger>
+                                                                        <SelectValue placeholder="Select a lens type" />
+                                                                    </SelectTrigger>
+                                                                </FormControl>
+                                                                <SelectContent>
+                                                                    <SelectItem value="sv">Single Vision</SelectItem>
+                                                                    <SelectItem value="bf">Bifocal</SelectItem>
+                                                                    <SelectItem value="var">Varifocal</SelectItem>
+                                                                    <SelectItem value="occ">Occupational</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={form.control}
+                                                    name="lens.material"
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Lens Material/Index</FormLabel>
+                                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                                <FormControl>
+                                                                    <SelectTrigger>
+                                                                        <SelectValue placeholder="Select a material" />
+                                                                    </SelectTrigger>
+                                                                </FormControl>
+                                                                <SelectContent>
+                                                                    <SelectItem value="1.50">Standard Index (1.50)</SelectItem>
+                                                                    <SelectItem value="1.59">Polycarbonate (1.59)</SelectItem>
+                                                                    <SelectItem value="1.60">Mid-Index (1.60)</SelectItem>
+                                                                    <SelectItem value="1.67">High-Index (1.67)</SelectItem>
+                                                                    <SelectItem value="1.74">High-Index (1.74)</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={form.control}
+                                                    name="frame.type"
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Frame Type</FormLabel>
+                                                            <FormControl>
+                                                                <Input placeholder="e.g., Full-rim metal" {...field} value={field.value ?? ''} />
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <FormField
+                                                    control={form.control}
+                                                    name="frame.measurements"
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Frame Measurements</FormLabel>
+                                                            <FormControl>
+                                                                <Input placeholder="e.g., 54-18-145" {...field} value={field.value ?? ''} />
+                                                            </FormControl>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                            <Separator />
+                                                <FormField
+                                                    control={form.control}
+                                                    name="isKnob"
+                                                    render={({ field }) => (
+                                                        <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+                                                            <FormControl>
+                                                                <Checkbox
+                                                                    checked={field.value}
+                                                                    onCheckedChange={handleKnobChange}
+                                                                />
+                                                            </FormControl>
+                                                            <div className="space-y-1 leading-none">
+                                                                <FormLabel>
+                                                                    Is the px a knob head?
+                                                                </FormLabel>
+                                                                <FormDescription>
+                                                                    Super-secret-diagnostic-tool for complex non-tolerance cases.
+                                                                </FormDescription>
+                                                            </div>
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
