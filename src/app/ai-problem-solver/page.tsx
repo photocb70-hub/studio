@@ -25,6 +25,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
 
 const rxSchema = z.object({
     sphere: z.coerce.number().optional(),
@@ -68,21 +69,36 @@ const lensMaterials = [
 ];
 const prismBases = ["Up", "Down", "In", "Out"];
 
+const formatPower = (power?: number) => {
+    if (power === undefined || power === null) return '';
+    return (power > 0 ? '+' : '') + power.toFixed(2);
+}
 
 const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) => {
-    const { control } = useFormContext<FormValues>();
+    const { control, watch } = useFormContext<FormValues>();
+    const sphere = watch(`${nestName}.sphere`);
+    const cylinder = watch(`${nestName}.cylinder`);
+    const invertedCylinder = cylinder !== undefined ? -cylinder : 0;
+    const axis = watch(`${nestName}.axis`);
+    const add = watch(`${nestName}.add`);
+    const prism = watch(`${nestName}.prism`);
+
+
     return (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
             <FormField
                 control={control}
                 name={`${nestName}.sphere`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Sphere</FormLabel>
+                        <FormLabel>Sphere: {formatPower(sphere)}</FormLabel>
                         <FormControl>
-                            <Input type="number" step="0.25" placeholder="e.g., -2.50" {...field} value={field.value ?? ''} />
+                            <Slider
+                                value={[field.value ?? 0]}
+                                onValueChange={(value) => field.onChange(value[0])}
+                                min={-20} max={20} step={0.25}
+                            />
                         </FormControl>
-                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -90,13 +106,16 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 control={control}
                 name={`${nestName}.cylinder`}
                 render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Cylinder</FormLabel>
+                     <FormItem>
+                        <FormLabel>Cylinder: {formatPower(cylinder)}</FormLabel>
                         <FormControl>
-                            <Input type="number" step="0.25" placeholder="e.g., -1.00" {...field} value={field.value ?? ''} />
+                          <Slider
+                              value={[invertedCylinder]}
+                              onValueChange={(value) => field.onChange(-value[0])}
+                              min={0} max={10} step={0.25}
+                          />
                         </FormControl>
-                        <FormMessage />
-                    </FormItem>
+                      </FormItem>
                 )}
             />
             <FormField
@@ -104,11 +123,14 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.axis`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Axis</FormLabel>
+                        <FormLabel>Axis: {axis ?? 'N/A'}</FormLabel>
                         <FormControl>
-                            <Input type="number" step="1" placeholder="e.g., 180" {...field} value={field.value ?? ''} />
+                            <Slider
+                                value={[field.value ?? 90]}
+                                onValueChange={(value) => field.onChange(value[0])}
+                                min={1} max={180} step={1}
+                            />
                         </FormControl>
-                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -117,11 +139,14 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.add`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Add</FormLabel>
+                        <FormLabel>Add: {formatPower(add)}</FormLabel>
                         <FormControl>
-                            <Input type="number" step="0.25" placeholder="e.g., +2.00" {...field} value={field.value ?? ''} />
+                           <Slider
+                                value={[field.value ?? 0]}
+                                onValueChange={(value) => field.onChange(value[0])}
+                                min={0} max={4} step={0.25}
+                            />
                         </FormControl>
-                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -129,13 +154,16 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 control={control}
                 name={`${nestName}.prism`}
                 render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Prism</FormLabel>
+                     <FormItem>
+                        <FormLabel>Prism: {prism?.toFixed(2) ?? '0.00'}</FormLabel>
                         <FormControl>
-                            <Input type="number" step="0.25" placeholder="e.g., 2.00" {...field} value={field.value ?? ''} />
+                           <Slider
+                                value={[field.value ?? 0]}
+                                onValueChange={(value) => field.onChange(value[0])}
+                                min={0} max={10} step={0.25}
+                            />
                         </FormControl>
-                        <FormMessage />
-                    </FormItem>
+                      </FormItem>
                 )}
             />
             <FormField
@@ -156,7 +184,6 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                                 ))}
                             </SelectContent>
                         </Select>
-                        <FormMessage />
                     </FormItem>
                 )}
             />
@@ -174,6 +201,10 @@ export default function AiProblemSolverPage() {
         defaultValues: {
             problem: '',
             isKnob: false,
+            currentRx: { sphere: 0, cylinder: 0, axis: 90, add: 0, prism: 0 },
+            previousRx: { sphere: 0, cylinder: 0, axis: 90, add: 0, prism: 0 },
+            lens: { type: '', material: ''},
+            frame: { type: '', measurements: ''},
         },
     });
 
@@ -295,7 +326,7 @@ export default function AiProblemSolverPage() {
                                                             <FormControl>
                                                                 <SelectTrigger>
                                                                     <SelectValue placeholder="Select a material" />
-                                                                </SelectTrigger>
+                                                                </Trigger>
                                                             </FormControl>
                                                             <SelectContent>
                                                                 {lensMaterials.map((material) => (
@@ -348,7 +379,7 @@ export default function AiProblemSolverPage() {
                                                                 Is the px a knob head?
                                                             </FormLabel>
                                                             <FormDescription>
-                                                                Advanced diagnostic tool for complex non-tolerance cases.
+                                                                Super-secret-diagnostic-tool for complex non-tolerance cases.
                                                             </FormDescription>
                                                         </div>
                                                     </FormItem>
@@ -398,10 +429,9 @@ export default function AiProblemSolverPage() {
                             <p>{result.considerations}</p>
                         </CardContent>
                     </Card>
+                </Card>
                 )}
             </div>
         </ToolPageLayout>
     );
 }
-    
-    
