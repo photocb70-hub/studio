@@ -11,8 +11,15 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { ToolPageLayout } from '@/components/tool-page-layout';
+import { ContactLensIcon } from '@/components/icons/contact-lens-icon';
 
 const clinicalMenuItems = [
+  {
+    href: '/contact-lens-converter',
+    title: 'Contact Lens Rx Converter',
+    description: 'Convert a spectacle Rx to a contact lens Rx.',
+    icon: <ContactLensIcon className="size-8 text-primary" />,
+  },
   {
     href: '/ocular-drugs',
     title: 'Ocular Drugs Guide',
