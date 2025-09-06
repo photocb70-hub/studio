@@ -1,6 +1,8 @@
 
+'use client';
+
 import type { ReactNode } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -11,16 +13,16 @@ type ToolPageLayoutProps = {
 };
 
 export function ToolPageLayout({ title, description, children }: ToolPageLayoutProps) {
+  const router = useRouter();
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">
-            <Button variant="outline" asChild className="pl-2.5 pr-3">
-              <Link href="/">
-                <ArrowLeft className="size-4" />
-                Back
-              </Link>
+            <Button variant="outline" onClick={() => router.back()} className="pl-2.5 pr-3">
+              <ArrowLeft className="size-4" />
+              Back
             </Button>
             <div className="flex items-center gap-2">
                 <Eye className="size-5 text-primary" />
