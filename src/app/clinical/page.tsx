@@ -3,6 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Pill, Sparkles, ScanEye } from 'lucide-react';
 import {
   Card,
@@ -11,7 +12,6 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { ToolPageLayout } from '@/components/tool-page-layout';
-import { ContactLensIcon } from '@/components/icons/contact-lens-icon';
 import { Badge } from '@/components/ui/badge';
 
 const clinicalMenuItems = [
@@ -19,7 +19,7 @@ const clinicalMenuItems = [
     href: '/contact-lens-converter',
     title: 'Contact Lens Rx Converter',
     description: 'Convert a spectacle Rx to a contact lens Rx.',
-    icon: <ContactLensIcon className="size-8 text-primary" />,
+    icon: <Image src="/optimusicon.png" alt="Optical Prime Icon" width={32} height={32} className="text-primary" />,
     inDevelopment: false,
   },
   {

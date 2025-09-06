@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Ruler, Eye, ScrollText } from 'lucide-react';
 import {
   Card,
@@ -86,26 +87,6 @@ const changelogContent = `# Changelog
 ### Changed
 - Alphabetized the items on the "Dispensing Tools" page for better organization.
 - Added distinct, thematic background images to the main, clinical, and dispensing pages to improve visual identity.
-
-## [1.9.1]
-### Fixed
-- Resolved a persistent build error on the "Lens Thickness Calculator" page by refactoring the component structure.
-- Corrected "duplicate key" errors in dropdown menus on the "Lens Thickness" and "Step-Along Vergence" calculators to improve UI stability.
-
-## [1.9 alpha]
-### Changed
-- Overhauled the application's UI with a more professional and "cozy" theme, replacing the blue color scheme with a rich green and implementing a modern "frosted glass" effect on cards.
-- The "Back" button on tool pages now correctly navigates to the user's previous page instead of always returning to the homepage, improving user experience.
-
-## [1.8 alpha]
-### Added
-- Created a new "Clinical Tools" section to group clinical guides and assistants.
-- Moved the "Ocular Drugs Guide" and "AI Problem Solver" into the new "Clinical" section.
-
-## [1.7 alpha]
-### Added
-- Created a new "Dispensing Tools" section to group related calculators like BVD, Lens Thickness, and Blank Size for better organization.
-- Updated the homepage to reflect the new "Dispensing Tools" category.
 `;
 
 export default function Home() {
@@ -136,7 +117,7 @@ export default function Home() {
         <div className="w-full max-w-4xl z-10">
           <header className="mb-12 text-center">
             <div className="mb-4 inline-flex cursor-pointer items-center gap-3" onClick={handleTitleClick}>
-              <Eye className="size-10 text-primary" />
+              <Image src="/optimusicon.png" alt="Optical Prime Icon" width={40} height={40} />
               <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
                 Optical Prime
               </h1>
@@ -171,24 +152,9 @@ export default function Home() {
                   <DialogTitle>Application Changelog</DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-[60vh] pr-4">
-                  <div
-                    className="prose prose-sm dark:prose-invert max-w-none"
-                    dangerouslySetInnerHTML={{
-                      __html: changelogContent
-                        .replace(/# (.+)/g, '<h3>$1</h3>')
-                        .replace(/## (.+)/g, '<h4>$1</h4>')
-                        .replace(/### (.+)/g, '<h5>$1</h5>')
-                        .replace(/- (.+)/g, '<li>$1</li>')
-                        .replace(/<\/li>\n<li>/g, '</li><li>')
-                        .replace(/<\/h5>\n<li>/g, '</h5><ul><li>')
-                        .replace(/<\/li>\n<h4>/g, '</li></ul><h4>')
-                        .replace(/<\/li>\n<h3>/g, '</li></ul><h3>')
-                        .replace(
-                          /<\/li>(?!<\/ul>)/g,
-                          '</li></ul>'
-                        )
-                    }}
-                  />
+                  <pre className="text-sm whitespace-pre-wrap">
+                    {changelogContent}
+                  </pre>
                 </ScrollArea>
               </DialogContent>
             </Dialog>
