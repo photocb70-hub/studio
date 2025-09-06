@@ -19,14 +19,64 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles, Bot, Loader2 } from 'lucide-react';
 import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flow';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 
 const formSchema = z.object({
-  query: z.string().min(10, {
-    message: 'Please provide a more detailed description of the problem.',
-  }),
+  complaint: z.string().min(10, "Please describe the primary complaint."),
+  currentSphere: z.coerce.number().optional(),
+  currentCylinder: z.coerce.number().optional(),
+  currentAxis: z.coerce.number().optional(),
+  previousSphere: z.coerce.number().optional(),
+  previousCylinder: z.coerce.number().optional(),
+  previousAxis: z.coerce.number().optional(),
+  lensDetails: z.string().optional(),
+  measurements: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+const RxInputGroup = ({ control, groupName }: { control: any, groupName: 'current' | 'previous' }) => (
+    <div className="grid grid-cols-3 gap-4">
+        <FormField
+            control={control}
+            name={`${groupName}Sphere`}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Sphere</FormLabel>
+                    <FormControl>
+                        <Input type="number" step="0.25" placeholder="0.00" {...field} />
+                    </FormControl>
+                </FormItem>
+            )}
+        />
+        <FormField
+            control={control}
+            name={`${groupName}Cylinder`}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Cylinder</FormLabel>
+                    <FormControl>
+                        <Input type="number" step="0.25" placeholder="0.00" {...field} />
+                    </FormControl>
+                </FormItem>
+            )}
+        />
+        <FormField
+            control={control}
+            name={`${groupName}Axis`}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Axis</FormLabel>
+                    <FormControl>
+                        <Input type="number" step="1" placeholder="90" {...field} />
+                    </FormControl>
+                </FormItem>
+            )}
+        />
+    </div>
+);
+
 
 export default function AiProblemSolverPage() {
     const [result, setResult] = useState<ProblemSolverOutput | null>(null);
@@ -34,23 +84,38 @@ export default function AiProblemSolverPage() {
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-        query: '',
-        },
     });
+
+    const formatRx = (sph?: number, cyl?: number, axis?: number) => {
+        if (sph === undefined && cyl === undefined && axis === undefined) return null;
+        return `${sph?.toFixed(2) || '0.00'} / ${cyl?.toFixed(2) || '0.00'} x ${axis || '0'}`;
+    }
 
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);
         setResult(null);
 
+        const currentRx = formatRx(values.currentSphere, values.currentCylinder, values.currentAxis);
+        const previousRx = formatRx(values.previousSphere, values.previousCylinder, values.previousAxis);
+
+        const queryParts = [
+            `Primary Complaint: ${values.complaint}`,
+            currentRx && `Current Rx: ${currentRx}`,
+            previousRx && `Previous Rx: ${previousRx}`,
+            values.lensDetails && `Lens/Frame Details: ${values.lensDetails}`,
+            values.measurements && `Measurements: ${values.measurements}`,
+        ];
+        
+        const query = queryParts.filter(Boolean).join('\n');
+
         try {
-        const response = await solveProblem({ query: values.query });
-        setResult(response);
+            const response = await solveProblem({ query });
+            setResult(response);
         } catch (error) {
-        console.error("Error solving problem:", error);
-        // You might want to show an error toast to the user here
+            console.error("Error solving problem:", error);
+            // You might want to show an error toast to the user here
         } finally {
-        setIsLoading(false);
+            setIsLoading(false);
         }
     };
 
@@ -68,31 +133,71 @@ export default function AiProblemSolverPage() {
                 <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <FormField
-                    control={form.control}
-                    name="query"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel className="sr-only">Problem Description</FormLabel>
-                        <FormControl>
-                            <Textarea
-                            placeholder={
-`Please provide a detailed description of the problem. Include as much information as possible, such as:
-
-- The primary complaint (e.g., 'Patient complains of peripheral distortion...')
-- Current Prescription (Sphere, Cylinder, Axis, Add)
-- Previous Prescription (if available)
-- Current Frame Details (Lens Type, Material, Base Curve)
-- Previous Frame Details
-- Any relevant measurements (PD, Fitting Heights)`
-                            }
-                            className="min-h-[250px] text-sm"
-                            {...field}
-                            />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
+                        control={form.control}
+                        name="complaint"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Patient's Primary Complaint</FormLabel>
+                                <FormControl>
+                                    <Textarea
+                                        placeholder="e.g., 'Patient complains of peripheral distortion and headaches with new glasses...'"
+                                        className="min-h-[100px]"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
                     />
+                    
+                    <Separator />
+                    
+                    <div>
+                        <h3 className="text-lg font-medium mb-4">Current Prescription (Optional)</h3>
+                        <RxInputGroup control={form.control} groupName="current" />
+                    </div>
+
+                    <div>
+                        <h3 className="text-lg font-medium mb-4">Previous Prescription (Optional)</h3>
+                        <RxInputGroup control={form.control} groupName="previous" />
+                    </div>
+
+                    <Separator />
+                    
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <FormField
+                            control={form.control}
+                            name="lensDetails"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Lens & Frame Details (Optional)</FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            placeholder="e.g., 'Current: 1.67 SV / Prev: 1.5 Poly. New frame is much larger with a higher base curve.'"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                         <FormField
+                            control={form.control}
+                            name="measurements"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Measurements (Optional)</FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            placeholder="e.g., 'PD: 64/61, Fitting Heights: 18mm, BVD: 10mm'"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+
                     <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                     {isLoading ? (
                         <Loader2 className="mr-2 size-4 animate-spin" />
