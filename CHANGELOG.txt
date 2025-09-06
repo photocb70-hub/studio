@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3 alpha]
+### Changed
+- Configured the Next.js project to generate a static export (`output: 'export'`) in preparation for being wrapped into a native mobile application.
+
 ## [2.2 alpha]
 ### Added
 - Added a new "Contact Lens Rx Converter" to the Clinical Tools section to compensate spectacle prescriptions for vertex distance.
