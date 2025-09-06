@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Pill, Sparkles, ScanEye } from 'lucide-react';
+import { Pill, Sparkles, ScanEye, ClipboardCheck } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -20,6 +20,13 @@ const clinicalMenuItems = [
     title: 'Contact Lens Rx Converter',
     description: 'Convert a spectacle Rx to a contact lens Rx.',
     icon: <ContactLensIcon className="size-8 text-primary" />,
+    inDevelopment: false,
+  },
+  {
+    href: '/rx-tolerance',
+    title: 'Rx Tolerance Checker',
+    description: 'Check if a final Rx is within manufacturing tolerance.',
+    icon: <ClipboardCheck className="size-8 text-primary" />,
     inDevelopment: false,
   },
   {
