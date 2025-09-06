@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -49,101 +49,97 @@ const diameterOptions = [55, 60, 65, 70, 75, 80];
 
 const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, maxAxis, eye }: { minThickness: number, maxThickness: number, centerThickness: number, minAxis: number, maxAxis: number, eye: 'OD' | 'OS' }) => {
   const isPlusLens = (minThickness + maxThickness) / 2 < centerThickness;
-  
-  const memoizedDiagrams = useMemo(() => {
-    const plusPath = `M 20,50 C 35,30 75,30 90,50 C 75,70 35,70 20,50 Z`;
-    const minusPath = `M 20,35 C 45,45 65,45 90,35 L 90,65 C 65,55 45,55 20,65 Z`;
-    const etRotation = `rotate(${maxAxis} 50 50)`;
 
-    // Calculate positions for text so it doesn't rotate
-    const maxAngleRad = (maxAxis - 90) * Math.PI / 180;
-    const minAngleRad = (minAxis - 90) * Math.PI / 180;
+  const plusPath = `M 20,50 C 35,30 75,30 90,50 C 75,70 35,70 20,50 Z`;
+  const minusPath = `M 20,35 C 45,45 65,45 90,35 L 90,65 C 65,55 45,55 20,65 Z`;
+  const etRotation = `rotate(${maxAxis} 50 50)`;
 
-    const maxTextX = 50 + Math.cos(maxAngleRad) * 58;
-    const maxTextY = 50 + Math.sin(maxAngleRad) * 58;
-    const minTextX = 50 + Math.cos(minAngleRad) * 58;
-    const minTextY = 50 + Math.sin(minAngleRad) * 58;
+  // Calculate positions for text so it doesn't rotate
+  const maxAngleRad = (maxAxis - 90) * Math.PI / 180;
+  const minAngleRad = (minAxis - 90) * Math.PI / 180;
 
-    const nasalX = eye === 'OD' ? -10 : 110;
-    const templeX = eye === 'OD' ? 110 : -10;
+  const maxTextX = 50 + Math.cos(maxAngleRad) * 58;
+  const maxTextY = 50 + Math.sin(maxAngleRad) * 58;
+  const minTextX = 50 + Math.cos(minAngleRad) * 58;
+  const minTextY = 50 + Math.sin(minAngleRad) * 58;
 
-    return (
-      <div className="w-full max-w-[250px] mx-auto p-4 flex flex-col items-center justify-center gap-6">
-        {/* 2D Cross-section */}
-        <div className="w-full">
-            <svg viewBox="0 0 110 100" className="w-full h-auto overflow-visible">
-                <path
-                    d={isPlusLens ? plusPath : minusPath}
-                    fill="none"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth="1.5"
-                />
-                
-                {isPlusLens ? (
+  const nasalX = eye === 'OD' ? -10 : 110;
+  const templeX = eye === 'OD' ? 110 : -10;
+
+  return (
+    <div className="w-full max-w-[250px] mx-auto p-4 flex flex-col items-center justify-center gap-6">
+      {/* 2D Cross-section */}
+      <div className="w-full">
+          <svg viewBox="0 0 110 100" className="w-full h-auto overflow-visible">
+              <path
+                  d={isPlusLens ? plusPath : minusPath}
+                  fill="none"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth="1.5"
+              />
+              
+              {isPlusLens ? (
+                <>
+                  {/* Center thickness line and label for Plus Lens */}
+                  <line x1="55" y1={30} x2="55" y2={70} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
+                  <line x1="55" y1={50} x2="70" y2="15" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5"/>
+                  <text x="72" y="15" textAnchor="start" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{centerThickness.toFixed(2)}mm</text>
+                </>
+              ) : (
                   <>
-                    {/* Center thickness line and label for Plus Lens */}
-                    <line x1="55" y1={30} x2="55" y2={70} stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
-                    <line x1="55" y1={50} x2="70" y2="15" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5"/>
-                    <text x="72" y="15" textAnchor="start" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{centerThickness.toFixed(2)}mm</text>
-                  </>
-                ) : (
-                   <>
-                    {/* Edge thickness line and label for Minus Lens */}
-                    <line x1="20" y1="50" x2="10" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
-                    <text x="8" y="50" textAnchor="end" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{minThickness.toFixed(2)}mm</text>
-                  </>
-                )}
-            </svg>
-        </div>
-        
-        <Separator />
-        
-        {/* 3D Perspective */}
-        <div className="w-full">
-             <svg viewBox="-20 -20 140 140" className="w-full h-auto overflow-visible">
-                <defs>
-                    <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                        <stop offset="0%" style={{stopColor: 'hsl(var(--primary) / 0.2)', stopOpacity: 1}} />
-                        <stop offset="100%" style={{stopColor: 'hsl(var(--primary) / 0.1)', stopOpacity: 1}} />
-                    </radialGradient>
-                </defs>
-                
-                {/* Back surface */}
-                <ellipse cx="50" cy="50" rx="45" ry="30" fill="url(#grad1)" />
-                
-                {/* Edge */}
-                <ellipse cx="50" cy="50" rx="45" ry="30" fill="none" stroke="hsl(var(--primary) / 0.5)" strokeWidth="1.5"/>
-                
-                {/* Front curve highlight */}
-                <path d="M 20 40 C 40 25, 60 25, 80 40" fill="none" stroke="hsl(var(--background) / 0.5)" strokeWidth="2.5" strokeLinecap="round" />
-            
-                {/* Rotated Indicator Lines */}
-                <g transform={etRotation}>
-                    {/* Max Thickness Line */}
-                    <line x1="50" y1="20" x2="50" y2="0" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
-
-                    {/* Min Thickness Line */}
-                    <line x1="5" y1="50" x2="-10" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
-                </g>
-                
-                {/* Non-rotated Text Labels */}
-                <text x={maxTextX} y={maxTextY - 5} textAnchor="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{maxThickness.toFixed(2)}mm</text>
-                <text x={maxTextX} y={maxTextY + 7} textAnchor="middle" fontSize="7" fill="hsl(var(--muted-foreground))">({maxAxis}°)</text>
-
-                <text x={minTextX} y={minTextY - 5} textAnchor="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{minThickness.toFixed(2)}mm</text>
-                <text x={minTextX} y={minTextY + 7} textAnchor="middle" fontSize="7" fill="hsl(var(--muted-foreground))">({minAxis}°)</text>
-
-                 {/* Nasal/Temple indicators */}
-                <text x={nasalX} y="55" textAnchor="middle" fontSize="10" fill="hsl(var(--muted-foreground))" className="font-bold">N</text>
-                <text x={templeX} y="55" textAnchor="middle" fontSize="10" fill="hsl(var(--muted-foreground))" className="font-bold">T</text>
-            </svg>
-        </div>
+                  {/* Edge thickness line and label for Minus Lens */}
+                  <line x1="20" y1="50" x2="10" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
+                  <text x="8" y="50" textAnchor="end" dominantBaseline="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{minThickness.toFixed(2)}mm</text>
+                </>
+              )}
+          </svg>
       </div>
-    );
-  }, [isPlusLens, minThickness, maxThickness, centerThickness, minAxis, maxAxis, eye]);
+      
+      <Separator />
+      
+      {/* 3D Perspective */}
+      <div className="w-full">
+            <svg viewBox="-20 -20 140 140" className="w-full h-auto overflow-visible">
+              <defs>
+                  <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                      <stop offset="0%" style={{stopColor: 'hsl(var(--primary) / 0.2)', stopOpacity: 1}} />
+                      <stop offset="100%" style={{stopColor: 'hsl(var(--primary) / 0.1)', stopOpacity: 1}} />
+                  </radialGradient>
+              </defs>
+              
+              {/* Back surface */}
+              <ellipse cx="50" cy="50" rx="45" ry="30" fill="url(#grad1)" />
+              
+              {/* Edge */}
+              <ellipse cx="50" cy="50" rx="45" ry="30" fill="none" stroke="hsl(var(--primary) / 0.5)" strokeWidth="1.5"/>
+              
+              {/* Front curve highlight */}
+              <path d="M 20 40 C 40 25, 60 25, 80 40" fill="none" stroke="hsl(var(--background) / 0.5)" strokeWidth="2.5" strokeLinecap="round" />
+          
+              {/* Rotated Indicator Lines */}
+              <g transform={etRotation}>
+                  {/* Max Thickness Line */}
+                  <line x1="50" y1="20" x2="50" y2="0" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
 
-  return memoizedDiagrams;
-}
+                  {/* Min Thickness Line */}
+                  <line x1="5" y1="50" x2="-10" y2="50" stroke="hsl(var(--foreground) / 0.5)" strokeWidth="0.5" />
+              </g>
+              
+              {/* Non-rotated Text Labels */}
+              <text x={maxTextX} y={maxTextY - 5} textAnchor="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{maxThickness.toFixed(2)}mm</text>
+              <text x={maxTextX} y={maxTextY + 7} textAnchor="middle" fontSize="7" fill="hsl(var(--muted-foreground))">({maxAxis}°)</text>
+
+              <text x={minTextX} y={minTextY - 5} textAnchor="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-medium">{minThickness.toFixed(2)}mm</text>
+              <text x={minTextX} y={minTextY + 7} textAnchor="middle" fontSize="7" fill="hsl(var(--muted-foreground))">({minAxis}°)</text>
+
+                {/* Nasal/Temple indicators */}
+              <text x={nasalX} y="55" textAnchor="middle" fontSize="10" fill="hsl(var(--muted-foreground))" className="font-bold">N</text>
+              <text x={templeX} y="55" textAnchor="middle" fontSize="10" fill="hsl(var(--muted-foreground))" className="font-bold">T</text>
+          </svg>
+      </div>
+    </div>
+  );
+};
 
 export default function EdgeThicknessPage() {
   const [result, setResult] = useState<{ minThickness: number; maxThickness: number; centerThickness: number; minAxis: number; maxAxis: number; eye: 'OD' | 'OS' } | null>(null);
@@ -405,7 +401,7 @@ export default function EdgeThicknessPage() {
 
         <div className="flex items-center justify-center">
             {result ? (
-                <Card className="w-full">
+                <Card className="w-full bg-accent/10 border-accent/50">
                     <CardHeader>
                         <CardTitle>Result & Visualization</CardTitle>
                     </CardHeader>
