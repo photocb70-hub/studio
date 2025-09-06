@@ -18,7 +18,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Calculator } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   eyeSize: z.coerce.number().min(1, "Must be a positive number."),
@@ -33,7 +32,6 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function BlankSizePage() {
   const [result, setResult] = useState<number | null>(null);
-  const { toast } = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
