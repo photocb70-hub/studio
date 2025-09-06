@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [2.0 alpha]
+### Changed
+- Alphabetized the items on the "Dispensing Tools" page for better organization.
+- Added distinct, thematic background images to the main, clinical, and dispensing pages to improve visual identity.
+
 ### Added
 - Implemented the initial framework for a new "AI Image Analyzer" tool in the Clinical section. This experimental feature allows users to upload an ocular image for an AI-powered analysis.
 
