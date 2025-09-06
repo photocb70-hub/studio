@@ -19,112 +19,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles, Bot, Loader2 } from 'lucide-react';
 import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flow';
-import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
-import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
-  complaint: z.string().min(10, "Please describe the primary complaint."),
-  currentSphere: z.coerce.number().optional(),
-  currentCylinder: z.coerce.number().optional(),
-  currentAxis: z.coerce.number().optional(),
-  currentAdd: z.coerce.number().optional(),
-  currentPrism: z.coerce.number().optional(),
-  currentPrismBase: z.string().optional(),
-  previousSphere: z.coerce.number().optional(),
-  previousCylinder: z.coerce.number().optional(),
-  previousAxis: z.coerce.number().optional(),
-  previousAdd: z.coerce.number().optional(),
-  previousPrism: z.coerce.number().optional(),
-  previousPrismBase: z.string().optional(),
-  lensDetails: z.string().optional(),
-  measurements: z.string().optional(),
+  query: z.string().min(10, "Please describe the optical problem in at least 10 characters."),
 });
 
 type FormValues = z.infer<typeof formSchema>;
-
-const RxInputGroup = ({ control, groupName }: { control: any, groupName: 'current' | 'previous' }) => (
-    <div className="space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <FormField
-                control={control}
-                name={`${groupName}Sphere`}
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Sphere</FormLabel>
-                        <FormControl>
-                            <Input type="number" step="0.25" placeholder="0.00" {...field} value={field.value ?? ''} />
-                        </FormControl>
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={control}
-                name={`${groupName}Cylinder`}
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Cylinder</FormLabel>
-                        <FormControl>
-                            <Input type="number" step="0.25" placeholder="0.00" {...field} value={field.value ?? ''} />
-                        </FormControl>
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={control}
-                name={`${groupName}Axis`}
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Axis</FormLabel>
-                        <FormControl>
-                            <Input type="number" step="1" placeholder="90" {...field} value={field.value ?? ''} />
-                        </FormControl>
-                    </FormItem>
-                )}
-            />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-             <FormField
-                control={control}
-                name={`${groupName}Add`}
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Add</FormLabel>
-                        <FormControl>
-                            <Input type="number" step="0.25" placeholder="+0.00" {...field} value={field.value ?? ''} />
-                        </FormControl>
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={control}
-                name={`${groupName}Prism`}
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Prism</FormLabel>
-                        <FormControl>
-                            <Input type="number" step="0.25" placeholder="0.00" {...field} value={field.value ?? ''} />
-                        </FormControl>
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={control}
-                name={`${groupName}PrismBase`}
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Base</FormLabel>
-                        <FormControl>
-                            <Input type="text" placeholder="e.g., In, Up" {...field} value={field.value ?? ''} />
-                        </FormControl>
-                    </FormItem>
-                )}
-            />
-        </div>
-    </div>
-);
-
 
 export default function AiProblemSolverPage() {
     const [result, setResult] = useState<ProblemSolverOutput | null>(null);
@@ -134,60 +35,23 @@ export default function AiProblemSolverPage() {
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            complaint: "",
+            query: "",
         }
     });
-
-    const formatRx = (values: FormValues, group: 'current' | 'previous') => {
-        const sph = values[`${group}Sphere`];
-        const cyl = values[`${group}Cylinder`];
-        const axis = values[`${group}Axis`];
-        const add = values[`${group}Add`];
-        const prism = values[`${group}Prism`];
-        const base = values[`${group}PrismBase`];
-
-        const hasValue = (v: any) => v !== undefined && v !== '' && v !== null && !isNaN(v);
-
-        if (
-            !hasValue(sph) && !hasValue(cyl) && !hasValue(axis) &&
-            !hasValue(add) && !hasValue(prism) && !hasValue(base)
-        ) {
-            return null;
-        }
-        
-        let rxString = `${hasValue(sph) ? Number(sph).toFixed(2) : '0.00'} / ${hasValue(cyl) ? Number(cyl).toFixed(2) : '0.00'} x ${hasValue(axis) ? axis : '0'}`;
-        if (hasValue(add)) rxString += ` Add: ${Number(add).toFixed(2)}`;
-        if (hasValue(prism) && base) rxString += ` Prism: ${Number(prism).toFixed(2)} Base ${base}`;
-
-        return rxString;
-    }
 
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);
         setResult(null);
 
-        const currentRx = formatRx(values, 'current');
-        const previousRx = formatRx(values, 'previous');
-
-        const queryParts = [
-            `Primary Complaint: ${values.complaint}`,
-            currentRx ? `Current Rx: ${currentRx}` : null,
-            previousRx ? `Previous Rx: ${previousRx}` : null,
-            values.lensDetails ? `Lens/Frame Details: ${values.lensDetails}` : null,
-            values.measurements ? `Measurements: ${values.measurements}` : null,
-        ];
-        
-        const query = queryParts.filter(Boolean).join('\n');
-
         try {
-            const response = await solveProblem({ query });
+            const response = await solveProblem({ query: values.query });
             setResult(response);
         } catch (error) {
             console.error("Error solving problem:", error);
             toast({
                 variant: 'destructive',
                 title: 'Analysis Failed',
-                description: 'The AI model could not process this request. Please try again.',
+                description: 'The AI model could not process this request. Please try rephrasing your query.',
             });
         } finally {
             setIsLoading(false);
@@ -209,14 +73,14 @@ export default function AiProblemSolverPage() {
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <FormField
                         control={form.control}
-                        name="complaint"
+                        name="query"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Patient's Primary Complaint</FormLabel>
+                                <FormLabel>Patient Complaint &amp; Data</FormLabel>
                                 <FormControl>
                                     <Textarea
-                                        placeholder="e.g., 'Patient complains of peripheral distortion and headaches with new glasses...'"
-                                        className="min-h-[100px]"
+                                        placeholder="e.g., 'Patient complains of peripheral distortion with new glasses. Current Rx: -4.00 / -1.00 x 180, Prev Rx: -3.50 DS. New frame is a larger metal frame, previous was a smaller plastic one...'"
+                                        className="min-h-[150px]"
                                         {...field}
                                     />
                                 </FormControl>
@@ -225,63 +89,6 @@ export default function AiProblemSolverPage() {
                         )}
                     />
                     
-                    <Separator />
-                    
-                    <div>
-                        <h3 className="text-lg font-medium mb-4">Current Prescription (Optional)</h3>
-                        <RxInputGroup control={form.control} groupName="current" />
-                    </div>
-
-                    <div>
-                        <h3 className="text-lg font-medium mb-4">Previous Prescription (Optional)</h3>
-                        <RxInputGroup control={form.control} groupName="previous" />
-                    </div>
-
-                    <Separator />
-                    
-                    <div className="grid md:grid-cols-2 gap-6">
-                        <FormField
-                            control={form.control}
-                            name="lensDetails"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Lens & Frame Details (Optional)</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="e.g., 'Current: 1.67 SV / Prev: 1.5 Poly. New frame is much larger with a higher base curve.'"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
-                         <FormField
-                            control={form.control}
-                            name="measurements"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Measurements (Optional)</FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="e.g., 'PD: 64/61, Fitting Heights: 18mm, BVD: 10mm'"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                        <Checkbox id="knob-checkbox" />
-                        <label
-                            htmlFor="knob-checkbox"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                            Is the px a knob?
-                        </label>
-                    </div>
-
                     <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                     {isLoading ? (
                         <Loader2 className="mr-2 size-4 animate-spin" />
