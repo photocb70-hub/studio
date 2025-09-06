@@ -323,7 +323,7 @@ export default function Home() {
                   <DialogTitle>Application Changelog</DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-[60vh] pr-4">
-                    <div className="prose prose-sm dark:prose-invert" dangerouslySetInnerHTML={{ __html: changelogHtml }}/>
+                    <div className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: changelogHtml }}/>
                 </ScrollArea>
               </DialogContent>
             </Dialog>
