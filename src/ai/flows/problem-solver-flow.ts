@@ -36,7 +36,7 @@ const problemSolverPrompt = ai.definePrompt({
   name: 'problemSolverPrompt',
   input: { schema: ProblemSolverInputSchema },
   output: { schema: ProblemSolverOutputSchema },
-  model: googleAI('gemini-1.5-flash-latest'),
+  model: googleAI('gemini-1.5-pro-latest'),
   prompt: `You are an expert ophthalmic optician and AI problem solver. A user has presented you with the following optical scenario.
 
 Your task is to:
