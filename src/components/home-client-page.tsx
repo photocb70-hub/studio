@@ -130,7 +130,7 @@ export default function HomeClientPage({ changelogContent }: { changelogContent:
   return (
     <div
       className="relative min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
-      style={{ backgroundImage: "url('/background.jpg')" }}
+      style={{ backgroundImage: "url('/main.jpg')" }}
     >
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
       <div className="relative z-10 flex min-h-screen flex-col">
