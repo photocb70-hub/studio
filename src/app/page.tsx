@@ -110,7 +110,7 @@ export default function Home() {
   return (
     <>
       <main 
-        className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000 bg-cover bg-center bg-no-repeat bg-fixed"
+        className="flex min-h-screen w-full flex-col p-4 sm:p-6 lg:p-8 transition-all duration-1000 bg-cover bg-center bg-no-repeat bg-fixed"
         style={{ backgroundImage: "url('/main.jpg')" }}
       >
         <div className="absolute top-4 right-4 z-20">
@@ -119,51 +119,53 @@ export default function Home() {
         <div 
           className="absolute inset-0 bg-background/80 backdrop-blur-sm z-0"
         />
-        <div className="w-full max-w-4xl z-10">
-          <header className="mb-12 text-center">
-            <div className="mb-4 inline-flex cursor-pointer items-center gap-3" onClick={handleTitleClick}>
-              <Eye className="size-10 text-primary" />
-              <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-                Optical Prime
-              </h1>
-            </div>
-            <p className="text-lg text-muted-foreground">
-              Precision tools for optical professionals.
-            </p>
-          </header>
+        <div className="w-full max-w-4xl z-10 mx-auto flex flex-col flex-grow items-center justify-center">
+            <header className="mb-12 text-center">
+                <div className="mb-4 inline-flex cursor-pointer items-center gap-3" onClick={handleTitleClick}>
+                <Eye className="size-10 text-primary" />
+                <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+                    Optical Prime
+                </h1>
+                </div>
+                <p className="text-lg text-muted-foreground">
+                Precision tools for optical professionals.
+                </p>
+            </header>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2">
-            {menuItems.map((item) => (
-                <Link
-                  href={item.href}
-                  key={item.href}
-                  className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                >
-                  <MenuItemCard item={item} />
-                </Link>
-              ))}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 w-full">
+                {menuItems.map((item) => (
+                    <Link
+                    href={item.href}
+                    key={item.href}
+                    className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    >
+                    <MenuItemCard item={item} />
+                    </Link>
+                ))}
+            </div>
           </div>
           
-          <AppFooter version={appVersion}>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <ScrollText className="mr-2" />
-                  Changelog
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogHeader>
-                  <DialogTitle>Application Changelog</DialogTitle>
-                </DialogHeader>
-                <ScrollArea className="h-[60vh] pr-4">
-                  <pre className="text-sm whitespace-pre-wrap">
-                    {changelogContent}
-                  </pre>
-                </ScrollArea>
-              </DialogContent>
-            </Dialog>
-          </AppFooter>
+        <div className="w-full max-w-4xl z-10 mx-auto">
+            <AppFooter version={appVersion}>
+                <Dialog>
+                <DialogTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                    <ScrollText className="mr-2" />
+                    Changelog
+                    </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                    <DialogTitle>Application Changelog</DialogTitle>
+                    </DialogHeader>
+                    <ScrollArea className="h-[60vh] pr-4">
+                    <pre className="text-sm whitespace-pre-wrap">
+                        {changelogContent}
+                    </pre>
+                    </ScrollArea>
+                </DialogContent>
+                </Dialog>
+            </AppFooter>
         </div>
       </main>
 
