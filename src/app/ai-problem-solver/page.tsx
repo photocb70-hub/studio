@@ -54,7 +54,7 @@ const RxInputGroup = ({ control, groupName }: { control: any, groupName: 'curren
                     <FormItem>
                         <FormLabel>Sphere</FormLabel>
                         <FormControl>
-                            <Input type="number" step="0.25" placeholder="0.00" {...field} />
+                            <Input type="number" step="0.25" placeholder="0.00" {...field} value={field.value ?? ''} />
                         </FormControl>
                     </FormItem>
                 )}
@@ -66,7 +66,7 @@ const RxInputGroup = ({ control, groupName }: { control: any, groupName: 'curren
                     <FormItem>
                         <FormLabel>Cylinder</FormLabel>
                         <FormControl>
-                            <Input type="number" step="0.25" placeholder="0.00" {...field} />
+                            <Input type="number" step="0.25" placeholder="0.00" {...field} value={field.value ?? ''} />
                         </FormControl>
                     </FormItem>
                 )}
@@ -78,7 +78,7 @@ const RxInputGroup = ({ control, groupName }: { control: any, groupName: 'curren
                     <FormItem>
                         <FormLabel>Axis</FormLabel>
                         <FormControl>
-                            <Input type="number" step="1" placeholder="90" {...field} />
+                            <Input type="number" step="1" placeholder="90" {...field} value={field.value ?? ''} />
                         </FormControl>
                     </FormItem>
                 )}
@@ -92,7 +92,7 @@ const RxInputGroup = ({ control, groupName }: { control: any, groupName: 'curren
                     <FormItem>
                         <FormLabel>Add</FormLabel>
                         <FormControl>
-                            <Input type="number" step="0.25" placeholder="+0.00" {...field} />
+                            <Input type="number" step="0.25" placeholder="+0.00" {...field} value={field.value ?? ''} />
                         </FormControl>
                     </FormItem>
                 )}
@@ -104,7 +104,7 @@ const RxInputGroup = ({ control, groupName }: { control: any, groupName: 'curren
                     <FormItem>
                         <FormLabel>Prism</FormLabel>
                         <FormControl>
-                            <Input type="number" step="0.25" placeholder="0.00" {...field} />
+                            <Input type="number" step="0.25" placeholder="0.00" {...field} value={field.value ?? ''} />
                         </FormControl>
                     </FormItem>
                 )}
@@ -116,7 +116,7 @@ const RxInputGroup = ({ control, groupName }: { control: any, groupName: 'curren
                     <FormItem>
                         <FormLabel>Base</FormLabel>
                         <FormControl>
-                            <Input type="text" placeholder="e.g., In, Up" {...field} />
+                            <Input type="text" placeholder="e.g., In, Up" {...field} value={field.value ?? ''} />
                         </FormControl>
                     </FormItem>
                 )}
@@ -133,6 +133,9 @@ export default function AiProblemSolverPage() {
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
+        defaultValues: {
+            complaint: "",
+        }
     });
 
     const formatRx = (values: FormValues, group: 'current' | 'previous') => {
@@ -143,20 +146,18 @@ export default function AiProblemSolverPage() {
         const prism = values[`${group}Prism`];
         const base = values[`${group}PrismBase`];
 
-        const hasValue = (v: any) => v !== undefined && v !== '' && v !== null;
+        const hasValue = (v: any) => v !== undefined && v !== '' && v !== null && !isNaN(v);
 
-        const hasSph = hasValue(sph) && sph !== 0;
-        const hasCyl = hasValue(cyl) && cyl !== 0;
-        const hasAxis = hasValue(axis);
-        const hasAdd = hasValue(add) && add !== 0;
-        const hasPrism = hasValue(prism) && prism !== 0;
-        const hasBase = hasValue(base);
-
-        if (!hasSph && !hasCyl && !hasAdd && !hasPrism) return null;
+        if (
+            !hasValue(sph) && !hasValue(cyl) && !hasValue(axis) &&
+            !hasValue(add) && !hasValue(prism) && !hasValue(base)
+        ) {
+            return null;
+        }
         
-        let rxString = `${sph?.toFixed(2) || '0.00'} / ${cyl?.toFixed(2) || '0.00'} x ${axis || '0'}`;
-        if (hasAdd) rxString += ` Add: ${add?.toFixed(2)}`;
-        if (hasPrism && hasBase) rxString += ` Prism: ${prism?.toFixed(2)} Base ${base}`;
+        let rxString = `${hasValue(sph) ? sph?.toFixed(2) : '0.00'} / ${hasValue(cyl) ? cyl?.toFixed(2) : '0.00'} x ${hasValue(axis) ? axis : '0'}`;
+        if (hasValue(add)) rxString += ` Add: ${add?.toFixed(2)}`;
+        if (hasValue(prism) && base) rxString += ` Prism: ${prism?.toFixed(2)} Base ${base}`;
 
         return rxString;
     }
@@ -321,4 +322,5 @@ export default function AiProblemSolverPage() {
         </div>
         </ToolPageLayout>
     );
-}
+
+    
