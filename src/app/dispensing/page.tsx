@@ -71,6 +71,10 @@ const MenuItemCard = ({ item }: { item: typeof dispensingMenuItems[0] }) => (
 
 export default function DispensingPage() {
   return (
+    <div
+      className="bg-cover bg-center bg-no-repeat bg-fixed"
+      style={{ backgroundImage: "url('/dispensing.jpg')" }}
+    >
     <ToolPageLayout
       title="Dispensing Tools"
       description="A collection of calculators for lens fitting and measurements."
@@ -87,5 +91,6 @@ export default function DispensingPage() {
             ))}
         </div>
     </ToolPageLayout>
+    </div>
   );
 }

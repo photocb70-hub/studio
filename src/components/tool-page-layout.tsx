@@ -16,7 +16,7 @@ export function ToolPageLayout({ title, description, children }: ToolPageLayoutP
   const router = useRouter();
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background">
+    <div className="flex min-h-screen w-full flex-col bg-background/80 backdrop-blur-sm">
       <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-4">

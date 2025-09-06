@@ -66,7 +66,8 @@ export default function Home() {
   return (
     <>
       <main 
-          className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000"
+        className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000 bg-cover bg-center bg-no-repeat bg-fixed"
+        style={{ backgroundImage: "url('/main.jpg')" }}
       >
         <div 
           className="absolute inset-0 bg-background/80 backdrop-blur-sm z-0"

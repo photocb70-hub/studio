@@ -54,30 +54,35 @@ const MenuItemCard = ({ item }: { item: typeof clinicalMenuItems[0] }) => (
 
 export default function ClinicalPage() {
   return (
-    <ToolPageLayout
-      title="Clinical Tools"
-      description="A collection of guides and assistants for clinical decision-making."
+    <div 
+      className="bg-cover bg-center bg-no-repeat bg-fixed"
+      style={{ backgroundImage: "url('/clinical.jpg')" }}
     >
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {clinicalMenuItems.map((item) => {
-              if (item.testing) {
+      <ToolPageLayout
+        title="Clinical Tools"
+        description="A collection of guides and assistants for clinical decision-making."
+      >
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              {clinicalMenuItems.map((item) => {
+                if (item.testing) {
+                  return (
+                    <div key={item.href} className="group rounded-lg cursor-not-allowed">
+                      <MenuItemCard item={item} />
+                    </div>
+                  );
+                }
                 return (
-                  <div key={item.href} className="group rounded-lg cursor-not-allowed">
+                  <Link
+                    href={item.href}
+                    key={item.href}
+                    className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  >
                     <MenuItemCard item={item} />
-                  </div>
+                  </Link>
                 );
-              }
-              return (
-                <Link
-                  href={item.href}
-                  key={item.href}
-                  className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                >
-                  <MenuItemCard item={item} />
-                </Link>
-              );
-            })}
-        </div>
-    </ToolPageLayout>
+              })}
+          </div>
+      </ToolPageLayout>
+    </div>
   );
 }
