@@ -11,18 +11,16 @@ export function AppFooter({ version, children }: { version: string, children?: R
   }, []);
 
   return (
-    <footer className="mt-12 text-center text-sm text-muted-foreground">
-      <div className="flex items-center justify-center gap-4">
+    <footer className="mt-12 flex flex-col items-center justify-center text-center text-sm text-muted-foreground">
         <div>
             {year !== null ? (
                 <p>© {year} Optical Prime. All Rights Reserved.</p>
             ) : (
-                <p>&nbsp;</p>
+                <p>&nbsp;</p> 
             )}
             {version && <p className="mt-1 opacity-75">Version {version}</p>}
         </div>
-        {children}
-      </div>
+        {children && <div className="mt-2">{children}</div>}
     </footer>
   );
 }
