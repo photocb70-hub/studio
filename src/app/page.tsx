@@ -1,6 +1,7 @@
 
 'use client';
 
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles, Pill } from 'lucide-react';
 import {
@@ -10,6 +11,7 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { AppFooter } from '@/components/app-footer';
+import { useToast } from '@/hooks/use-toast';
 
 const menuItems = [
   {
@@ -69,7 +71,7 @@ const menuItems = [
   },
 ];
 
-const appVersion = "1.2 alpha";
+const appVersion = "1.4 alpha";
 
 const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
   <Card className="relative flex h-full items-center overflow-hidden bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-lg">
@@ -89,6 +91,21 @@ const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
 );
 
 export default function Home() {
+  const [clicks, setClicks] = useState(0);
+  const { toast } = useToast();
+
+  const handleTitleClick = () => {
+    const newClicks = clicks + 1;
+    setClicks(newClicks);
+    if (newClicks === 10) {
+      toast({
+        title: 'You found the Easter Egg!',
+        description: 'Thanks for being so curious. Have a great day!',
+      });
+      setClicks(0); // Reset for next time
+    }
+  };
+
 
   return (
     <main 
@@ -99,7 +116,7 @@ export default function Home() {
       />
       <div className="w-full max-w-4xl z-10">
         <header className="mb-12 text-center">
-          <div className="mb-4 inline-flex items-center gap-3">
+          <div className="mb-4 inline-flex cursor-pointer items-center gap-3" onClick={handleTitleClick}>
             <Eye className="size-10 text-primary" />
             <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
               Optical Prime
