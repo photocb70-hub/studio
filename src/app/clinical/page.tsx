@@ -31,6 +31,7 @@ const clinicalMenuItems = [
     title: 'AI Image Analyzer',
     description: 'Upload an ocular image for AI-powered analysis.',
     icon: <ScanEye className="size-8 text-primary" />,
+    testing: true,
   },
 ];
 

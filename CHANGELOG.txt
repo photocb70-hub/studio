@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1 alpha]
+### Added
+- Implemented the initial framework for a new "AI Image Analyzer" tool in the Clinical section to provide visual feedback. (Note: This feature is currently in testing and disabled on the UI).
+
 ## [2.0 alpha]
 ### Changed
 - Alphabetized the items on the "Dispensing Tools" page for better organization.
