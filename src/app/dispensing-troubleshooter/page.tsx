@@ -19,9 +19,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Workflow, Search, AlertTriangle } from 'lucide-react';
+import { Workflow, Search, AlertTriangle, Copy } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Slider } from '@/components/ui/slider';
@@ -175,7 +176,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx.od' | 'currentRx.os' 
                         <FormItem>
                             <FormLabel>PD (mm)</FormLabel>
                             <FormControl>
-                            <Input placeholder="e.g., 64" {...field} value={field.value ?? ''} />
+                            <Input placeholder="e.g., 30" {...field} value={field.value ?? ''} />
                             </FormControl>
                         </FormItem>
                     )}
@@ -222,14 +223,51 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx.od' | 'currentRx.os' 
 };
 
 const BinocularRxInput = ({ nestName, title }: { nestName: 'currentRx' | 'previousRx', title: string }) => {
+    const { getValues, setValue } = useFormContext<FormValues>();
+    const { toast } = useToast();
+
+    const copyMeasurementsOdToOs = () => {
+        const odMeasurements = {
+            pd: getValues(`${nestName}.od.pd`),
+            hts: getValues(`${nestName}.od.hts`),
+            prism: getValues(`${nestName}.od.prism`),
+            base: getValues(`${nestName}.od.base`),
+        };
+        setValue(`${nestName}.os.pd`, odMeasurements.pd);
+        setValue(`${nestName}.os.hts`, odMeasurements.hts);
+        setValue(`${nestName}.os.prism`, odMeasurements.prism);
+        setValue(`${nestName}.os.base`, odMeasurements.base);
+        toast({ title: 'Right eye measurements copied to left eye.' });
+    };
+
+    const copyCurrentToPrevious = () => {
+        const currentRxValues = getValues('currentRx');
+        setValue('previousRx', currentRxValues);
+        toast({ title: 'Current Rx copied to Previous Rx.' });
+    };
+
     return (
         <div>
-            <h4 className="mb-2 font-medium">{title}</h4>
+            <div className="flex justify-between items-center mb-2">
+                <h4 className="font-medium">{title}</h4>
+                {nestName === 'previousRx' && (
+                    <Button type="button" variant="ghost" size="sm" onClick={copyCurrentToPrevious} className="text-xs">
+                        <Copy className="mr-2"/>
+                        Copy Current Rx
+                    </Button>
+                )}
+            </div>
             <Tabs defaultValue="od">
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="od">Right Eye (OD)</TabsTrigger>
-                    <TabsTrigger value="os">Left Eye (OS)</TabsTrigger>
-                </TabsList>
+                 <div className="flex justify-between items-center border-b">
+                    <TabsList className="grid w-full grid-cols-2 bg-transparent p-0">
+                        <TabsTrigger value="od" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Right Eye (OD)</TabsTrigger>
+                        <TabsTrigger value="os" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Left Eye (OS)</TabsTrigger>
+                    </TabsList>
+                    <Button type="button" variant="ghost" size="sm" onClick={copyMeasurementsOdToOs} className="shrink-0 text-xs">
+                        <Copy className="mr-2"/>
+                        Copy Measurements to Left
+                    </Button>
+                </div>
                 <TabsContent value="od" className="pt-4">
                     <RxInputGroup nestName={`${nestName}.od`} />
                 </TabsContent>
@@ -295,7 +333,7 @@ export default function DispensingTroubleshooterPage() {
             odDiff.sph > 0.5 || odDiff.cyl > 0.5 || odDiff.axis > 10 ||
             osDiff.sph > 0.5 || osDiff.cyl > 0.5 || osDiff.axis > 10;
 
-        let keyFinding = "The previous and current prescriptions are identical. The issue may lie with dispensing parameters or lens type.";
+        let keyFinding = "The previous and current prescriptions are very similar. The issue may lie with dispensing parameters or lens type.";
         let investigationPoint = "Focus on Step 2: Check Dispensing Parameters.";
 
         if (isSignificantChange) {

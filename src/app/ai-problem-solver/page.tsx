@@ -191,15 +191,22 @@ const BinocularRxInput = ({ nestName, title }: { nestName: 'currentRx' | 'previo
     const { getValues, setValue } = useFormContext<FormValues>();
     const { toast } = useToast();
 
-    const copyOdToOs = () => {
-        const odValues = getValues(`${nestName}.od`);
-        setValue(`${nestName}.os`, odValues);
-        toast({ title: 'Right eye Rx copied to left eye.' });
+    const copyMeasurementsOdToOs = () => {
+        const odMeasurements = {
+            pd: getValues(`${nestName}.od.pd`),
+            hts: getValues(`${nestName}.od.hts`),
+            prism: getValues(`${nestName}.od.prism`),
+            base: getValues(`${nestName}.od.base`),
+        };
+        setValue(`${nestName}.os.pd`, odMeasurements.pd);
+        setValue(`${nestName}.os.hts`, odMeasurements.hts);
+        setValue(`${nestName}.os.prism`, odMeasurements.prism);
+        setValue(`${nestName}.os.base`, odMeasurements.base);
+        toast({ title: 'Right eye measurements copied to left eye.' });
     };
 
     const copyCurrentToPrevious = () => {
         const currentRxValues = getValues('currentRx');
-        const currentLensValues = getValues('lens');
         setValue('previousRx', currentRxValues);
         toast({ title: 'Current Rx copied to Previous Rx.' });
     };
@@ -221,9 +228,9 @@ const BinocularRxInput = ({ nestName, title }: { nestName: 'currentRx' | 'previo
                         <TabsTrigger value="od" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Right Eye (OD)</TabsTrigger>
                         <TabsTrigger value="os" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Left Eye (OS)</TabsTrigger>
                     </TabsList>
-                    <Button type="button" variant="ghost" size="sm" onClick={copyOdToOs} className="shrink-0 text-xs">
+                    <Button type="button" variant="ghost" size="sm" onClick={copyMeasurementsOdToOs} className="shrink-0 text-xs">
                         <Copy className="mr-2"/>
-                        Copy to Left Eye
+                        Copy Measurements to Left
                     </Button>
                 </div>
                 <TabsContent value="od" className="pt-4">
