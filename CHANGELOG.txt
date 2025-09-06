@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3 alpha]
+
+### Added
+- Implemented a new "Ocular Pharmacology Guide" page to provide a quick reference for common UK drugs and their potential ocular side effects.
+
 ## [1.2 alpha]
 
 ### Added
