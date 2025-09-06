@@ -22,6 +22,7 @@ import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flo
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   complaint: z.string().min(10, "Please describe the primary complaint."),
@@ -128,6 +129,7 @@ const RxInputGroup = ({ control, groupName }: { control: any, groupName: 'curren
 export default function AiProblemSolverPage() {
     const [result, setResult] = useState<ProblemSolverOutput | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const { toast } = useToast();
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -172,7 +174,11 @@ export default function AiProblemSolverPage() {
             setResult(response);
         } catch (error) {
             console.error("Error solving problem:", error);
-            // You might want to show an error toast to the user here
+            toast({
+                variant: 'destructive',
+                title: 'Analysis Failed',
+                description: 'The AI model could not process this request. Please try again.',
+            });
         } finally {
             setIsLoading(false);
         }
