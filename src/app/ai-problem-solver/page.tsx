@@ -27,9 +27,15 @@ const formSchema = z.object({
   currentSphere: z.coerce.number().optional(),
   currentCylinder: z.coerce.number().optional(),
   currentAxis: z.coerce.number().optional(),
+  currentAdd: z.coerce.number().optional(),
+  currentPrism: z.coerce.number().optional(),
+  currentPrismBase: z.string().optional(),
   previousSphere: z.coerce.number().optional(),
   previousCylinder: z.coerce.number().optional(),
   previousAxis: z.coerce.number().optional(),
+  previousAdd: z.coerce.number().optional(),
+  previousPrism: z.coerce.number().optional(),
+  previousPrismBase: z.string().optional(),
   lensDetails: z.string().optional(),
   measurements: z.string().optional(),
 });
@@ -37,43 +43,83 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const RxInputGroup = ({ control, groupName }: { control: any, groupName: 'current' | 'previous' }) => (
-    <div className="grid grid-cols-3 gap-4">
-        <FormField
-            control={control}
-            name={`${groupName}Sphere`}
-            render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Sphere</FormLabel>
-                    <FormControl>
-                        <Input type="number" step="0.25" placeholder="0.00" {...field} />
-                    </FormControl>
-                </FormItem>
-            )}
-        />
-        <FormField
-            control={control}
-            name={`${groupName}Cylinder`}
-            render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Cylinder</FormLabel>
-                    <FormControl>
-                        <Input type="number" step="0.25" placeholder="0.00" {...field} />
-                    </FormControl>
-                </FormItem>
-            )}
-        />
-        <FormField
-            control={control}
-            name={`${groupName}Axis`}
-            render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Axis</FormLabel>
-                    <FormControl>
-                        <Input type="number" step="1" placeholder="90" {...field} />
-                    </FormControl>
-                </FormItem>
-            )}
-        />
+    <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <FormField
+                control={control}
+                name={`${groupName}Sphere`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Sphere</FormLabel>
+                        <FormControl>
+                            <Input type="number" step="0.25" placeholder="0.00" {...field} />
+                        </FormControl>
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name={`${groupName}Cylinder`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Cylinder</FormLabel>
+                        <FormControl>
+                            <Input type="number" step="0.25" placeholder="0.00" {...field} />
+                        </FormControl>
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name={`${groupName}Axis`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Axis</FormLabel>
+                        <FormControl>
+                            <Input type="number" step="1" placeholder="90" {...field} />
+                        </FormControl>
+                    </FormItem>
+                )}
+            />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+             <FormField
+                control={control}
+                name={`${groupName}Add`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Add</FormLabel>
+                        <FormControl>
+                            <Input type="number" step="0.25" placeholder="+0.00" {...field} />
+                        </FormControl>
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name={`${groupName}Prism`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Prism</FormLabel>
+                        <FormControl>
+                            <Input type="number" step="0.25" placeholder="0.00" {...field} />
+                        </FormControl>
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name={`${groupName}PrismBase`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Base</FormLabel>
+                        <FormControl>
+                            <Input type="text" placeholder="e.g., In, Up" {...field} />
+                        </FormControl>
+                    </FormItem>
+                )}
+            />
+        </div>
     </div>
 );
 
@@ -86,17 +132,29 @@ export default function AiProblemSolverPage() {
         resolver: zodResolver(formSchema),
     });
 
-    const formatRx = (sph?: number, cyl?: number, axis?: number) => {
-        if (sph === undefined && cyl === undefined && axis === undefined) return null;
-        return `${sph?.toFixed(2) || '0.00'} / ${cyl?.toFixed(2) || '0.00'} x ${axis || '0'}`;
+    const formatRx = (values: FormValues, group: 'current' | 'previous') => {
+        const sph = values[`${group}Sphere`];
+        const cyl = values[`${group}Cylinder`];
+        const axis = values[`${group}Axis`];
+        const add = values[`${group}Add`];
+        const prism = values[`${group}Prism`];
+        const base = values[`${group}PrismBase`];
+
+        if (sph === undefined && cyl === undefined && axis === undefined && add === undefined && prism === undefined) return null;
+        
+        let rxString = `${sph?.toFixed(2) || '0.00'} / ${cyl?.toFixed(2) || '0.00'} x ${axis || '0'}`;
+        if (add) rxString += ` Add ${add.toFixed(2)}`;
+        if (prism && base) rxString += ` Prism ${prism.toFixed(2)} Base ${base}`;
+
+        return rxString;
     }
 
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);
         setResult(null);
 
-        const currentRx = formatRx(values.currentSphere, values.currentCylinder, values.currentAxis);
-        const previousRx = formatRx(values.previousSphere, values.previousCylinder, values.previousAxis);
+        const currentRx = formatRx(values, 'current');
+        const previousRx = formatRx(values, 'previous');
 
         const queryParts = [
             `Primary Complaint: ${values.complaint}`,
