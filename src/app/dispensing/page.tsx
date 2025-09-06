@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Layers, ArrowRightLeft, Triangle, Maximize, ChevronsUpDown, Repeat, Footprints } from 'lucide-react';
+import { Layers, ArrowRightLeft, Triangle, Maximize, ChevronsUpDown, Repeat, Footprints, Search } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -49,6 +49,12 @@ const dispensingMenuItems = [
         description: 'Calculate effective power in a progressive lens.',
         icon: <ChevronsUpDown className="size-8 text-primary" />,
     },
+     {
+        href: '/relative-magnification',
+        title: 'Relative Magnification',
+        description: 'Compare magnification effects between two lenses.',
+        icon: <Search className="size-8 text-primary" />,
+    },
     {
         href: '/step-along',
         title: 'Step-Along Vergence',
@@ -80,7 +86,7 @@ export default function DispensingPage() {
       description="A collection of calculators for lens fitting and measurements."
     >
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {dispensingMenuItems.map((item) => (
+            {dispensingMenuItems.sort((a,b) => a.title.localeCompare(b.title)).map((item) => (
                 <Link
                   href={item.href}
                   key={item.href}
