@@ -66,6 +66,8 @@ const getPlaceholderResponse = async (input: ProblemSolverInput): Promise<Proble
 export async function solveProblem(input: ProblemSolverInput): Promise<ProblemSolverOutput> {
   // The live AI call is temporarily replaced with a placeholder for stability.
   return getPlaceholderResponse(input);
+  // To re-enable the live AI, uncomment the line below and comment out the line above.
+  // return problemSolverFlow(input);
 }
 
 // The Genkit flow and prompt are defined below but are not currently used.
@@ -84,8 +86,8 @@ const problemSolverPrompt = ai.definePrompt({
     2.  Recommend a clear, step-by-step solution. Format this as a markdown list.
     3.  List any other considerations the user should be aware of.
     4.  If the 'isKnob' flag is true, acknowledge this with a touch of humor and empathy in your 'considerations' section, emphasizing the importance of patient communication.
-    5.  If the problem involves a very new or specific named lens technology, or a rare clinical sign, use the 'searchWeb' tool to look up information to support your analysis.
-    
+    5.  If the query is complex or involves very new technology, use the searchWeb tool to find the most up-to-date information to inform your answer.
+
     Problem: {{{problem}}}
     
     Current Rx (OD): R: {{currentRx.od.sphere}} / {{currentRx.od.cylinder}} x {{currentRx.od.axis}}

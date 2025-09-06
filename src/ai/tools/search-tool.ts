@@ -1,48 +1,47 @@
 
 'use server';
 /**
- * @fileOverview Defines a Genkit tool for searching the web.
+ * @fileOverview A Genkit tool for performing web searches and scraping content.
+ *
+ * - searchWeb - The main tool function that the AI can call.
  */
+
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import googleIt from 'google-it';
 import { scrapeUrl } from '@/services/web-scraper';
-
-const SearchWebInputSchema = z.object({
-  query: z.string().describe('A specific, targeted search query.'),
-});
+import googleIt from 'google-it';
 
 export const searchWeb = ai.defineTool(
   {
     name: 'searchWeb',
-    description: 'Searches the web for information on a given query, scrapes the top results, and returns the combined text content. Use for very specific, new, or rare topics.',
-    input: { schema: SearchWebInputSchema },
-    output: { schema: z.string() },
+    description: 'Performs a web search to find up-to-date information on a given topic, scraping the top results for context.',
+    inputSchema: z.object({
+      query: z.string().describe('The search query.'),
+    }),
+    outputSchema: z.string().describe('A compilation of the text content from the top search results.'),
   },
-  async ({ query }) => {
+  async (input) => {
     try {
-      console.log(`AI is searching the web for: "${query}"`);
-      const searchResults = await googleIt({ query, limit: 3, 'no-display': true });
+      const searchResults = await googleIt({ query: input.query, disableConsole: true });
 
-      if (!searchResults || searchResults.length === 0) {
-        return 'No search results found.';
-      }
-
-      // Scrape the top 2-3 results in parallel
-      const scrapePromises = searchResults
-        .slice(0, 3)
-        .map(result => scrapeUrl(result.link));
-
+      // Scrape the top 2 results for content.
+      const scrapePromises = searchResults.slice(0, 2).map(result => scrapeUrl(result.link));
       const scrapedContents = await Promise.all(scrapePromises);
-      
+
+      // Combine the content from all scraped pages.
       const combinedContent = scrapedContents
-        .map((content, index) => `Source ${index + 1}: ${searchResults[index].title}\n${content}`)
+        .filter(content => content) // Filter out any failed scrapes
         .join('\n\n---\n\n');
 
-      return combinedContent || 'Could not extract any content from the search results.';
+      if (!combinedContent) {
+        return 'No relevant content could be scraped from the web search results.';
+      }
+
+      return combinedContent;
+
     } catch (error) {
-      console.error('Error in searchWeb tool:', error);
-      return 'An error occurred while searching the web.';
+      console.error('Error performing web search:', error);
+      return 'An error occurred while trying to search the web.';
     }
   }
 );
