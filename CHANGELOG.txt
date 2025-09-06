@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9 alpha]
+
+### Changed
+- Overhauled the application's UI with a more professional and "cozy" theme, replacing the blue color scheme with a rich green and implementing a modern "frosted glass" effect on cards.
+- The "Back" button on tool pages now correctly navigates to the user's previous page instead of always returning to the homepage, improving user experience.
+
+### Fixed
+- Resolved multiple critical bugs causing "duplicate key" errors in dropdown menus on the "Lens Thickness" and "Step-Along Vergence" calculators, ensuring UI stability.
+- Corrected a rendering error on the "Lens Thickness" calculator page.
+- Improved validation logic on the "Blank Size," "Induced Prism," and "BVD Conversion" calculators to prevent errors and ensure more reliable results.
+- Removed a redundant "Vitreous" material from the "Step-Along Vergence" calculator to prevent confusion.
+
 ## [1.8 alpha]
 
 ### Added
