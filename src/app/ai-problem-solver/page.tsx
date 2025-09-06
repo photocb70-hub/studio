@@ -188,8 +188,8 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 )}
             />
         </div>
-    )
-}
+    );
+};
 
 export default function AiProblemSolverPage() {
     const [result, setResult] = useState<ProblemSolverOutput | null>(null);
@@ -326,7 +326,7 @@ export default function AiProblemSolverPage() {
                                                             <FormControl>
                                                                 <SelectTrigger>
                                                                     <SelectValue placeholder="Select a material" />
-                                                                </Trigger>
+                                                                </SelectTrigger>
                                                             </FormControl>
                                                             <SelectContent>
                                                                 {lensMaterials.map((material) => (
