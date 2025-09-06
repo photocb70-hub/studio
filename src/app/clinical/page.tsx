@@ -34,7 +34,7 @@ const clinicalMenuItems = [
     title: 'AI Problem Solver',
     description: 'Get AI-powered solutions for optical problems.',
     icon: <Sparkles className="size-8 text-primary" />,
-    inDevelopment: true,
+    inDevelopment: false,
   },
   {
     href: '/ai-image-analyzer',

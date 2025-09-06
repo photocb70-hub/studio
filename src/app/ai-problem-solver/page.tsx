@@ -26,6 +26,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Slider } from '@/components/ui/slider';
+import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flow';
 
 const rxSchema = z.object({
     sphere: z.coerce.number().min(-20).max(20).optional().default(0),
@@ -50,12 +51,6 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
-
-type ProblemSolverOutput = {
-    analysis: string;
-    solution: string;
-    considerations: string;
-};
 
 const formatPower = (power?: number) => {
     if (power === undefined || power === null) return '0.00';
@@ -219,35 +214,19 @@ export default function AiProblemSolverPage() {
         }
     };
     
-    const getPlaceholderResponse = (values: FormValues): ProblemSolverOutput => {
-        if (values.isKnob) {
-             return {
-                analysis: "The 'Patient is a Knob Head' checkbox was selected.",
-                solution: "It has been empirically observed that this is the root cause of approximately 98% of all non-tolerance cases. The recommended course of action is to explain the concept of 'subjective adaptation' and to politely, but firmly, ask the patient to try the new spectacles for at least two weeks. Reassure them that their brain needs time to adjust to the 'superior clarity' of their new prescription.",
-                considerations: "Consider offering a complimentary lens cloth and a sympathetic nod. This often provides the necessary placebo effect to facilitate adaptation. Further investigation is unwarranted until this primary factor has been addressed.",
-            };
-        }
-        return {
-            analysis: "This is a placeholder analysis. The AI model is currently being updated. Your input has been received, but this response is pre-configured. It seems you've described a dispensing problem.",
-            solution: "1. Double-check all measurements, including monocular PDs and fitting heights.\n2. Verify the prescription was ordered and dispensed correctly.\n3. Consider the new frame's wrap, size, and vertex distance compared to the previous pair.",
-            considerations: "This is a temporary response. Factors like lens material, base curve, and asphericity could be relevant. The full AI will provide a more detailed analysis based on the specific inputs provided.",
-        };
-    };
-
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);
         setResult(null);
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
+        
         try {
-            const response = getPlaceholderResponse(values);
+            const response = await solveProblem(values);
             setResult(response);
         } catch (error) {
-            console.error('Error generating placeholder response:', error);
+            console.error('Error solving problem:', error);
             toast({
                 variant: 'destructive',
                 title: 'An Unexpected Error Occurred',
-                description: 'Could not generate a response. Please try again.',
+                description: 'The AI model could not generate a response. Please try again.',
             });
         } finally {
             setIsLoading(false);
@@ -427,7 +406,7 @@ export default function AiProblemSolverPage() {
                             <h4>Recommended Solution</h4>
                             <div
                                 dangerouslySetInnerHTML={{
-                                    __html: result.solution.replace(/\\n/g, '<br />'),
+                                    __html: result.solution.replace(/\n/g, '<br />'),
                                 }}
                             />
                             <h4>Further Considerations</h4>
