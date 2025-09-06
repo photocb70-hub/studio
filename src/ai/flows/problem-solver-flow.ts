@@ -35,7 +35,7 @@ export async function solveProblem(input: ProblemSolverInput): Promise<ProblemSo
 const problemSolverPrompt = ai.definePrompt({
   name: 'problemSolverPrompt',
   input: { schema: ProblemSolverInputSchema },
-  output: { schema: ProblemSolverOutputSchema },
+  output: { schema: ProblemSolverOutputSchema, format: 'json' },
   model: googleAI('gemini-1.5-flash-latest'),
   prompt: `You are an expert ophthalmic optician and AI problem solver. A user has presented you with the following complex optical scenario, including current and previous patient data.
 
@@ -46,7 +46,7 @@ Your task is to:
 4.  Formulate a clear, actionable, step-by-step solution.
 5.  List any important further considerations or alternative approaches.
 
-Your response must be professional, accurate, and easy for an optical professional to understand.
+Your response must be professional, accurate, and easy for an optical professional to understand. You must respond in the requested JSON format.
 
 **Patient Data:**
 {{{query}}}
@@ -62,6 +62,9 @@ const problemSolverFlow = ai.defineFlow(
   },
   async (input) => {
     const { output } = await problemSolverPrompt(input);
-    return output!;
+    if (!output) {
+      throw new Error("The AI failed to produce a valid response.");
+    }
+    return output;
   }
 );
