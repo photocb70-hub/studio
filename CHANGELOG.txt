@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.5 alpha]
+### Changed
+- Re-implemented the "AI Problem Solver" with a structured, flexible input form. The new design replaces the single text area with optional fields for current and previous prescriptions, measurements, and lens details. This allows the AI to provide a more detailed analysis while accommodating real-world scenarios where not all data is available.
+
 ## [2.4 alpha]
 ### Changed
 - Reverted Next.js configuration to remove `output: 'export'` to allow for direct web publishing from Firebase Studio. This pauses native app preparation.
