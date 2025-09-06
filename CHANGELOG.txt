@@ -2,7 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.9.1 alpha]
+## [1.9.1]
+
+### Changed
+- Alphabetized the "Ocular Drugs Guide" to improve usability.
 
 ### Fixed
 - Resolved a persistent build error on the "Lens Thickness Calculator" page by refactoring the component structure.
