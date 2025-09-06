@@ -2,10 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.3 alpha]
-### Added
-- Implemented a theme toggle button to allow users to switch between light and dark modes.
+## [2.5 alpha]
+### Changed
+- Re-implemented the "AI Problem Solver" with a structured, flexible input form. The new design replaces the single text area with optional fields for current and previous prescriptions, measurements, and lens details. This allows the AI to provide a more detailed analysis while accommodating real-world scenarios where not all data is available.
 
+## [2.4 alpha]
+### Changed
+- Reverted Next.js configuration to remove `output: 'export'` to allow for direct web publishing from Firebase Studio. This pauses native app preparation.
+- Removed Capacitor dependencies and configuration files.
+- Re-enabled AI features on the clinical tools page.
+
+## [2.3 alpha]
 ### Changed
 - Configured the Next.js project to support static exports (`output: 'export'`) in preparation for integration with Capacitor to build for native mobile platforms.
 - Disabled AI features on the UI to allow for a successful static build, as Server Actions are not compatible with `output: 'export'`.
@@ -157,7 +164,7 @@ All notable changes to this project will be documented in this file.
 - Updated the "Lens Thickness Calculator" default minimum thickness to 2.0mm for more realistic results.
 - Corrected the "Blank Size Calculator" formula and updated its input fields for better accuracy.
 
-## [04 alpha]
+## [0.4 alpha]
 
 ### Changed
 - Updated the application's background to a subtle and thematic design featuring various optical formulas.

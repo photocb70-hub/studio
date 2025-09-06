@@ -1,9 +1,9 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Ruler, Eye } from 'lucide-react';
+import { Ruler, Eye, ScrollText } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -19,8 +19,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AppFooter } from '@/components/app-footer';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const menuItems = [
   {
@@ -37,7 +40,7 @@ const menuItems = [
   },
 ];
 
-const appVersion = "2.3 alpha";
+const appVersion = "2.5 alpha";
 
 const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
   <Card className="relative flex h-full items-center overflow-hidden bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-lg">
@@ -51,9 +54,68 @@ const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
   </Card>
 );
 
+const changelogContent = `# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [2.5 alpha]
+### Changed
+- Re-implemented the "AI Problem Solver" with a structured, flexible input form. The new design replaces the single text area with optional fields for current and previous prescriptions, measurements, and lens details. This allows the AI to provide a more detailed analysis while accommodating real-world scenarios where not all data is available.
+
+## [2.4 alpha]
+### Changed
+- Reverted Next.js configuration to remove \`output: 'export'\` to allow for direct web publishing from Firebase Studio. This pauses native app preparation.
+- Removed Capacitor dependencies and configuration files.
+- Re-enabled AI features on the clinical tools page.
+
+## [2.3 alpha]
+### Changed
+- Configured the Next.js project to support static exports (\`output: 'export'\`) in preparation for integration with Capacitor to build for native mobile platforms.
+- Disabled AI features on the UI to allow for a successful static build, as Server Actions are not compatible with \`output: 'export'\`.
+
+## [2.2 alpha]
+- This is the point to rollback to if wrapper fails!
+### Added
+- Added a new "Contact Lens Rx Converter" to the Clinical Tools section to compensate spectacle prescriptions for vertex distance.
+
+### Changed
+- Standardized user input for prescriptions across multiple calculators. Sphere, Cylinder, and Axis fields now consistently use sliders with a default value of 0, creating a more uniform user experience.
+- Improved the layout of the "Lens Thickness Calculator" by placing the cylinder and axis controls on the same line for a cleaner look.
+- Enhanced input validation on several calculators to prevent errors and improve stability.
+
+### Fixed
+- Corrected the calculation formula and rounding logic in the "Contact Lens Rx Converter" to ensure it provides clinically accurate results in 0.25D steps.
+
+## [2.1 alpha]
+### Added
+- Implemented the initial framework for a new "AI Image Analyzer" tool in the Clinical section to provide visual feedback. (Note: This feature is currently in testing and disabled on the UI).
+
+## [2.0 alpha]
+### Changed
+- Alphabetized the items on the "Dispensing Tools" page for better organization.
+- Added distinct, thematic background images to the main, clinical, and dispensing pages to improve visual identity.
+
+### Added
+- Implemented the initial framework for a new "AI Image Analyzer" tool in the Clinical section. This experimental feature allows users to upload an ocular image for an AI-powered analysis.
+`;
+
 export default function Home() {
   const [clicks, setClicks] = useState(0);
   const [isEasterEggVisible, setIsEasterEggVisible] = useState(false);
+  const [changelogHtml, setChangelogHtml] = useState('');
+
+  useEffect(() => {
+    // Basic markdown to HTML conversion
+    const html = changelogContent
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+      .replace(/\n/g, '<br />')
+      .replace(/<br \/>- (.*)/g, '<li>$1</li>')
+      .replace(/<\/li><br \/>/g, '</li>')
+      .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+    setChangelogHtml(html);
+  }, []);
 
   const handleTitleClick = () => {
     const newClicks = clicks + 1;
@@ -101,7 +163,24 @@ export default function Home() {
               ))}
           </div>
           
-          <AppFooter version={appVersion} />
+          <AppFooter version={appVersion}>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <ScrollText className="mr-2" />
+                  Changelog
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Application Changelog</DialogTitle>
+                </DialogHeader>
+                <ScrollArea className="h-[60vh] pr-4">
+                    <div className="prose prose-sm dark:prose-invert" dangerouslySetInnerHTML={{ __html: changelogHtml }}/>
+                </ScrollArea>
+              </DialogContent>
+            </Dialog>
+          </AppFooter>
         </div>
       </main>
 
