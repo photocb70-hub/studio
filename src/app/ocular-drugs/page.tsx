@@ -9,8 +9,9 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { drugData } from '@/lib/drug-data';
+import { drugCategories } from '@/lib/drug-data';
 import { TriangleAlert } from 'lucide-react';
+import { Fragment } from 'react';
 
 export default function OcularDrugsPage() {
   return (
@@ -27,27 +28,34 @@ export default function OcularDrugsPage() {
           </AlertDescription>
         </Alert>
         
-        <Accordion type="multiple" className="w-full">
-          {drugData.map((drug) => (
-            <AccordionItem value={drug.name} key={drug.name}>
-              <AccordionTrigger className="text-base hover:no-underline">
-                {drug.name}
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="prose prose-sm dark:prose-invert max-w-none space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-1">Common Uses</h4>
-                    <p className="mt-0">{drug.uses}</p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground mb-1">Potential Ocular Side Effects</h4>
-                    <p className="mt-0">{drug.sideEffects}</p>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+        <div className="space-y-6">
+          {drugCategories.map((category) => (
+             <Fragment key={category.title}>
+              <h3 className="text-xl font-semibold tracking-tight border-b pb-2">{category.title}</h3>
+              <Accordion type="multiple" className="w-full">
+                {category.drugs.map((drug) => (
+                  <AccordionItem value={drug.name} key={drug.name}>
+                    <AccordionTrigger className="text-base hover:no-underline">
+                      {drug.name}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="prose prose-sm dark:prose-invert max-w-none space-y-4">
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-1">Common Uses</h4>
+                          <p className="mt-0">{drug.uses}</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-1">Potential Ocular Side Effects</h4>
+                          <p className="mt-0">{drug.sideEffects}</p>
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+             </Fragment>
           ))}
-        </Accordion>
+        </div>
       </div>
     </ToolPageLayout>
   );
