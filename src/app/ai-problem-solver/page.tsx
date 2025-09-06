@@ -44,9 +44,8 @@ const formSchema = z.object({
     type: z.string().optional(),
     material: z.string().optional(),
   }).optional(),
-  frame: z.object({
-    type: z.string().optional(),
-    measurements: z.string().optional(),
+  measurements: z.object({
+    pd: z.string().optional(),
   }).optional(),
   isKnob: z.boolean().optional(),
 });
@@ -73,12 +72,12 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
     const axisValue = watch(`${nestName}.axis`);
 
     return (
-        <div className="grid grid-cols-1 gap-x-4 gap-y-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6 md:grid-cols-2">
              <FormField
                 control={control}
                 name={`${nestName}.sphere`}
                 render={({ field }) => (
-                    <FormItem className="md:col-span-3">
+                    <FormItem>
                         <FormLabel>Sphere (D): {formatPower(sphereValue)}</FormLabel>
                         <FormControl>
                              <Slider
@@ -110,7 +109,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 control={control}
                 name={`${nestName}.axis`}
                 render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="md:col-span-2">
                         <FormLabel>Axis (°): {axisValue}</FormLabel>
                         <FormControl>
                             <Slider
@@ -122,42 +121,44 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                     </FormItem>
                 )}
             />
-             <FormField
-                control={control}
-                name={`${nestName}.add`}
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Add</FormLabel>
-                        <FormControl>
-                           <Input placeholder="+2.00" {...field} value={field.value ?? ''} />
-                        </FormControl>
-                    </FormItem>
-                )}
-            />
-             <FormField
-                control={control}
-                name={`${nestName}.prism`}
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Prism</FormLabel>
-                        <FormControl>
-                           <Input placeholder="2.00" {...field} value={field.value ?? ''} />
-                        </FormControl>
-                    </FormItem>
-                )}
-            />
-             <FormField
-                control={control}
-                name={`${nestName}.base`}
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Base</FormLabel>
-                        <FormControl>
-                           <Input placeholder="UP" {...field} value={field.value ?? ''} />
-                        </FormControl>
-                    </FormItem>
-                )}
-            />
+            <div className="grid grid-cols-1 gap-4 md:col-span-2 md:grid-cols-3">
+                <FormField
+                    control={control}
+                    name={`${nestName}.add`}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Add</FormLabel>
+                            <FormControl>
+                            <Input placeholder="+2.00" {...field} value={field.value ?? ''} />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={control}
+                    name={`${nestName}.prism`}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Prism</FormLabel>
+                            <FormControl>
+                            <Input placeholder="2.00" {...field} value={field.value ?? ''} />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={control}
+                    name={`${nestName}.base`}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Base</FormLabel>
+                            <FormControl>
+                            <Input placeholder="UP" {...field} value={field.value ?? ''} />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
+            </div>
         </div>
     );
 };
@@ -342,26 +343,14 @@ export default function AiProblemSolverPage() {
                                                         </FormItem>
                                                     )}
                                                 />
-                                                <FormField
+                                                 <FormField
                                                     control={form.control}
-                                                    name="frame.type"
+                                                    name="measurements.pd"
                                                     render={({ field }) => (
                                                         <FormItem>
-                                                            <FormLabel>Frame Type</FormLabel>
+                                                            <FormLabel>PD / Hts (if needed)</FormLabel>
                                                             <FormControl>
-                                                                <Input placeholder="e.g., Full-rim metal" {...field} value={field.value ?? ''} />
-                                                            </FormControl>
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                                <FormField
-                                                    control={form.control}
-                                                    name="frame.measurements"
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Frame Measurements</FormLabel>
-                                                            <FormControl>
-                                                                <Input placeholder="e.g., 54-18-145" {...field} value={field.value ?? ''} />
+                                                                <Input placeholder="e.g., R: 32/20, L: 33/20" {...field} value={field.value ?? ''} />
                                                             </FormControl>
                                                         </FormItem>
                                                     )}
