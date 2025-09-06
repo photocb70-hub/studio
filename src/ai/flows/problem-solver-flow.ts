@@ -22,10 +22,15 @@ const rxSchema = z.object({
     hts: z.string().optional(),
 });
 
+const binocularRxSchema = z.object({
+    od: rxSchema.optional(),
+    os: rxSchema.optional(),
+});
+
 const ProblemSolverInputSchema = z.object({
   problem: z.string().describe("The primary complaint or issue the patient is experiencing."),
-  currentRx: rxSchema.optional().describe("The patient's current, new prescription details."),
-  previousRx: rxSchema.optional().describe("The patient's previous prescription details, for comparison."),
+  currentRx: binocularRxSchema.optional().describe("The patient's current, new prescription details for both eyes."),
+  previousRx: binocularRxSchema.optional().describe("The patient's previous prescription details for both eyes, for comparison."),
   lens: z.object({
     type: z.string().optional().describe("The type or design of the lens (e.g., Single Vision, Varifocal)."),
     material: z.string().optional().describe("The lens material or refractive index."),
@@ -80,16 +85,11 @@ const problemSolverPrompt = ai.definePrompt({
     
     Problem: {{{problem}}}
     
-    Current Rx:
-    - Sphere: {{currentRx.sphere}}
-    - Cylinder: {{currentRx.cylinder}}
-    - Axis: {{currentRx.axis}}
-    - Add: {{currentRx.add}}
+    Current Rx (OD): R: {{currentRx.od.sphere}} / {{currentRx.od.cylinder}} x {{currentRx.od.axis}}
+    Current Rx (OS): L: {{currentRx.os.sphere}} / {{currentRx.os.cylinder}} x {{currentRx.os.axis}}
     
-    Previous Rx:
-    - Sphere: {{previousRx.sphere}}
-    - Cylinder: {{previousRx.cylinder}}
-    - Axis: {{previousRx.axis}}
+    Previous Rx (OD): R: {{previousRx.od.sphere}} / {{previousRx.od.cylinder}} x {{previousRx.od.axis}}
+    Previous Rx (OS): L: {{previousRx.os.sphere}} / {{previousRx.os.cylinder}} x {{previousRx.os.axis}}
 
     Lens Details:
     - Type: {{lens.type}}

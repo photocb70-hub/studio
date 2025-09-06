@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useForm, useFormContext } from 'react-hook-form';
+import { useForm, useFormContext, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ToolPageLayout } from '@/components/tool-page-layout';
@@ -27,6 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Slider } from '@/components/ui/slider';
 import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flow';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const rxSchema = z.object({
     sphere: z.coerce.number().min(-20).max(20).optional().default(0),
@@ -39,10 +40,15 @@ const rxSchema = z.object({
     hts: z.string().optional(),
 });
 
+const binocularRxSchema = z.object({
+    od: rxSchema,
+    os: rxSchema,
+});
+
 const formSchema = z.object({
   problem: z.string().min(10, 'Please describe the problem in at least 10 characters.'),
-  currentRx: rxSchema.optional(),
-  previousRx: rxSchema.optional(),
+  currentRx: binocularRxSchema.optional(),
+  previousRx: binocularRxSchema.optional(),
   lens: z.object({
     type: z.string().optional(),
     material: z.string().optional(),
@@ -57,7 +63,7 @@ const formatPower = (power?: number) => {
     return (power > 0 ? '+' : '') + power.toFixed(2);
 };
 
-const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) => {
+const RxInputGroup = ({ nestName }: { nestName: 'currentRx.od' | 'currentRx.os' | 'previousRx.od' | 'previousRx.os' }) => {
     const { control, watch } = useFormContext<FormValues>();
 
     const sphereValue = watch(`${nestName}.sphere`);
@@ -181,6 +187,27 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
     );
 };
 
+const BinocularRxInput = ({ nestName, title }: { nestName: 'currentRx' | 'previousRx', title: string }) => {
+    return (
+        <div>
+            <h4 className="mb-2 font-medium">{title}</h4>
+            <Tabs defaultValue="od">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="od">Right Eye (OD)</TabsTrigger>
+                    <TabsTrigger value="os">Left Eye (OS)</TabsTrigger>
+                </TabsList>
+                <TabsContent value="od" className="pt-4">
+                    <RxInputGroup nestName={`${nestName}.od`} />
+                </TabsContent>
+                <TabsContent value="os" className="pt-4">
+                    <RxInputGroup nestName={`${nestName}.os`} />
+                </TabsContent>
+            </Tabs>
+        </div>
+    );
+};
+
+
 export default function AiProblemSolverPage() {
     const [result, setResult] = useState<ProblemSolverOutput | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -192,8 +219,14 @@ export default function AiProblemSolverPage() {
         defaultValues: {
             problem: '',
             isKnob: false,
-            currentRx: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
-            previousRx: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
+            currentRx: {
+                od: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
+                os: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
+            },
+            previousRx: {
+                od: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
+                os: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
+            },
         },
     });
 
@@ -263,126 +296,122 @@ export default function AiProblemSolverPage() {
                         <CardTitle>Describe the Scenario</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                                <FormField
-                                    control={form.control}
-                                    name="problem"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Primary Complaint & Scenario</FormLabel>
-                                            <FormControl>
-                                                <Textarea
-                                                    placeholder="e.g., Patient reporting peripheral distortion and headaches with new progressive lenses..."
-                                                    className="min-h-[120px]"
-                                                    {...field}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                
-                                <Separator />
+                         <FormProvider {...form}>
+                            <Form {...form}>
+                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                    <FormField
+                                        control={form.control}
+                                        name="problem"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Primary Complaint & Scenario</FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        placeholder="e.g., Patient reporting peripheral distortion and headaches with new progressive lenses..."
+                                                        className="min-h-[120px]"
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    
+                                    <Separator />
 
-                                <div className="space-y-6">
-                                    <div>
-                                        <h3 className="mb-4 text-lg font-medium">Prescriptions & Lens Details (Optional)</h3>
-                                        <div className="space-y-6">
-                                            <div>
-                                                <h4 className="mb-2 font-medium">Current Prescription</h4>
-                                                <RxInputGroup nestName="currentRx" />
-                                            </div>
-                                            <Separator />
-                                            <div>
-                                                <h4 className="mb-2 font-medium">Previous Prescription</h4>
-                                                <RxInputGroup nestName="previousRx" />
-                                            </div>
-                                             <Separator />
-                                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                                <FormField
-                                                    control={form.control}
-                                                    name="lens.type"
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Lens Type/Design</FormLabel>
-                                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <div className="space-y-6">
+                                        <div>
+                                            <h3 className="mb-4 text-lg font-medium">Prescriptions & Lens Details (Optional)</h3>
+                                            <div className="space-y-6">
+                                                <BinocularRxInput nestName="currentRx" title="Current Prescription" />
+                                                <Separator />
+                                                <BinocularRxInput nestName="previousRx" title="Previous Prescription" />
+                                                <Separator />
+                                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="lens.type"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Lens Type/Design</FormLabel>
+                                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                                    <FormControl>
+                                                                        <SelectTrigger>
+                                                                            <SelectValue placeholder="Select a lens type" />
+                                                                        </SelectTrigger>
+                                                                    </FormControl>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="sv">Single Vision</SelectItem>
+                                                                        <SelectItem value="bf">Bifocal</SelectItem>
+                                                                        <SelectItem value="var">Varifocal</SelectItem>
+                                                                        <SelectItem value="occ">Occupational</SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="lens.material"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Lens Material/Index</FormLabel>
+                                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                                    <FormControl>
+                                                                        <SelectTrigger>
+                                                                            <SelectValue placeholder="Select a material" />
+                                                                        </SelectTrigger>
+                                                                    </FormControl>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="1.50">Standard Index (1.50)</SelectItem>
+                                                                        <SelectItem value="1.59">Polycarbonate (1.59)</SelectItem>
+                                                                        <SelectItem value="1.60">Mid-Index (1.60)</SelectItem>
+                                                                        <SelectItem value="1.67">High-Index (1.67)</SelectItem>
+                                                                        <SelectItem value="1.74">High-Index (1.74)</SelectItem>
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                </div>
+                                                <Separator />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="isKnob"
+                                                        render={({ field }) => (
+                                                            <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
                                                                 <FormControl>
-                                                                    <SelectTrigger>
-                                                                        <SelectValue placeholder="Select a lens type" />
-                                                                    </SelectTrigger>
+                                                                    <Checkbox
+                                                                        checked={field.value}
+                                                                        onCheckedChange={handleKnobChange}
+                                                                    />
                                                                 </FormControl>
-                                                                <SelectContent>
-                                                                    <SelectItem value="sv">Single Vision</SelectItem>
-                                                                    <SelectItem value="bf">Bifocal</SelectItem>
-                                                                    <SelectItem value="var">Varifocal</SelectItem>
-                                                                    <SelectItem value="occ">Occupational</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                                <FormField
-                                                    control={form.control}
-                                                    name="lens.material"
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Lens Material/Index</FormLabel>
-                                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                                <FormControl>
-                                                                    <SelectTrigger>
-                                                                        <SelectValue placeholder="Select a material" />
-                                                                    </SelectTrigger>
-                                                                </FormControl>
-                                                                <SelectContent>
-                                                                    <SelectItem value="1.50">Standard Index (1.50)</SelectItem>
-                                                                    <SelectItem value="1.59">Polycarbonate (1.59)</SelectItem>
-                                                                    <SelectItem value="1.60">Mid-Index (1.60)</SelectItem>
-                                                                    <SelectItem value="1.67">High-Index (1.67)</SelectItem>
-                                                                    <SelectItem value="1.74">High-Index (1.74)</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </FormItem>
-                                                    )}
-                                                />
+                                                                <div className="space-y-1 leading-none">
+                                                                    <FormLabel>
+                                                                        Is the px a knob head?
+                                                                    </FormLabel>
+                                                                    <FormDescription>
+                                                                        Super-secret-diagnostic-tool for complex non-tolerance cases.
+                                                                    </FormDescription>
+                                                                </div>
+                                                            </FormItem>
+                                                        )}
+                                                    />
                                             </div>
-                                            <Separator />
-                                                <FormField
-                                                    control={form.control}
-                                                    name="isKnob"
-                                                    render={({ field }) => (
-                                                        <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
-                                                            <FormControl>
-                                                                <Checkbox
-                                                                    checked={field.value}
-                                                                    onCheckedChange={handleKnobChange}
-                                                                />
-                                                            </FormControl>
-                                                            <div className="space-y-1 leading-none">
-                                                                <FormLabel>
-                                                                    Is the px a knob head?
-                                                                </FormLabel>
-                                                                <FormDescription>
-                                                                    Super-secret-diagnostic-tool for complex non-tolerance cases.
-                                                                </FormDescription>
-                                                            </div>
-                                                        </FormItem>
-                                                    )}
-                                                />
                                         </div>
                                     </div>
-                                </div>
 
-                                <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
-                                    {isLoading ? (
-                                        <Loader2 className="mr-2 size-4 animate-spin" />
-                                    ) : (
-                                        <Sparkles className="mr-2 size-4" />
-                                    )}
-                                    Solve Problem
-                                </Button>
-                            </form>
-                        </Form>
+                                    <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
+                                        {isLoading ? (
+                                            <Loader2 className="mr-2 size-4 animate-spin" />
+                                        ) : (
+                                            <Sparkles className="mr-2 size-4" />
+                                        )}
+                                        Solve Problem
+                                    </Button>
+                                </form>
+                            </Form>
+                        </FormProvider>
                     </CardContent>
                 </Card>
 
