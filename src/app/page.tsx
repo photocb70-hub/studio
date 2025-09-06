@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { AppFooter } from '@/components/app-footer';
+import { ThemeToggleButton } from '@/components/theme-toggle-button';
 
 const menuItems = [
   {
@@ -36,7 +37,7 @@ const menuItems = [
   },
 ];
 
-const appVersion = "2.2 alpha";
+const appVersion = "2.3 alpha";
 
 const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
   <Card className="relative flex h-full items-center overflow-hidden bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-lg">
@@ -69,6 +70,9 @@ export default function Home() {
         className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000 bg-cover bg-center bg-no-repeat bg-fixed"
         style={{ backgroundImage: "url('/main.jpg')" }}
       >
+        <div className="absolute top-4 right-4 z-20">
+            <ThemeToggleButton />
+        </div>
         <div 
           className="absolute inset-0 bg-background/80 backdrop-blur-sm z-0"
         />

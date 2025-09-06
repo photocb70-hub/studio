@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ThemeToggleButton } from '@/components/theme-toggle-button';
 
 type ToolPageLayoutProps = {
   title: string;
@@ -31,6 +32,7 @@ export function ToolPageLayout({ title, description, children }: ToolPageLayoutP
                 </h1>
             </div>
           </div>
+           <ThemeToggleButton />
         </div>
       </header>
       <main className="flex-1">
