@@ -60,19 +60,16 @@ export default function ContactLensConverterPage() {
     // Convert BVD from mm to meters
     const d = bvd / 1000;
 
-    // Only vertex powers over +/- 4.00D are clinically significant
-    if (Math.abs(sphere) < 4) {
-      setResult({ sphere, cylinder, axis });
-      return;
-    }
-
     // Vertex Compensated Power (Fc) = F / (1 - d*F)
     const compensatedSphere = sphere / (1 - d * sphere);
+
+    // Round to the nearest 0.25D step
+    const roundedCompensatedSphere = Math.round(compensatedSphere * 4) / 4;
     
     // For simplicity, this calculator does not vertex the cylinder power.
     // In practice, toric adjustments can be more complex.
     setResult({
-      sphere: compensatedSphere,
+      sphere: roundedCompensatedSphere,
       cylinder,
       axis,
     });
