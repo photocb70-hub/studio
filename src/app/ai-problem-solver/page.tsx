@@ -18,8 +18,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles, Bot, Loader2 } from 'lucide-react';
-import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flow';
 import { useToast } from '@/hooks/use-toast';
+
+// Define the shape of the result object
+type ProblemSolverOutput = {
+  analysis: string;
+  solution: string;
+  considerations: string;
+};
 
 const formSchema = z.object({
   query: z.string().min(10, "Please describe the optical problem in at least 10 characters."),
@@ -38,20 +44,33 @@ export default function AiProblemSolverPage() {
             query: "",
         }
     });
+    
+    // This is a placeholder function to simulate an AI response.
+    const getPlaceholderResponse = (query: string): ProblemSolverOutput => {
+        return {
+            analysis: "This is a placeholder analysis. The AI model is currently being updated. Based on your query, the likely cause is related to the change in frame size, which can induce unwanted prismatic effects or alter the position of the optical centers.",
+            solution: "1. Verify the fitting measurements, specifically the patient's monocular pupillary distances (PDs) and optical center (OC) heights.\n2. Remeasure the back vertex distance (BVD) as the new frame may sit differently.\n3. Consider using a lens with a higher Abbe value to reduce chromatic aberration, which can be more noticeable in larger lenses.",
+            considerations: "This is a temporary response. For a full diagnosis, please consult with an experienced optician. The AI feature will be restored once the backend issues are resolved.",
+        };
+    };
 
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);
         setResult(null);
 
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
         try {
-            const response = await solveProblem({ query: values.query });
+            // Use the placeholder function instead of calling the AI flow
+            const response = getPlaceholderResponse(values.query);
             setResult(response);
         } catch (error) {
-            console.error("Error solving problem:", error);
+            console.error("Error generating placeholder response:", error);
             toast({
                 variant: 'destructive',
-                title: 'Analysis Failed',
-                description: 'The AI model could not process this request. Please try rephrasing your query.',
+                title: 'An Unexpected Error Occurred',
+                description: 'Could not generate a response. Please try again.',
             });
         } finally {
             setIsLoading(false);
