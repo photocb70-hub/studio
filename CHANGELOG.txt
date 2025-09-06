@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ## [2.3 alpha]
 ### Changed
 - Configured the Next.js project to support static exports (`output: 'export'`) in preparation for integration with Capacitor to build for native mobile platforms.
+- Disabled AI features on the UI to allow for a successful static build, as Server Actions are not compatible with `output: 'export'`.
 
 ## [2.2 alpha]
 - This is the point to rollback to if wrapper fails!
@@ -131,7 +132,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - The AI Problem Solver is hidden behind a feature flag for testing and can be enabled by adding `?enabled=true` to the URL.
 
-## [0.8 alpha]
+## [0.axlpha]
 
 ### Changed
 - Improved navigation by adding a "Back" label to the return button on calculator pages.

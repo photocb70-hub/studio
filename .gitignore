@@ -5,6 +5,16 @@
 /.pnp
 .pnp.js
 
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
 # misc
 .DS_Store
 *.pem
@@ -15,17 +25,20 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # vercel
 .vercel
 
-# next.js
-.next/
-out/
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 
-# capacitor
+# Capacitor
 /android
 /ios
-/dist
-capacitor.config.json
+/node_modules
+capacitor.config.ts
