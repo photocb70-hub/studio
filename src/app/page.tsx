@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles, Pill, Stethoscope, BrainCircuit } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles, Pill, Stethoscope } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -68,7 +68,7 @@ const menuItems = [
     href: '/clinical',
     title: 'Clinical Tools',
     description: 'Reference guides for clinical decision-making.',
-    icon: <BrainCircuit className="size-8 text-primary" />,
+    icon: <Eye className="size-8 text-primary" />,
   },
 ];
 
@@ -102,7 +102,7 @@ export default function Home() {
   return (
     <>
       <main 
-          className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000"
+          className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000" style={{ backgroundColor: 'hsl(207 90% 95%)' }}
       >
         <div 
           className="absolute inset-0 bg-background/80 backdrop-blur-sm z-0"
