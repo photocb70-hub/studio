@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2 alpha]
+### Added
+- Added a new "Contact Lens Rx Converter" to the Clinical Tools section to compensate spectacle prescriptions for vertex distance.
+
+### Changed
+- Standardized user input for prescriptions across multiple calculators. Sphere, Cylinder, and Axis fields now consistently use sliders with a default value of 0, creating a more uniform user experience.
+- Improved the layout of the "Lens Thickness Calculator" by placing the cylinder and axis controls on the same line for a cleaner look.
+- Enhanced input validation on several calculators to prevent errors and improve stability.
+
+### Fixed
+- Corrected the calculation formula and rounding logic in the "Contact Lens Rx Converter" to ensure it provides clinically accurate results in 0.25D steps.
+
 ## [2.1 alpha]
 ### Added
 - Implemented the initial framework for a new "AI Image Analyzer" tool in the Clinical section to provide visual feedback. (Note: This feature is currently in testing and disabled on the UI).

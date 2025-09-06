@@ -22,7 +22,10 @@ import { Slider } from '@/components/ui/slider';
 
 const formSchema = z.object({
   power: z.coerce.number().min(-20).max(20),
-  decentration: z.coerce.number({ required_error: "Decentration is required." }),
+  decentration: z.coerce.number({
+    required_error: "Decentration is required.",
+    invalid_type_error: "Decentration must be a number.",
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
