@@ -10,8 +10,16 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { AppFooter } from '@/components/app-footer';
-import { useToast } from '@/hooks/use-toast';
 
 const menuItems = [
   {
@@ -92,64 +100,78 @@ const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
 
 export default function Home() {
   const [clicks, setClicks] = useState(0);
-  const { toast } = useToast();
+  const [isEasterEggVisible, setIsEasterEggVisible] = useState(false);
 
   const handleTitleClick = () => {
     const newClicks = clicks + 1;
     setClicks(newClicks);
-    if (newClicks === 10) {
-      toast({
-        title: 'You found the Easter Egg!',
-        description: 'Thanks for being so curious. Have a great day!',
-      });
+    if (newClicks >= 10) {
+      setIsEasterEggVisible(true);
       setClicks(0); // Reset for next time
     }
   };
 
-
   return (
-    <main 
-        className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000"
-    >
-      <div 
-        className="absolute inset-0 bg-background/80 backdrop-blur-sm z-0"
-      />
-      <div className="w-full max-w-4xl z-10">
-        <header className="mb-12 text-center">
-          <div className="mb-4 inline-flex cursor-pointer items-center gap-3" onClick={handleTitleClick}>
-            <Eye className="size-10 text-primary" />
-            <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Optical Prime
-            </h1>
-          </div>
-          <p className="text-lg text-muted-foreground">
-            Precision tools for optical professionals.
-          </p>
-        </header>
+    <>
+      <main 
+          className="flex min-h-screen w-full flex-col items-center justify-center p-4 sm:p-6 lg:p-8 transition-all duration-1000"
+      >
+        <div 
+          className="absolute inset-0 bg-background/80 backdrop-blur-sm z-0"
+        />
+        <div className="w-full max-w-4xl z-10">
+          <header className="mb-12 text-center">
+            <div className="mb-4 inline-flex cursor-pointer items-center gap-3" onClick={handleTitleClick}>
+              <Eye className="size-10 text-primary" />
+              <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+                Optical Prime
+              </h1>
+            </div>
+            <p className="text-lg text-muted-foreground">
+              Precision tools for optical professionals.
+            </p>
+          </header>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {menuItems.map((item) => {
-            if (item.testing) {
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {menuItems.map((item) => {
+              if (item.testing) {
+                return (
+                  <div key={item.href} className="group rounded-lg cursor-not-allowed">
+                    <MenuItemCard item={item} />
+                  </div>
+                );
+              }
               return (
-                <div key={item.href} className="group rounded-lg cursor-not-allowed">
+                <Link
+                  href={item.href}
+                  key={item.href}
+                  className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
                   <MenuItemCard item={item} />
-                </div>
+                </Link>
               );
-            }
-            return (
-              <Link
-                href={item.href}
-                key={item.href}
-                className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              >
-                <MenuItemCard item={item} />
-              </Link>
-            );
-          })}
+            })}
+          </div>
+          
+          <AppFooter version={appVersion} />
         </div>
-        
-        <AppFooter version={appVersion} />
-      </div>
-    </main>
+      </main>
+
+      <AlertDialog open={isEasterEggVisible} onOpenChange={setIsEasterEggVisible}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>You found the secret!</AlertDialogTitle>
+            <AlertDialogDescription>
+              Imagine a glorious fanfare as spectacles are launched from a cannon! Thanks for being so awesome. ✨
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setIsEasterEggVisible(false)}>
+              Awesome!
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
