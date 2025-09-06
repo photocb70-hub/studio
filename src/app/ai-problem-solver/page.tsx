@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -25,6 +25,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 const rxSchema = z.object({
     sphere: z.string().optional(),
@@ -141,6 +142,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
 export default function AiProblemSolverPage() {
     const [result, setResult] = useState<ProblemSolverOutput | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [showRefundAlert, setShowRefundAlert] = useState(false);
     const { toast } = useToast();
 
     const form = useForm<FormValues>({
@@ -151,6 +153,23 @@ export default function AiProblemSolverPage() {
         },
     });
 
+    useEffect(() => {
+        if (showRefundAlert) {
+            const timer = setTimeout(() => {
+                setShowRefundAlert(false);
+                form.setValue('isKnob', false);
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [showRefundAlert, form]);
+
+    const handleKnobChange = (checked: boolean) => {
+        form.setValue('isKnob', checked);
+        if (checked) {
+            setShowRefundAlert(true);
+        }
+    };
+    
     const getPlaceholderResponse = (values: FormValues): ProblemSolverOutput => {
         if (values.isKnob) {
              return {
@@ -191,6 +210,16 @@ export default function AiProblemSolverPage() {
             title="AI Problem Solver"
             description="Describe a complex optical scenario, provide any relevant data, and the AI will provide an analysis and potential solutions."
         >
+            <AlertDialog open={showRefundAlert}>
+                <AlertDialogContent className="border-destructive bg-destructive/90 text-destructive-foreground">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-center text-4xl font-extrabold tracking-widest">
+                            REFUND ! CLOSED !
+                        </AlertDialogTitle>
+                    </AlertDialogHeader>
+                </AlertDialogContent>
+            </AlertDialog>
+
             <div className="grid gap-8">
                 <Card>
                     <CardHeader>
@@ -244,18 +273,18 @@ export default function AiProblemSolverPage() {
                                                       <FormItem>
                                                           <FormLabel>Lens Type/Design</FormLabel>
                                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                              <FormControl>
-                                                                  <SelectTrigger>
-                                                                      <SelectValue placeholder="Select a lens type" />
-                                                                  </SelectTrigger>
-                                                              </FormControl>
-                                                              <SelectContent>
-                                                                  <SelectItem value="sv">Single Vision</SelectItem>
-                                                                  <SelectItem value="bf">Bifocal</SelectItem>
-                                                                  <SelectItem value="var">Varifocal</SelectItem>
-                                                                  <SelectItem value="occ">Occupational</SelectItem>
-                                                              </SelectContent>
-                                                          </Select>
+                                                               <FormControl>
+                                                                   <SelectTrigger>
+                                                                       <SelectValue placeholder="Select a lens type" />
+                                                                   </SelectTrigger>
+                                                               </FormControl>
+                                                               <SelectContent>
+                                                                   <SelectItem value="sv">Single Vision</SelectItem>
+                                                                   <SelectItem value="bf">Bifocal</SelectItem>
+                                                                   <SelectItem value="var">Varifocal</SelectItem>
+                                                                   <SelectItem value="occ">Occupational</SelectItem>
+                                                               </SelectContent>
+                                                           </Select>
                                                       </FormItem>
                                                   )}
                                               />
@@ -266,19 +295,19 @@ export default function AiProblemSolverPage() {
                                                       <FormItem>
                                                           <FormLabel>Lens Material/Index</FormLabel>
                                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                              <FormControl>
-                                                                  <SelectTrigger>
-                                                                      <SelectValue placeholder="Select a material" />
-                                                                  </SelectTrigger>
-                                                              </FormControl>
-                                                              <SelectContent>
-                                                                  <SelectItem value="1.50">Standard Index (1.50)</SelectItem>
-                                                                  <SelectItem value="1.59">Polycarbonate (1.59)</SelectItem>
-                                                                  <SelectItem value="1.60">Mid-Index (1.60)</SelectItem>
-                                                                  <SelectItem value="1.67">High-Index (1.67)</SelectItem>
-                                                                  <SelectItem value="1.74">High-Index (1.74)</SelectItem>
-                                                              </SelectContent>
-                                                          </Select>
+                                                               <FormControl>
+                                                                   <SelectTrigger>
+                                                                       <SelectValue placeholder="Select a material" />
+                                                                   </SelectTrigger>
+                                                               </FormControl>
+                                                               <SelectContent>
+                                                                   <SelectItem value="1.50">Standard Index (1.50)</SelectItem>
+                                                                   <SelectItem value="1.59">Polycarbonate (1.59)</SelectItem>
+                                                                   <SelectItem value="1.60">Mid-Index (1.60)</SelectItem>
+                                                                   <SelectItem value="1.67">High-Index (1.67)</SelectItem>
+                                                                   <SelectItem value="1.74">High-Index (1.74)</SelectItem>
+                                                               </SelectContent>
+                                                           </Select>
                                                       </FormItem>
                                                   )}
                                               />
@@ -315,8 +344,8 @@ export default function AiProblemSolverPage() {
                                                     <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
                                                         <FormControl>
                                                             <Checkbox
-                                                            checked={field.value}
-                                                            onCheckedChange={field.onChange}
+                                                                checked={field.value}
+                                                                onCheckedChange={handleKnobChange}
                                                             />
                                                         </FormControl>
                                                         <div className="space-y-1 leading-none">
@@ -379,5 +408,3 @@ export default function AiProblemSolverPage() {
         </ToolPageLayout>
     );
 }
-
-    
