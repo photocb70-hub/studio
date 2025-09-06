@@ -127,6 +127,46 @@ export const drugCategories: DrugCategory[] = [
     ]
   },
   {
+    title: 'In-Practice Ophthalmic Drugs',
+    drugs: [
+        {
+            name: 'Proxymetacaine Hydrochloride',
+            uses: 'Topical local anaesthetic for tonometry, contact lens fitting, and minor procedures. Rapid onset, short duration.',
+            sideEffects: 'Mild stinging on instillation. Corneal epithelial toxicity with repeated use. Rare allergic reactions.',
+        },
+        {
+            name: 'Tropicamide',
+            uses: 'Anticholinergic agent used for mydriasis (pupil dilation) and cycloplegia (paralysis of accommodation) for fundus examination.',
+            sideEffects: 'Stinging, light sensitivity (photophobia), blurred near vision. Can increase intraocular pressure and precipitate acute angle-closure glaucoma in at-risk eyes.',
+        },
+        {
+            name: 'Cyclopentolate Hydrochloride',
+            uses: 'Potent anticholinergic for mydriasis and cycloplegia, especially for paediatric refraction.',
+            sideEffects: 'More pronounced and longer-lasting effects than Tropicamide. Can cause CNS effects, especially in children (e.g., drowsiness, disorientation, hallucinations).',
+        },
+        {
+            name: 'Phenylephrine Hydrochloride',
+            uses: 'Sympathomimetic agent used for mydriasis without cycloplegia. Often used with Tropicamide for maximum dilation.',
+            sideEffects: 'Can cause significant cardiovascular effects (increased blood pressure, tachycardia). Use with caution in patients with hypertension, heart disease, or on MAOIs.',
+        },
+        {
+            name: 'Fluorescein Sodium',
+            uses: 'Diagnostic dye used topically (as strips) to assess corneal integrity, tear film quality (TBUT), and applanation tonometry.',
+            sideEffects: 'Minimal. Can cause mild stinging. Stains soft contact lenses.',
+        },
+        {
+            name: 'Chloramphenicol',
+            uses: 'Broad-spectrum antibiotic (POM) for the treatment of bacterial conjunctivitis and other superficial eye infections. Available under PGDs for optometrists.',
+            sideEffects: 'Generally well-tolerated. Rare but serious risk of aplastic anaemia with systemic use; topical risk is considered extremely low but not zero.',
+        },
+        {
+            name: 'Fusidic Acid',
+            uses: 'Antibiotic (POM) with strong activity against staphylococcal infections, commonly prescribed for bacterial conjunctivitis or blepharitis.',
+            sideEffects: 'Transient stinging or blurring. Often prescribed as a viscous drop.',
+        },
+    ]
+  },
+  {
     title: 'Over-the-Counter & Other',
     drugs: [
       {
