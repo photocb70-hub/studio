@@ -138,10 +138,11 @@ export default function HomeClientPage({ changelogContent }: { changelogContent:
             <div className="flex items-center gap-2">
                 <MobileNav />
                  <h1
-                    className="cursor-pointer text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
+                    className="flex cursor-pointer items-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
                     onClick={handleTitleClick}
                  >
-                    <span className="inline-block text-primary"><Eye className="size-8" /></span>ptical Prime
+                    <Eye className="mr-1 size-8 text-primary" />
+                    <span>ptical Prime</span>
                 </h1>
             </div>
             <ThemeToggleButton />
