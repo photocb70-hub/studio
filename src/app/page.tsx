@@ -41,7 +41,7 @@ const menuItems = [
   },
 ];
 
-const appVersion = "2.6 alpha";
+const appVersion = "2.7 alpha";
 
 const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
   <Card className="relative flex h-full items-center overflow-hidden bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-lg">
@@ -56,6 +56,17 @@ const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
 );
 
 const changelogContent = `# Changelog
+
+## [2.7 alpha]
+### Changed
+- Finalized UI for the "AI Problem Solver" form, replacing text inputs with sliders and reorganizing fields for better usability.
+- Made the header title a direct link to the main menu on all tool pages.
+- Adjusted homepage layout to move the footer and changelog button further down for better visual balance.
+
+### Fixed
+- Corrected the layout of the "In Development" badge to be a centered, two-line element.
+- Fixed the background image on the "Refund" pop-up to correctly cover the entire dialog.
+- Cleaned up 1 unused import from the clinical page.
 
 ## [2.6 alpha]
 ### Fixed
@@ -119,7 +130,8 @@ export default function Home() {
         <div 
           className="absolute inset-0 bg-background/80 backdrop-blur-sm z-0"
         />
-        <div className="w-full max-w-4xl z-10 mx-auto flex flex-col flex-grow items-center justify-center">
+        <div className="w-full max-w-4xl z-10 mx-auto flex flex-col flex-grow">
+          <div className="flex-grow flex flex-col items-center justify-center">
             <header className="mb-12 text-center">
                 <div className="mb-4 inline-flex cursor-pointer items-center gap-3" onClick={handleTitleClick}>
                 <Eye className="size-10 text-primary" />
@@ -145,27 +157,26 @@ export default function Home() {
             </div>
           </div>
           
-        <div className="w-full max-w-4xl z-10 mx-auto">
-            <AppFooter version={appVersion}>
-                <Dialog>
-                <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                    <ScrollText className="mr-2" />
-                    Changelog
-                    </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                    <DialogTitle>Application Changelog</DialogTitle>
-                    </DialogHeader>
-                    <ScrollArea className="h-[60vh] pr-4">
-                    <pre className="text-sm whitespace-pre-wrap">
-                        {changelogContent}
-                    </pre>
-                    </ScrollArea>
-                </DialogContent>
-                </Dialog>
-            </AppFooter>
+          <AppFooter version={appVersion}>
+              <Dialog>
+              <DialogTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                  <ScrollText className="mr-2" />
+                  Changelog
+                  </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                  <DialogTitle>Application Changelog</DialogTitle>
+                  </DialogHeader>
+                  <ScrollArea className="h-[60vh] pr-4">
+                  <pre className="text-sm whitespace-pre-wrap">
+                      {changelogContent}
+                  </pre>
+                  </ScrollArea>
+              </DialogContent>
+              </Dialog>
+          </AppFooter>
         </div>
       </main>
 

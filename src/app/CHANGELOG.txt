@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.7 alpha]
+### Changed
+- Finalized UI for the "AI Problem Solver" form, replacing text inputs with sliders and reorganizing fields for better usability.
+- Made the header title a direct link to the main menu on all tool pages.
+- Adjusted homepage layout to move the footer and changelog button further down for better visual balance.
+
+### Fixed
+- Corrected the layout of the "In Development" badge to be a centered, two-line element.
+- Fixed the background image on the "Refund" pop-up to correctly cover the entire dialog.
+- Cleaned up 1 unused import from the clinical page.
+
 ## [2.6 alpha]
 ### Fixed
 - Stabilized the "AI Problem Solver" page to resolve a persistent and critical series of application crashes. The complex form with sliders has been reverted to a more robust, simple text-input version to ensure reliability.

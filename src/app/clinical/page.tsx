@@ -11,7 +11,6 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { ToolPageLayout } from '@/components/tool-page-layout';
-import { Badge } from '@/components/ui/badge';
 import { ContactLensIcon } from '@/components/icons/contact-lens-icon';
 
 
