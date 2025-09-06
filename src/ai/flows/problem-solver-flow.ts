@@ -41,32 +41,54 @@ const ProblemSolverOutputSchema = z.object({
 });
 export type ProblemSolverOutput = z.infer<typeof ProblemSolverOutputSchema>;
 
-// Placeholder function to return a stable response for UI testing.
-const getPlaceholderResponse = async (input: ProblemSolverInput): Promise<ProblemSolverOutput> => {
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
-
-    const isPlusLens = (input.currentRx?.sphere ?? 0) > 0;
-
-    const analysis = `This is a simulated analysis based on the input. The primary complaint is: "${input.problem}". The patient's new prescription appears to be for ${isPlusLens ? 'hyperopia' : 'myopia'}. A significant change in axis or cylinder power between the new and old prescription is often a key factor in adaptation issues.`;
-
-    const solution = `
-*   First, re-verify all measurements, including PD, heights, and back vertex distance.
-*   Next, check the base curve and lens design against the previous pair.
-*   Consider a trial frame demonstration to confirm the patient's subjective experience.
-*   If all measurements are correct, a non-adapt period of 1-2 weeks may be necessary.
-    `;
-    
-    const considerations = "Other factors could include frame fit, pantoscopic tilt, and wrap angle. Also consider the patient's visual needs and lifestyle. If the patient has been marked with the 'isKnob' flag, bedside manner and careful communication will be paramount to success.";
-
-    return {
-        analysis,
-        solution,
-        considerations,
-    };
-};
-
 export async function solveProblem(input: ProblemSolverInput): Promise<ProblemSolverOutput> {
-  // The live Genkit flow is temporarily disabled to ensure application stability.
-  // We are returning a placeholder response for now.
-  return getPlaceholderResponse(input);
+  return problemSolverFlow(input);
 }
+
+const problemSolverPrompt = ai.definePrompt({
+    name: 'problemSolverPrompt',
+    input: { schema: ProblemSolverInputSchema },
+    output: { schema: ProblemSolverOutputSchema },
+    prompt: `You are an expert optical dispenser and problem solver. A user has submitted the following dispensing scenario.
+
+    Analyze the provided information, including the primary complaint, current and previous prescriptions, and lens details.
+    
+    Your task is to:
+    1.  Provide a detailed analysis of the potential root causes of the problem.
+    2.  Recommend a clear, step-by-step solution. Format this as a markdown list.
+    3.  List any other considerations the user should be aware of.
+    4.  If the 'isKnob' flag is true, acknowledge this with a touch of humor and empathy in your 'considerations' section, emphasizing the importance of patient communication.
+    
+    Problem: {{{problem}}}
+    
+    Current Rx:
+    - Sphere: {{currentRx.sphere}}
+    - Cylinder: {{currentRx.cylinder}}
+    - Axis: {{currentRx.axis}}
+    - Add: {{currentRx.add}}
+    
+    Previous Rx:
+    - Sphere: {{previousRx.sphere}}
+    - Cylinder: {{previousRx.cylinder}}
+    - Axis: {{previousRx.axis}}
+
+    Lens Details:
+    - Type: {{lens.type}}
+    - Material: {{lens.material}}
+    `,
+});
+
+const problemSolverFlow = ai.defineFlow(
+    {
+        name: 'problemSolverFlow',
+        inputSchema: ProblemSolverInputSchema,
+        outputSchema: ProblemSolverOutputSchema,
+    },
+    async (input) => {
+        const { output } = await problemSolverPrompt(input);
+        if (!output) {
+            throw new Error('The AI model failed to produce a valid output.');
+        }
+        return output;
+    }
+);

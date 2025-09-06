@@ -48,7 +48,7 @@ const clinicalMenuItems = [
     title: 'AI Problem Solver',
     description: 'Get AI-powered solutions for optical problems.',
     icon: <Sparkles className="size-8 text-primary" />,
-    inDevelopment: true,
+    inDevelopment: false,
   },
 ];
 
@@ -73,6 +73,12 @@ const MenuItemCard = ({ item }: { item: typeof clinicalMenuItems[0] }) => (
   );
 
 export default function ClinicalPage() {
+    const sortedItems = [...clinicalMenuItems].sort((a, b) => {
+        if (a.inDevelopment && !b.inDevelopment) return 1;
+        if (!a.inDevelopment && b.inDevelopment) return -1;
+        return a.title.localeCompare(b.title);
+    });
+
   return (
     <div 
       className="bg-cover bg-center bg-no-repeat bg-fixed"
@@ -83,7 +89,7 @@ export default function ClinicalPage() {
         description="A collection of guides and assistants for clinical decision-making."
       >
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              {clinicalMenuItems.map((item) => (
+              {sortedItems.map((item) => (
                     <Link
                         href={item.href}
                         key={item.href}
