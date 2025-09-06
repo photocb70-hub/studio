@@ -36,7 +36,6 @@ const lensMaterials = [
     { name: 'Air', index: 1.000 },
     { name: 'Water', index: 1.333 },
     { name: 'Aqueous', index: 1.336 },
-    { name: 'Vitreous', index: 1.336 },
     { name: 'Cornea', index: 1.376 },
     { name: 'Standard Index (1.50)', index: 1.498 },
     { name: 'Crown Glass', index: 1.523 },
