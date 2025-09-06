@@ -1,6 +1,11 @@
-g# Changelog
+# Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [1.2 alpha]
+
+### Added
+- Added high-quality SVG app icons and a web app manifest (`manifest.json`) to improve the look and behavior when the app is saved to a phone's home screen (PWA).
 
 ## [1.1 alpha]
 
