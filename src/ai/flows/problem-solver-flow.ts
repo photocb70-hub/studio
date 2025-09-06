@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI-based problem solver for optical dispensing issues.
@@ -40,66 +41,32 @@ export const ProblemSolverOutputSchema = z.object({
 });
 export type ProblemSolverOutput = z.infer<typeof ProblemSolverOutputSchema>;
 
+// Placeholder function to return a stable response for UI testing.
+const getPlaceholderResponse = async (input: ProblemSolverInput): Promise<ProblemSolverOutput> => {
+    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
+
+    const isPlusLens = (input.currentRx?.sphere ?? 0) > 0;
+
+    const analysis = `This is a simulated analysis based on the input. The primary complaint is: "${input.problem}". The patient's new prescription appears to be for ${isPlusLens ? 'hyperopia' : 'myopia'}. A significant change in axis or cylinder power between the new and old prescription is often a key factor in adaptation issues.`;
+
+    const solution = `
+*   First, re-verify all measurements, including PD, heights, and back vertex distance.
+*   Next, check the base curve and lens design against the previous pair.
+*   Consider a trial frame demonstration to confirm the patient's subjective experience.
+*   If all measurements are correct, a non-adapt period of 1-2 weeks may be necessary.
+    `;
+    
+    const considerations = "Other factors could include frame fit, pantoscopic tilt, and wrap angle. Also consider the patient's visual needs and lifestyle. If the patient has been marked with the 'isKnob' flag, bedside manner and careful communication will be paramount to success.";
+
+    return {
+        analysis,
+        solution,
+        considerations,
+    };
+};
+
 export async function solveProblem(input: ProblemSolverInput): Promise<ProblemSolverOutput> {
-  return problemSolverFlow(input);
+  // The live Genkit flow is temporarily disabled to ensure application stability.
+  // We are returning a placeholder response for now.
+  return getPlaceholderResponse(input);
 }
-
-const formatRx = (rx: z.infer<typeof rxSchema> | undefined) => {
-    if (!rx) return 'Not provided.';
-    const parts = [];
-    if (rx.sphere !== undefined) parts.push(`Sphere: ${rx.sphere.toFixed(2)}`);
-    if (rx.cylinder !== undefined) parts.push(`Cylinder: ${rx.cylinder.toFixed(2)}`);
-    if (rx.axis !== undefined) parts.push(`Axis: ${rx.axis}`);
-    if (rx.add) parts.push(`Add: ${rx.add}`);
-    if (rx.prism) parts.push(`Prism: ${rx.prism}`);
-    if (rx.base) parts.push(`Base: ${rx.base}`);
-    if (rx.pd) parts.push(`PD: ${rx.pd}`);
-    if (rx.hts) parts.push(`Heights: ${rx.hts}`);
-    return parts.length > 0 ? parts.join(', ') : 'Not provided.';
-}
-
-const problemSolverFlow = ai.defineFlow(
-  {
-    name: 'problemSolverFlow',
-    inputSchema: ProblemSolverInputSchema,
-    outputSchema: ProblemSolverOutputSchema,
-  },
-  async (input) => {
-    const prompt = `You are an expert dispensing optician and AI problem solver. A user has submitted the following optical non-tolerance case.
-
-Analyze the data provided and generate a structured response with a detailed analysis, a recommended solution, and any further considerations. Be professional, concise, and base your analysis on optical principles.
-
-**Case Details:**
-
-*   **Primary Complaint:**
-    {{{problem}}}
-
-*   **Current Prescription:**
-    ${formatRx(input.currentRx)}
-
-*   **Previous Prescription:**
-    ${formatRx(input.previousRx)}
-
-*   **Lens Details:**
-    *   Type/Design: ${input.lens?.type || 'Not provided.'}
-    *   Material/Index: ${input.lens?.material || 'Not provided.'}
-    
-{{#if isKnob}}
-*   **Secret Diagnostic Flag:**
-    The user has indicated that the patient is being particularly difficult. Acknowledge this with professional humor in your analysis and suggest strategies for patient communication and managing expectations, but still provide a thorough, evidence-based optical analysis as the primary response. For the solution, start with: "While the 'subjective refinement' phase with the patient is crucial, let's first ensure our optical foundations are solid."
-{{/if}}
-
-Provide your response in the required JSON format with fields for analysis, solution, and considerations. The solution should be a markdown list.`;
-
-    const { output } = await ai.generate({
-        prompt,
-        model: 'googleai/gemini-1.5-flash-latest',
-        output: { schema: ProblemSolverOutputSchema },
-    });
-    
-    if (!output) {
-      throw new Error('The AI model failed to generate a response.');
-    }
-    return output;
-  }
-);

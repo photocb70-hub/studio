@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Pill, Sparkles, ScanEye, Contact } from 'lucide-react';
+import { Pill, Sparkles, ScanEye } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -34,7 +34,7 @@ const clinicalMenuItems = [
     title: 'AI Problem Solver',
     description: 'Get AI-powered solutions for optical problems.',
     icon: <Sparkles className="size-8 text-primary" />,
-    inDevelopment: false,
+    inDevelopment: true,
   },
   {
     href: '/ai-image-analyzer',
