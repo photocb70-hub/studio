@@ -12,6 +12,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Optical Prime',
   description: 'Precision tools for optical professionals.',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
