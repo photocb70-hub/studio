@@ -143,11 +143,20 @@ export default function AiProblemSolverPage() {
         const prism = values[`${group}Prism`];
         const base = values[`${group}PrismBase`];
 
-        if (sph === undefined && cyl === undefined && axis === undefined && add === undefined && prism === undefined) return null;
+        const hasValue = (v: any) => v !== undefined && v !== '' && v !== null;
+
+        const hasSph = hasValue(sph) && sph !== 0;
+        const hasCyl = hasValue(cyl) && cyl !== 0;
+        const hasAxis = hasValue(axis);
+        const hasAdd = hasValue(add) && add !== 0;
+        const hasPrism = hasValue(prism) && prism !== 0;
+        const hasBase = hasValue(base);
+
+        if (!hasSph && !hasCyl && !hasAdd && !hasPrism) return null;
         
         let rxString = `${sph?.toFixed(2) || '0.00'} / ${cyl?.toFixed(2) || '0.00'} x ${axis || '0'}`;
-        if (add) rxString += ` Add ${add.toFixed(2)}`;
-        if (prism && base) rxString += ` Prism ${prism.toFixed(2)} Base ${base}`;
+        if (hasAdd) rxString += ` Add: ${add?.toFixed(2)}`;
+        if (hasPrism && hasBase) rxString += ` Prism: ${prism?.toFixed(2)} Base ${base}`;
 
         return rxString;
     }
@@ -161,10 +170,10 @@ export default function AiProblemSolverPage() {
 
         const queryParts = [
             `Primary Complaint: ${values.complaint}`,
-            currentRx && `Current Rx: ${currentRx}`,
-            previousRx && `Previous Rx: ${previousRx}`,
-            values.lensDetails && `Lens/Frame Details: ${values.lensDetails}`,
-            values.measurements && `Measurements: ${values.measurements}`,
+            currentRx ? `Current Rx: ${currentRx}` : null,
+            previousRx ? `Previous Rx: ${previousRx}` : null,
+            values.lensDetails ? `Lens/Frame Details: ${values.lensDetails}` : null,
+            values.measurements ? `Measurements: ${values.measurements}` : null,
         ];
         
         const query = queryParts.filter(Boolean).join('\n');
