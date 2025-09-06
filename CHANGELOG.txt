@@ -2,10 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4 alpha]
+
+### Changed
+- Configured the Next.js project to support static exports (`output: 'export'`) in preparation for integration with Capacitor to build for native mobile platforms.
+
 ## [1.3 alpha]
 
 ### Added
 - Implemented a new "Ocular Pharmacology Guide" page to provide a quick reference for common UK drugs and their potential ocular side effects.
+- Added categories to the drug guide, including "Prescription," "In-Practice," and "Over-the-Counter."
+- Updated the drug guide to use nested accordions for better navigation.
 
 ## [1.2 alpha]
 
