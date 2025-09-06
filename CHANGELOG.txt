@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.9.1 alpha]
+
+### Fixed
+- Resolved a persistent build error on the "Lens Thickness Calculator" page by refactoring the component structure.
+- Corrected "duplicate key" errors in dropdown menus on the "Lens Thickness" and "Step-Along Vergence" calculators to improve UI stability.
+
 ## [1.9 alpha]
 
 ### Changed
