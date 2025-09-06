@@ -14,24 +14,103 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Bot, Loader2 } from 'lucide-react';
+import { Sparkles, Bot, Loader2, ChevronsUpDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Separator } from '@/components/ui/separator';
 
-// Define the shape of the result object
-type ProblemSolverOutput = {
-  analysis: string;
-  solution: string;
-  considerations: string;
-};
+const rxSchema = z.object({
+    sphere: z.coerce.number().optional(),
+    cylinder: z.coerce.number().optional(),
+    axis: z.coerce.number().optional(),
+    add: z.coerce.number().optional(),
+});
 
 const formSchema = z.object({
-  query: z.string().min(10, "Please describe the optical problem in at least 10 characters."),
+  problem: z.string().min(10, 'Please describe the problem in at least 10 characters.'),
+  currentRx: rxSchema.optional(),
+  previousRx: rxSchema.optional(),
+  lens: z.object({
+    type: z.string().optional(),
+    material: z.string().optional(),
+  }).optional(),
+  frame: z.object({
+    type: z.string().optional(),
+    measurements: z.string().optional(),
+  }).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+type ProblemSolverOutput = {
+    analysis: string;
+    solution: string;
+    considerations: string;
+};
+
+const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) => {
+    const { control } = useFormContext<FormValues>();
+    return (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <FormField
+                control={control}
+                name={`${nestName}.sphere`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Sphere</FormLabel>
+                        <FormControl>
+                            <Input type="number" step="0.25" placeholder="e.g., -2.50" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name={`${nestName}.cylinder`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Cylinder</FormLabel>
+                        <FormControl>
+                            <Input type="number" step="0.25" placeholder="e.g., -1.00" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name={`${nestName}.axis`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Axis</FormLabel>
+                        <FormControl>
+                            <Input type="number" step="1" placeholder="e.g., 180" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={control}
+                name={`${nestName}.add`}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Add</FormLabel>
+                        <FormControl>
+                            <Input type="number" step="0.25" placeholder="e.g., +2.00" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        </div>
+    )
+}
 
 export default function AiProblemSolverPage() {
     const [result, setResult] = useState<ProblemSolverOutput | null>(null);
@@ -41,32 +120,28 @@ export default function AiProblemSolverPage() {
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            query: "",
-        }
+            problem: '',
+        },
     });
-    
-    // This is a placeholder function to simulate an AI response.
-    const getPlaceholderResponse = (query: string): ProblemSolverOutput => {
+
+    const getPlaceholderResponse = (values: FormValues): ProblemSolverOutput => {
         return {
-            analysis: "This is a placeholder analysis. The AI model is currently being updated. Based on your query, the likely cause is related to the change in frame size, which can induce unwanted prismatic effects or alter the position of the optical centers.",
-            solution: "1. Verify the fitting measurements, specifically the patient's monocular pupillary distances (PDs) and optical center (OC) heights.\n2. Remeasure the back vertex distance (BVD) as the new frame may sit differently.\n3. Consider using a lens with a higher Abbe value to reduce chromatic aberration, which can be more noticeable in larger lenses.",
-            considerations: "This is a temporary response. For a full diagnosis, please consult with an experienced optician. The AI feature will be restored once the backend issues are resolved.",
+            analysis: "This is a placeholder analysis. The AI model is currently being updated. Your input has been received, but this response is pre-configured. It seems you've described a dispensing problem.",
+            solution: "1. Double-check all measurements, including monocular PDs and fitting heights.\n2. Verify the prescription was ordered and dispensed correctly.\n3. Consider the new frame's wrap, size, and vertex distance compared to the previous pair.",
+            considerations: "This is a temporary response. Factors like lens material, base curve, and asphericity could be relevant. The full AI will provide a more detailed analysis based on the specific inputs provided.",
         };
     };
 
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);
         setResult(null);
-
-        // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         try {
-            // Use the placeholder function instead of calling the AI flow
-            const response = getPlaceholderResponse(values.query);
+            const response = getPlaceholderResponse(values);
             setResult(response);
         } catch (error) {
-            console.error("Error generating placeholder response:", error);
+            console.error('Error generating placeholder response:', error);
             toast({
                 variant: 'destructive',
                 title: 'An Unexpected Error Occurred',
@@ -79,73 +154,150 @@ export default function AiProblemSolverPage() {
 
     return (
         <ToolPageLayout
-        title="AI Problem Solver"
-        description="Describe a complex optical problem, and the AI will provide a step-by-step solution."
+            title="AI Problem Solver"
+            description="Describe a complex optical scenario, provide any relevant data, and the AI will provide an analysis and potential solutions."
         >
-        <div className="grid gap-8">
-            <Card>
-            <CardHeader>
-                <CardTitle>Describe the Scenario</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="query"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Patient Complaint &amp; Data</FormLabel>
-                                <FormControl>
-                                    <Textarea
-                                        placeholder="e.g., 'Patient complains of peripheral distortion with new glasses. Current Rx: -4.00 / -1.00 x 180, Prev Rx: -3.50 DS. New frame is a larger metal frame, previous was a smaller plastic one...'"
-                                        className="min-h-[150px]"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    
-                    <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
-                    {isLoading ? (
-                        <Loader2 className="mr-2 size-4 animate-spin" />
-                    ) : (
-                        <Sparkles className="mr-2 size-4" />
-                    )}
-                    Solve Problem
-                    </Button>
-                </form>
-                </Form>
-            </CardContent>
-            </Card>
+            <div className="grid gap-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Describe the Scenario</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                <FormField
+                                    control={form.control}
+                                    name="problem"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Primary Complaint & Scenario</FormLabel>
+                                            <FormControl>
+                                                <Textarea
+                                                    placeholder="e.g., Patient reporting peripheral distortion and headaches with new progressive lenses..."
+                                                    className="min-h-[120px]"
+                                                    {...field}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                
+                                <Separator />
 
-            {isLoading && (
-            <div className="flex min-h-[200px] w-full items-center justify-center rounded-lg border border-dashed bg-card p-8 text-center text-muted-foreground">
-                <div className="flex flex-col items-center gap-2">
-                <Bot className="size-8 animate-pulse" />
-                <p>AI is thinking...</p>
-                </div>
+                                <div className="space-y-4">
+                                  <Collapsible>
+                                      <CollapsibleTrigger asChild>
+                                          <Button variant="link" className="p-0 text-base">
+                                              <ChevronsUpDown className="mr-2 size-4" />
+                                              Add Prescriptions & Lens Details (Optional)
+                                          </Button>
+                                      </CollapsibleTrigger>
+                                      <CollapsibleContent className="space-y-6 pt-4">
+                                          <div>
+                                              <h4 className="mb-2 font-medium">Current Prescription</h4>
+                                              <RxInputGroup nestName="currentRx" />
+                                          </div>
+                                          <div>
+                                              <h4 className="mb-2 font-medium">Previous Prescription</h4>
+                                              <RxInputGroup nestName="previousRx" />
+                                          </div>
+                                           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                              <FormField
+                                                  control={form.control}
+                                                  name="lens.type"
+                                                  render={({ field }) => (
+                                                      <FormItem>
+                                                          <FormLabel>Lens Type/Design</FormLabel>
+                                                          <FormControl>
+                                                              <Input placeholder="e.g., Zeiss SmartLife" {...field} />
+                                                          </FormControl>
+                                                      </FormItem>
+                                                  )}
+                                              />
+                                              <FormField
+                                                  control={form.control}
+                                                  name="lens.material"
+                                                  render={({ field }) => (
+                                                      <FormItem>
+                                                          <FormLabel>Lens Material/Index</FormLabel>
+                                                          <FormControl>
+                                                              <Input placeholder="e.g., 1.67 Aspheric" {...field} />
+                                                          </FormControl>
+                                                      </FormItem>
+                                                  )}
+                                              />
+                                              <FormField
+                                                  control={form.control}
+                                                  name="frame.type"
+                                                  render={({ field }) => (
+                                                      <FormItem>
+                                                          <FormLabel>Frame Type</FormLabel>
+                                                          <FormControl>
+                                                              <Input placeholder="e.g., Full-rim metal" {...field} />
+                                                          </FormControl>
+                                                      </FormItem>
+                                                  )}
+                                              />
+                                              <FormField
+                                                  control={form.control}
+                                                  name="frame.measurements"
+                                                  render={({ field }) => (
+                                                      <FormItem>
+                                                          <FormLabel>Frame Measurements</FormLabel>
+                                                          <FormControl>
+                                                              <Input placeholder="e.g., 54-18-145" {...field} />
+                                                          </FormControl>
+                                                      </FormItem>
+                                                  )}
+                                              />
+                                          </div>
+                                      </CollapsibleContent>
+                                  </Collapsible>
+                                </div>
+
+                                <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
+                                    {isLoading ? (
+                                        <Loader2 className="mr-2 size-4 animate-spin" />
+                                    ) : (
+                                        <Sparkles className="mr-2 size-4" />
+                                    )}
+                                    Solve Problem
+                                </Button>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
+
+                {isLoading && (
+                    <div className="flex min-h-[200px] w-full items-center justify-center rounded-lg border border-dashed bg-card p-8 text-center text-muted-foreground">
+                        <div className="flex flex-col items-center gap-2">
+                            <Bot className="size-8 animate-pulse" />
+                            <p>AI is thinking...</p>
+                        </div>
+                    </div>
+                )}
+
+                {result && (
+                    <Card className="bg-accent/10 border-accent/50">
+                        <CardHeader>
+                            <CardTitle>AI Generated Solution</CardTitle>
+                        </CardHeader>
+                        <CardContent className="prose prose-sm max-w-none text-accent-foreground dark:prose-invert">
+                            <h4>Analysis</h4>
+                            <p>{result.analysis}</p>
+                            <h4>Recommended Solution</h4>
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: result.solution.replace(/\n/g, '<br />'),
+                                }}
+                            />
+                            <h4>Further Considerations</h4>
+                            <p>{result.considerations}</p>
+                        </CardContent>
+                    </Card>
+                )}
             </div>
-            )}
-
-            {result && (
-            <Card className="bg-accent/10 border-accent/50">
-                <CardHeader>
-                <CardTitle>AI Generated Solution</CardTitle>
-                </CardHeader>
-                <CardContent className="prose prose-sm max-w-none text-accent-foreground dark:prose-invert">
-                <h4>Analysis</h4>
-                <p>{result.analysis}</p>
-                <h4>Recommended Solution</h4>
-                <p>{result.solution}</p>
-                <h4>Further Considerations</h4>
-                <p>{result.considerations}</p>
-                </CardContent>
-            </Card>
-            )}
-        </div>
         </ToolPageLayout>
     );
 }
