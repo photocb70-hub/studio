@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Bot, Loader2, UploadCloud, AlertCircle } from 'lucide-react';
+import { Sparkles, Bot, Loader2, UploadCloud, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import { analyzeImage, ImageAnalyzerOutput } from '@/ai/flows/image-analyzer-flow';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -191,10 +191,21 @@ export default function AiImageAnalyzerPage() {
                         <h4>Potential Anomalies</h4>
                         <p>{result.anomalies}</p>
                     </div>
-                     <div className="flex items-center justify-center">
-                        <div className="relative w-full aspect-square max-w-[300px]">
+                     <div className="space-y-4">
+                        <div className="relative w-full aspect-square max-w-[300px] mx-auto">
                             <Image src={preview} alt="Analyzed image" layout="fill" objectFit="contain" className="rounded-md" />
-                            <p className="text-xs text-center text-muted-foreground mt-2">Original Image</p>
+                            <p className="text-xs text-center text-muted-foreground absolute -bottom-5 w-full">Original Image</p>
+                        </div>
+                        <div className="relative w-full aspect-square max-w-[300px] mx-auto">
+                            {result.annotatedImageDataUri ? (
+                                <Image src={result.annotatedImageDataUri} alt="AI-annotated image" layout="fill" objectFit="contain" className="rounded-md" />
+                            ) : (
+                                <div className="flex flex-col items-center justify-center h-full w-full bg-muted/50 rounded-md">
+                                    <ImageIcon className="size-8 animate-pulse text-muted-foreground" />
+                                    <p className="text-sm text-muted-foreground mt-2">Generating annotated image...</p>
+                                </div>
+                            )}
+                            <p className="text-xs text-center text-muted-foreground absolute -bottom-5 w-full">AI Annotated Image</p>
                         </div>
                     </div>
                 </CardContent>
