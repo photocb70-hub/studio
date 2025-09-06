@@ -68,7 +68,7 @@ const appVersion = "1.0 alpha";
 const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
   <Card className={`relative flex h-full items-center overflow-hidden bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-lg ${item.testing ? 'opacity-50' : ''}`}>
       {item.testing && (
-      <div className="absolute -right-11 top-10 z-10 w-[160px] rotate-45 bg-accent py-1 text-center text-sm font-semibold text-accent-foreground shadow-lg">
+      <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 bg-accent py-1 text-center text-sm font-semibold text-accent-foreground shadow-lg">
           In Testing
       </div>
       )}
