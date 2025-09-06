@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles, Pill, Stethoscope } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles, Pill, Stethoscope, BrainCircuit } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -68,7 +68,7 @@ const menuItems = [
     href: '/clinical',
     title: 'Clinical Tools',
     description: 'Reference guides for clinical decision-making.',
-    icon: <Stethoscope className="size-8 text-primary" />,
+    icon: <BrainCircuit className="size-8 text-primary" />,
   },
 ];
 
