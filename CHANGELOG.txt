@@ -2,10 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.5 alpha]
+## [1.6 alpha]
 
 ### Changed
 - Reverted Next.js configuration to remove `output: 'export'` to allow for direct web publishing from Firebase Studio. This temporarily pauses native app preparation.
+- Cleaned up unused code in the `blank-size` calculator page.
+
+## [1.5 alpha]
+
+### Added
+- Added an easter egg where clicking the main title 10 times reveals a celebratory dialog.
 
 ## [1.4 alpha]
 
