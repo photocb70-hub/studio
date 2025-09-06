@@ -35,8 +35,8 @@ export default function PrescriptionTransposerPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      sphere: -1.00,
-      cylinder: -0.50,
+      sphere: 0,
+      cylinder: 0,
       axis: 90,
     },
   });

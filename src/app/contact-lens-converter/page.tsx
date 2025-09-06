@@ -41,9 +41,9 @@ export default function ContactLensConverterPage() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      sphere: -4.00,
-      cylinder: -0.75,
-      axis: 180,
+      sphere: 0,
+      cylinder: 0,
+      axis: 90,
       bvd: 12,
     },
   });
