@@ -24,16 +24,12 @@ import { useToast } from '@/hooks/use-toast';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
 
 const rxSchema = z.object({
-    sphere: z.coerce.number().optional(),
-    cylinder: z.coerce.number().optional(),
-    axis: z.coerce.number().optional(),
-    add: z.coerce.number().optional(),
-    prism: z.coerce.number().optional(),
-    base: z.string().optional(),
+    sphere: z.string().optional(),
+    cylinder: z.string().optional(),
+    axis: z.string().optional(),
+    add: z.string().optional(),
 });
 
 const formSchema = z.object({
@@ -59,44 +55,18 @@ type ProblemSolverOutput = {
     considerations: string;
 };
 
-const lensTypes = ["Single Vision", "Bifocal", "Varifocal", "Occupational"];
-const lensMaterials = [
-    { name: 'Standard Index (1.50)', value: '1.50' },
-    { name: 'Polycarbonate (1.59)', value: '1.59' },
-    { name: 'Mid-Index (1.60)', value: '1.60' },
-    { name: 'High-Index (1.67)', value: '1.67' },
-    { name: 'High-Index (1.74)', value: '1.74' },
-];
-const prismBases = ["Up", "Down", "In", "Out"];
-
-const formatPower = (power?: number) => {
-    if (power === undefined || power === null) return '0.00';
-    return (power > 0 ? '+' : '') + power.toFixed(2);
-}
-
 const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) => {
-    const { control, watch } = useFormContext<FormValues>();
-    const sphere = watch(`${nestName}.sphere`);
-    const cylinder = watch(`${nestName}.cylinder`);
-    const invertedCylinder = cylinder !== undefined ? -cylinder : 0;
-    const axis = watch(`${nestName}.axis`);
-    const add = watch(`${nestName}.add`);
-    const prism = watch(`${nestName}.prism`);
-
+    const { control } = useFormContext<FormValues>();
     return (
-        <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             <FormField
                 control={control}
                 name={`${nestName}.sphere`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Sphere: {formatPower(field.value)}</FormLabel>
+                        <FormLabel>Sphere</FormLabel>
                         <FormControl>
-                            <Slider
-                                value={[field.value ?? 0]}
-                                onValueChange={(value) => field.onChange(value[0])}
-                                min={-20} max={20} step={0.25}
-                            />
+                            <Input placeholder="+1.00" {...field} value={field.value ?? ''} />
                         </FormControl>
                     </FormItem>
                 )}
@@ -106,13 +76,9 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.cylinder`}
                 render={({ field }) => (
                      <FormItem>
-                        <FormLabel>Cylinder: {formatPower(field.value)}</FormLabel>
+                        <FormLabel>Cylinder</FormLabel>
                         <FormControl>
-                          <Slider
-                              value={[field.value ? -field.value : 0]}
-                              onValueChange={(value) => field.onChange(-value[0])}
-                              min={0} max={10} step={0.25}
-                          />
+                            <Input placeholder="-0.50" {...field} value={field.value ?? ''} />
                         </FormControl>
                       </FormItem>
                 )}
@@ -122,13 +88,9 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.axis`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Axis: {field.value ?? 'N/A'}</FormLabel>
+                        <FormLabel>Axis</FormLabel>
                         <FormControl>
-                            <Slider
-                                value={[field.value ?? 90]}
-                                onValueChange={(value) => field.onChange(value[0])}
-                                min={1} max={180} step={1}
-                            />
+                            <Input placeholder="90" {...field} value={field.value ?? ''} />
                         </FormControl>
                     </FormItem>
                 )}
@@ -138,51 +100,10 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.add`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Add: {formatPower(field.value)}</FormLabel>
+                        <FormLabel>Add</FormLabel>
                         <FormControl>
-                           <Slider
-                                value={[field.value ?? 0]}
-                                onValueChange={(value) => field.onChange(value[0])}
-                                min={0} max={4} step={0.25}
-                            />
+                           <Input placeholder="+2.00" {...field} value={field.value ?? ''} />
                         </FormControl>
-                    </FormItem>
-                )}
-            />
-            <FormField
-                control={control}
-                name={`${nestName}.prism`}
-                render={({ field }) => (
-                     <FormItem>
-                        <FormLabel>Prism: {field.value?.toFixed(2) ?? '0.00'}</FormLabel>
-                        <FormControl>
-                           <Slider
-                                value={[field.value ?? 0]}
-                                onValueChange={(value) => field.onChange(value[0])}
-                                min={0} max={10} step={0.25}
-                            />
-                        </FormControl>
-                      </FormItem>
-                )}
-            />
-            <FormField
-                control={control}
-                name={`${nestName}.base`}
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Base</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Base" />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                {prismBases.map((base) => (
-                                    <SelectItem key={base} value={base.toLowerCase()}>{base}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
                     </FormItem>
                 )}
             />
@@ -200,10 +121,6 @@ export default function AiProblemSolverPage() {
         defaultValues: {
             problem: '',
             isKnob: false,
-            currentRx: { sphere: 0, cylinder: 0, axis: 90, add: 0, prism: 0, base: '' },
-            previousRx: { sphere: 0, cylinder: 0, axis: 90, add: 0, prism: 0, base: '' },
-            lens: { type: '', material: ''},
-            frame: { type: '', measurements: ''},
         },
     });
 
@@ -217,7 +134,7 @@ export default function AiProblemSolverPage() {
         }
         return {
             analysis: "This is a placeholder analysis. The AI model is currently being updated. Your input has been received, but this response is pre-configured. It seems you've described a dispensing problem.",
-            solution: "1. Double-check all measurements, including monocular PDs and fitting heights.\n2. Verify the prescription was ordered and dispensed correctly.\n3. Consider the new frame's wrap, size, and vertex distance compared to the previous pair.",
+            solution: "1. Double-check all measurements, including monocular PDs and fitting heights.\\n2. Verify the prescription was ordered and dispensed correctly.\\n3. Consider the new frame's wrap, size, and vertex distance compared to the previous pair.",
             considerations: "This is a temporary response. Factors like lens material, base curve, and asphericity could be relevant. The full AI will provide a more detailed analysis based on the specific inputs provided.",
         };
     };
@@ -300,18 +217,9 @@ export default function AiProblemSolverPage() {
                                                   render={({ field }) => (
                                                       <FormItem>
                                                           <FormLabel>Lens Type/Design</FormLabel>
-                                                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                            <FormControl>
-                                                                <SelectTrigger>
-                                                                    <SelectValue placeholder="Select a type" />
-                                                                </SelectTrigger>
-                                                            </FormControl>
-                                                            <SelectContent>
-                                                                {lensTypes.map((type) => (
-                                                                    <SelectItem key={type} value={type}>{type}</SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                          </Select>
+                                                          <FormControl>
+                                                              <Input placeholder="e.g., Varilux Physio 3.0" {...field} value={field.value ?? ''} />
+                                                          </FormControl>
                                                       </FormItem>
                                                   )}
                                               />
@@ -321,18 +229,9 @@ export default function AiProblemSolverPage() {
                                                   render={({ field }) => (
                                                       <FormItem>
                                                           <FormLabel>Lens Material/Index</FormLabel>
-                                                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                            <FormControl>
-                                                                <SelectTrigger>
-                                                                    <SelectValue placeholder="Select a material" />
-                                                                </SelectTrigger>
-                                                            </FormControl>
-                                                            <SelectContent>
-                                                                {lensMaterials.map((material) => (
-                                                                    <SelectItem key={material.value} value={material.value}>{material.name}</SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                          </Select>
+                                                           <FormControl>
+                                                              <Input placeholder="e.g., 1.67" {...field} value={field.value ?? ''} />
+                                                          </FormControl>
                                                       </FormItem>
                                                   )}
                                               />
@@ -428,7 +327,6 @@ export default function AiProblemSolverPage() {
                             <p>{result.considerations}</p>
                         </CardContent>
                     </Card>
-                </Card>
                 )}
             </div>
         </ToolPageLayout>
