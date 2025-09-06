@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles, Pill } from 'lucide-react';
+import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles, Pill, Stethoscope } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -64,30 +64,18 @@ const menuItems = [
     description: 'Calculate vergence through an optical system.',
     icon: <Footprints className="size-8 text-primary" />,
   },
-   {
-    href: '/ocular-drugs',
-    title: 'Ocular Drugs Guide',
-    description: 'Quick reference for drugs with ocular side effects.',
-    icon: <Pill className="size-8 text-primary" />,
-  },
-   {
-    href: '/ai-problem-solver',
-    title: 'AI Problem Solver',
-    description: 'Get AI-powered solutions for optical problems.',
-    icon: <Sparkles className="size-8 text-primary" />,
-    testing: true,
+  {
+    href: '/clinical',
+    title: 'Clinical Tools',
+    description: 'Reference guides for clinical decision-making.',
+    icon: <Stethoscope className="size-8 text-primary" />,
   },
 ];
 
-const appVersion = "1.5 alpha";
+const appVersion = "1.6 alpha";
 
 const MenuItemCard = ({ item }: { item: typeof menuItems[0] }) => (
   <Card className="relative flex h-full items-center overflow-hidden bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-lg">
-      {item.testing && (
-      <div className="absolute inset-x-0 top-1/2 z-10 -translate-y-1/2 bg-accent py-1 text-center text-sm font-semibold text-accent-foreground shadow-lg">
-          In Testing
-      </div>
-      )}
       <CardHeader className="flex w-full flex-row items-center gap-4 space-y-0 p-4">
       {item.icon}
       <div className="grid gap-1">
@@ -133,15 +121,7 @@ export default function Home() {
           </header>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {menuItems.map((item) => {
-              if (item.testing) {
-                return (
-                  <div key={item.href} className="group rounded-lg cursor-not-allowed">
-                    <MenuItemCard item={item} />
-                  </div>
-                );
-              }
-              return (
+            {menuItems.map((item) => (
                 <Link
                   href={item.href}
                   key={item.href}
@@ -149,8 +129,7 @@ export default function Home() {
                 >
                   <MenuItemCard item={item} />
                 </Link>
-              );
-            })}
+              ))}
           </div>
           
           <AppFooter version={appVersion} />
