@@ -141,7 +141,7 @@ export default function HomeClientPage({ changelogContent }: { changelogContent:
                     className="flex cursor-pointer items-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
                     onClick={handleTitleClick}
                  >
-                    <Eye className="mr-1 size-8 text-primary" />
+                    <Eye className="size-8 text-primary" />
                     <span>ptical Prime</span>
                 </h1>
             </div>
