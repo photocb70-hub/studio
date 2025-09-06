@@ -2,13 +2,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ToolPageLayout } from '@/components/tool-page-layout';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,6 +23,7 @@ import { Sparkles, Bot, Loader2, ChevronsUpDown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const rxSchema = z.object({
     sphere: z.coerce.number().optional(),
@@ -42,6 +44,7 @@ const formSchema = z.object({
     type: z.string().optional(),
     measurements: z.string().optional(),
   }).optional(),
+  isKnob: z.boolean().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -63,7 +66,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                     <FormItem>
                         <FormLabel>Sphere</FormLabel>
                         <FormControl>
-                            <Input type="number" step="0.25" placeholder="e.g., -2.50" {...field} />
+                            <Input type="number" step="0.25" placeholder="e.g., -2.50" {...field} value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -76,7 +79,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                     <FormItem>
                         <FormLabel>Cylinder</FormLabel>
                         <FormControl>
-                            <Input type="number" step="0.25" placeholder="e.g., -1.00" {...field} />
+                            <Input type="number" step="0.25" placeholder="e.g., -1.00" {...field} value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -89,7 +92,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                     <FormItem>
                         <FormLabel>Axis</FormLabel>
                         <FormControl>
-                            <Input type="number" step="1" placeholder="e.g., 180" {...field} />
+                            <Input type="number" step="1" placeholder="e.g., 180" {...field} value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -102,7 +105,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                     <FormItem>
                         <FormLabel>Add</FormLabel>
                         <FormControl>
-                            <Input type="number" step="0.25" placeholder="e.g., +2.00" {...field} />
+                            <Input type="number" step="0.25" placeholder="e.g., +2.00" {...field} value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -121,10 +124,18 @@ export default function AiProblemSolverPage() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             problem: '',
+            isKnob: false,
         },
     });
 
     const getPlaceholderResponse = (values: FormValues): ProblemSolverOutput => {
+        if (values.isKnob) {
+             return {
+                analysis: "The 'Patient is a Knob Head' checkbox was selected.",
+                solution: "It has been empirically observed that this is the root cause of approximately 98% of all non-tolerance cases. The recommended course of action is to explain the concept of 'subjective adaptation' and to politely, but firmly, ask the patient to try the new spectacles for at least two weeks. Reassure them that their brain needs time to adjust to the 'superior clarity' of their new prescription.",
+                considerations: "Consider offering a complimentary lens cloth and a sympathetic nod. This often provides the necessary placebo effect to facilitate adaptation. Further investigation is unwarranted until this primary factor has been addressed.",
+            };
+        }
         return {
             analysis: "This is a placeholder analysis. The AI model is currently being updated. Your input has been received, but this response is pre-configured. It seems you've described a dispensing problem.",
             solution: "1. Double-check all measurements, including monocular PDs and fitting heights.\n2. Verify the prescription was ordered and dispensed correctly.\n3. Consider the new frame's wrap, size, and vertex distance compared to the previous pair.",
@@ -135,6 +146,7 @@ export default function AiProblemSolverPage() {
     const onSubmit = async (values: FormValues) => {
         setIsLoading(true);
         setResult(null);
+        // Simulate network delay
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         try {
@@ -252,6 +264,29 @@ export default function AiProblemSolverPage() {
                                                   )}
                                               />
                                           </div>
+                                           <Separator />
+                                            <FormField
+                                                control={form.control}
+                                                name="isKnob"
+                                                render={({ field }) => (
+                                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+                                                        <FormControl>
+                                                            <Checkbox
+                                                            checked={field.value}
+                                                            onCheckedChange={field.onChange}
+                                                            />
+                                                        </FormControl>
+                                                        <div className="space-y-1 leading-none">
+                                                            <FormLabel>
+                                                                Is the px a knob head?
+                                                            </FormLabel>
+                                                            <FormDescription>
+                                                                Advanced diagnostic tool for complex non-tolerance cases.
+                                                            </FormDescription>
+                                                        </div>
+                                                    </FormItem>
+                                                )}
+                                            />
                                       </CollapsibleContent>
                                   </Collapsible>
                                 </div>
@@ -289,7 +324,7 @@ export default function AiProblemSolverPage() {
                             <h4>Recommended Solution</h4>
                             <div
                                 dangerouslySetInnerHTML={{
-                                    __html: result.solution.replace(/\n/g, '<br />'),
+                                    __html: result.solution.replace(/\\n/g, '<br />'),
                                 }}
                             />
                             <h4>Further Considerations</h4>
@@ -301,3 +336,4 @@ export default function AiProblemSolverPage() {
         </ToolPageLayout>
     );
 }
+    
