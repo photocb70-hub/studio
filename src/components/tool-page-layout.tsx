@@ -3,8 +3,7 @@
 
 import type { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 
@@ -27,7 +26,7 @@ export function ToolPageLayout({ title, description, children }: ToolPageLayoutP
               Back
             </Button>
             <div className="flex items-center gap-2">
-                <Image src="/optimusicon.png" alt="Optical Prime Icon" width={24} height={24} />
+                <Eye className="size-6 text-primary" />
                 <h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
                     Optical Prime
                 </h1>

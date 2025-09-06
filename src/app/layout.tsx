@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -14,6 +15,10 @@ export const metadata: Metadata = {
   title: 'Optical Prime',
   description: 'Precision tools for optical professionals.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/optimusicon.png',
+    apple: '/optimusicon.png',
+  }
 };
 
 export default function RootLayout({

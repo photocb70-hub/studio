@@ -117,7 +117,7 @@ export default function Home() {
         <div className="w-full max-w-4xl z-10">
           <header className="mb-12 text-center">
             <div className="mb-4 inline-flex cursor-pointer items-center gap-3" onClick={handleTitleClick}>
-              <Image src="/optimusicon.png" alt="Optical Prime Icon" width={40} height={40} />
+              <Eye className="size-10 text-primary" />
               <h1 className="font-headline text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
                 Optical Prime
               </h1>
