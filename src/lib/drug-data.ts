@@ -135,6 +135,11 @@ export const drugCategories: DrugCategory[] = [
             sideEffects: 'Mild stinging on instillation. Corneal epithelial toxicity with repeated use. Rare allergic reactions.',
         },
         {
+            name: 'Oxybuprocaine Hydrochloride',
+            uses: 'Topical local anaesthetic for tonometry and minor procedures. Can cause more stinging than Proxymetacaine.',
+            sideEffects: 'Stinging on instillation, potential for corneal epithelial toxicity with overuse. Rare allergic reactions.',
+        },
+        {
             name: 'Tropicamide',
             uses: 'Anticholinergic agent used for mydriasis (pupil dilation) and cycloplegia (paralysis of accommodation) for fundus examination.',
             sideEffects: 'Stinging, light sensitivity (photophobia), blurred near vision. Can increase intraocular pressure and precipitate acute angle-closure glaucoma in at-risk eyes.',
