@@ -1,4 +1,6 @@
 
+'use client';
+
 import Link from 'next/link';
 import { Layers, Scissors, Triangle, FlaskConical, Eye, MoveHorizontal, Maximize, Footprints, ChevronsUpDown, ArrowRightLeft, Repeat, Sparkles } from 'lucide-react';
 import {
@@ -53,10 +55,11 @@ const menuItems = [
     icon: <Footprints className="size-8 text-primary" />,
   },
    {
-    href: '/ai-problem-solver',
+    href: '#',
     title: 'AI Problem Solver',
     description: 'Get AI-powered solutions for optical problems.',
     icon: <Sparkles className="size-8 text-primary" />,
+    testing: true,
   },
 ];
 
@@ -86,8 +89,13 @@ export default function Home() {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {menuItems.map((item) => (
-            <Link href={item.href} key={item.href} className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-              <Card className="relative flex h-full items-center overflow-hidden bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-lg">
+            <Link 
+              href={item.href} 
+              key={item.href} 
+              className={`group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${item.testing ? 'cursor-not-allowed' : ''}`}
+              onClick={(e) => { if (item.testing) e.preventDefault(); }}
+            >
+              <Card className={`relative flex h-full items-center overflow-hidden bg-card/80 backdrop-blur-sm transition-all duration-300 ease-in-out group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-lg ${item.testing ? 'opacity-50' : ''}`}>
                  {item.testing && (
                   <div className="absolute -right-11 top-10 z-10 w-[160px] rotate-45 bg-accent py-1 text-center text-sm font-semibold text-accent-foreground shadow-lg">
                     In Testing
@@ -110,4 +118,3 @@ export default function Home() {
     </main>
   );
 }
-
