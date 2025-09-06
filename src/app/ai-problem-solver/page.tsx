@@ -25,11 +25,12 @@ import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Slider } from '@/components/ui/slider';
 
 const rxSchema = z.object({
-    sphere: z.string().optional(),
-    cylinder: z.string().optional(),
-    axis: z.string().optional(),
+    sphere: z.coerce.number().min(-20).max(20).optional().default(0),
+    cylinder: z.coerce.number().min(-10).max(0).optional().default(0),
+    axis: z.coerce.number().min(1).max(180).optional().default(90),
     add: z.string().optional(),
     prism: z.string().optional(),
     base: z.string().optional(),
@@ -58,18 +59,33 @@ type ProblemSolverOutput = {
     considerations: string;
 };
 
+const formatPower = (power?: number) => {
+    if (power === undefined || power === null) return '0.00';
+    return (power > 0 ? '+' : '') + power.toFixed(2);
+};
+
 const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) => {
-    const { control } = useFormContext<FormValues>();
+    const { control, watch } = useFormContext<FormValues>();
+
+    const sphereValue = watch(`${nestName}.sphere`);
+    const cylinderValue = watch(`${nestName}.cylinder`);
+    const invertedCylinderValue = cylinderValue !== undefined ? -cylinderValue : 0;
+    const axisValue = watch(`${nestName}.axis`);
+
     return (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-            <FormField
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6 md:grid-cols-3">
+             <FormField
                 control={control}
                 name={`${nestName}.sphere`}
                 render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Sphere</FormLabel>
+                    <FormItem className="md:col-span-3">
+                        <FormLabel>Sphere (D): {formatPower(sphereValue)}</FormLabel>
                         <FormControl>
-                            <Input placeholder="+1.00" {...field} value={field.value ?? ''} />
+                             <Slider
+                                value={[field.value ?? 0]}
+                                onValueChange={(value) => field.onChange(value[0])}
+                                min={-20} max={20} step={0.25}
+                            />
                         </FormControl>
                     </FormItem>
                 )}
@@ -79,9 +95,13 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.cylinder`}
                 render={({ field }) => (
                      <FormItem>
-                        <FormLabel>Cylinder</FormLabel>
+                        <FormLabel>Cylinder (D): {formatPower(cylinderValue)}</FormLabel>
                         <FormControl>
-                            <Input placeholder="-0.50" {...field} value={field.value ?? ''} />
+                            <Slider
+                                value={[invertedCylinderValue]}
+                                onValueChange={(value) => field.onChange(-value[0])}
+                                min={0} max={10} step={0.25}
+                            />
                         </FormControl>
                       </FormItem>
                 )}
@@ -91,14 +111,18 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx' | 'previousRx' }) =>
                 name={`${nestName}.axis`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Axis</FormLabel>
+                        <FormLabel>Axis (°): {axisValue}</FormLabel>
                         <FormControl>
-                            <Input placeholder="90" {...field} value={field.value ?? ''} />
+                            <Slider
+                                value={[field.value ?? 90]}
+                                onValueChange={(value) => field.onChange(value[0])}
+                                min={1} max={180} step={1}
+                            />
                         </FormControl>
                     </FormItem>
                 )}
             />
-            <FormField
+             <FormField
                 control={control}
                 name={`${nestName}.add`}
                 render={({ field }) => (
@@ -149,6 +173,8 @@ export default function AiProblemSolverPage() {
         defaultValues: {
             problem: '',
             isKnob: false,
+            currentRx: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '' },
+            previousRx: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '' },
         },
     });
 
@@ -264,10 +290,12 @@ export default function AiProblemSolverPage() {
                                                 <h4 className="mb-2 font-medium">Current Prescription</h4>
                                                 <RxInputGroup nestName="currentRx" />
                                             </div>
+                                            <Separator />
                                             <div>
                                                 <h4 className="mb-2 font-medium">Previous Prescription</h4>
                                                 <RxInputGroup nestName="previousRx" />
                                             </div>
+                                             <Separator />
                                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                                 <FormField
                                                     control={form.control}
@@ -411,3 +439,5 @@ export default function AiProblemSolverPage() {
         </ToolPageLayout>
     );
 }
+
+    
