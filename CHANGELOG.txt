@@ -2,6 +2,16 @@ g# Changelog
 
 All notable changes to this project will be documented in this file.
 
+## [1.1 alpha]
+
+### Changed
+- Radically simplified the "AI Problem Solver" to use a single input field, removing the complex multi-part form to improve stability.
+- The "AI Problem Solver" has been temporarily disabled and marked as "In Testing" on the homepage to prevent users from encountering bugs.
+- Updated the "In Testing" banner to be more centrally located for better visibility.
+
+### Fixed
+- Resolved a persistent critical bug in the "AI Problem Solver" that caused the application to crash on submission.
+
 ## [1.0 alpha]
 
 ### Changed
