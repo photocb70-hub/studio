@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -47,8 +46,8 @@ const binocularRxSchema = z.object({
 
 const formSchema = z.object({
   problem: z.string().min(10, 'Please describe the problem in at least 10 characters.'),
-  currentRx: binocularRxSchema.optional(),
-  previousRx: binocularRxSchema.optional(),
+  currentRx: binocularRxSchema,
+  previousRx: binocularRxSchema,
   lens: z.object({
     type: z.string().optional(),
     material: z.string().optional(),

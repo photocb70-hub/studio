@@ -10,6 +10,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
+import { searchWeb } from '@/ai/tools/search-tool';
 
 const rxSchema = z.object({
     sphere: z.number().optional(),
@@ -23,14 +24,14 @@ const rxSchema = z.object({
 });
 
 const binocularRxSchema = z.object({
-    od: rxSchema.optional(),
-    os: rxSchema.optional(),
+    od: rxSchema,
+    os: rxSchema,
 });
 
 const ProblemSolverInputSchema = z.object({
   problem: z.string().describe("The primary complaint or issue the patient is experiencing."),
-  currentRx: binocularRxSchema.optional().describe("The patient's current, new prescription details for both eyes."),
-  previousRx: binocularRxSchema.optional().describe("The patient's previous prescription details for both eyes, for comparison."),
+  currentRx: binocularRxSchema,
+  previousRx: binocularRxSchema,
   lens: z.object({
     type: z.string().optional().describe("The type or design of the lens (e.g., Single Vision, Varifocal)."),
     material: z.string().optional().describe("The lens material or refractive index."),
@@ -73,6 +74,7 @@ const problemSolverPrompt = ai.definePrompt({
     name: 'problemSolverPrompt',
     input: { schema: ProblemSolverInputSchema },
     output: { schema: ProblemSolverOutputSchema },
+    tools: [searchWeb],
     prompt: `You are an expert optical dispenser and problem solver. A user has submitted the following dispensing scenario.
 
     Analyze the provided information, including the primary complaint, current and previous prescriptions, and lens details.
@@ -82,6 +84,7 @@ const problemSolverPrompt = ai.definePrompt({
     2.  Recommend a clear, step-by-step solution. Format this as a markdown list.
     3.  List any other considerations the user should be aware of.
     4.  If the 'isKnob' flag is true, acknowledge this with a touch of humor and empathy in your 'considerations' section, emphasizing the importance of patient communication.
+    5.  If the problem involves a very new or specific named lens technology, or a rare clinical sign, use the 'searchWeb' tool to look up information to support your analysis.
     
     Problem: {{{problem}}}
     
