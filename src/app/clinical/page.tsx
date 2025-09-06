@@ -19,7 +19,7 @@ const clinicalMenuItems = [
     href: '/contact-lens-converter',
     title: 'Contact Lens Rx Converter',
     description: 'Convert a spectacle Rx to a contact lens Rx.',
-    icon: <Image src="/optimusicon.png" alt="Optical Prime Icon" width={32} height={32} className="text-primary" />,
+    icon: <Image src="/optimusicon.png" alt="Optical Prime Icon" width={32} height={32} />,
     inDevelopment: false,
   },
   {
