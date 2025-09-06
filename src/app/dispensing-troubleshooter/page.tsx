@@ -47,8 +47,8 @@ const binocularRxSchema = z.object({
 
 const formSchema = z.object({
   problem: z.string().min(10, 'Please describe the problem in at least 10 characters.'),
-  currentRx: binocularRxSchema.optional(),
-  previousRx: binocularRxSchema.optional(),
+  currentRx: binocularRxSchema,
+  previousRx: binocularRxSchema,
   lens: z.object({
     type: z.string().optional(),
     material: z.string().optional(),
@@ -282,14 +282,23 @@ export default function DispensingTroubleshooterPage() {
     const onSubmit = async (values: FormValues) => {
         const { currentRx, previousRx, lens, isKnob, problem } = values;
 
-        const sphDiff = Math.abs((currentRx?.od?.sphere ?? 0) - (previousRx?.od?.sphere ?? 0));
-        const cylDiff = Math.abs((currentRx?.od?.cylinder ?? 0) - (previousRx?.od?.cylinder ?? 0));
-        const axisDiff = Math.abs((currentRx?.od?.axis ?? 0) - (previousRx?.od?.axis ?? 0));
+        const getRxDiff = (eye: 'od' | 'os') => ({
+            sph: Math.abs((currentRx[eye]?.sphere ?? 0) - (previousRx[eye]?.sphere ?? 0)),
+            cyl: Math.abs((currentRx[eye]?.cylinder ?? 0) - (previousRx[eye]?.cylinder ?? 0)),
+            axis: Math.abs((currentRx[eye]?.axis ?? 0) - (previousRx[eye]?.axis ?? 0)),
+        });
+
+        const odDiff = getRxDiff('od');
+        const osDiff = getRxDiff('os');
+
+        const isSignificantChange = 
+            odDiff.sph > 0.5 || odDiff.cyl > 0.5 || odDiff.axis > 10 ||
+            osDiff.sph > 0.5 || osDiff.cyl > 0.5 || osDiff.axis > 10;
 
         let keyFinding = "The previous and current prescriptions are identical. The issue may lie with dispensing parameters or lens type.";
         let investigationPoint = "Focus on Step 2: Check Dispensing Parameters.";
 
-        if (sphDiff > 0.5 || cylDiff > 0.5 || axisDiff > 10) {
+        if (isSignificantChange) {
             keyFinding = "There is a significant change in the prescription (sphere, cylinder, or axis) compared to the previous pair.";
             investigationPoint = "Focus on Step 3: Analyze Rx Change.";
         } else if (lens?.type) {
@@ -499,3 +508,5 @@ export default function DispensingTroubleshooterPage() {
         </ToolPageLayout>
     );
 }
+
+    

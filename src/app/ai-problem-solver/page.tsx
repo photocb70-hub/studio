@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -18,7 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Sparkles, Bot, Loader2 } from 'lucide-react';
+import { Sparkles, Bot, Loader2, Copy } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -140,7 +141,7 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx.od' | 'currentRx.os' 
                         <FormItem>
                             <FormLabel>PD (mm)</FormLabel>
                             <FormControl>
-                            <Input placeholder="e.g., 64" {...field} value={field.value ?? ''} />
+                            <Input placeholder="e.g., 30" {...field} value={field.value ?? ''} />
                             </FormControl>
                         </FormItem>
                     )}
@@ -187,14 +188,44 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx.od' | 'currentRx.os' 
 };
 
 const BinocularRxInput = ({ nestName, title }: { nestName: 'currentRx' | 'previousRx', title: string }) => {
+    const { getValues, setValue } = useFormContext<FormValues>();
+    const { toast } = useToast();
+
+    const copyOdToOs = () => {
+        const odValues = getValues(`${nestName}.od`);
+        setValue(`${nestName}.os`, odValues);
+        toast({ title: 'Right eye Rx copied to left eye.' });
+    };
+
+    const copyCurrentToPrevious = () => {
+        const currentRxValues = getValues('currentRx');
+        const currentLensValues = getValues('lens');
+        setValue('previousRx', currentRxValues);
+        toast({ title: 'Current Rx copied to Previous Rx.' });
+    };
+
     return (
         <div>
-            <h4 className="mb-2 font-medium">{title}</h4>
+            <div className="flex justify-between items-center mb-2">
+                <h4 className="font-medium">{title}</h4>
+                {nestName === 'previousRx' && (
+                    <Button type="button" variant="ghost" size="sm" onClick={copyCurrentToPrevious} className="text-xs">
+                        <Copy className="mr-2"/>
+                        Copy Current Rx
+                    </Button>
+                )}
+            </div>
             <Tabs defaultValue="od">
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="od">Right Eye (OD)</TabsTrigger>
-                    <TabsTrigger value="os">Left Eye (OS)</TabsTrigger>
-                </TabsList>
+                <div className="flex justify-between items-center border-b">
+                    <TabsList className="grid w-full grid-cols-2 bg-transparent p-0">
+                        <TabsTrigger value="od" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Right Eye (OD)</TabsTrigger>
+                        <TabsTrigger value="os" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Left Eye (OS)</TabsTrigger>
+                    </TabsList>
+                    <Button type="button" variant="ghost" size="sm" onClick={copyOdToOs} className="shrink-0 text-xs">
+                        <Copy className="mr-2"/>
+                        Copy to Left Eye
+                    </Button>
+                </div>
                 <TabsContent value="od" className="pt-4">
                     <RxInputGroup nestName={`${nestName}.od`} />
                 </TabsContent>
@@ -446,3 +477,5 @@ export default function AiProblemSolverPage() {
         </ToolPageLayout>
     );
 }
+
+    
