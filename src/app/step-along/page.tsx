@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { Footprints } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
@@ -31,6 +31,13 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+type Result = {
+    L_prime: number;
+    l_prime: number;
+    L2_prime?: number;
+    l2_prime?: number;
+    inputs: FormValues;
+};
 
 const lensMaterials = [
     { name: 'Air', index: 1.000 },
@@ -46,7 +53,7 @@ const lensMaterials = [
 ];
 
 export default function StepAlongPage() {
-  const [result, setResult] = useState<{ L_prime: number; l_prime: number; L2_prime?: number; l2_prime?: number; } | null>(null);
+  const [result, setResult] = useState<Result | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -79,12 +86,7 @@ export default function StepAlongPage() {
       l2_prime = refractiveIndex / L2_prime;
     }
     
-    // For the next step in a system, we'd calculate the new object vergence:
-    // L_next = L' / (1 - (d/n') * L')
-    // For this tool, we are just doing one step. The distance 'd' would be the thickness to the next surface.
-    // Since this is a single step calculation, we'll show the final vergence and image distance.
-
-    setResult({ L_prime, l_prime, L2_prime, l2_prime });
+    setResult({ L_prime, l_prime, L2_prime, l2_prime, inputs: values });
   }
 
   return (
@@ -221,10 +223,31 @@ export default function StepAlongPage() {
                             )}
                         </div>
                     </CardContent>
-                     <CardFooter>
-                        <p className="text-xs text-muted-foreground/80 text-center w-full">
-                            Formulas: L' = L + F  and  l' = n' / L'
-                        </p>
+                     <CardFooter className="flex-col items-start p-4 text-xs text-muted-foreground/80">
+                        <p className="font-semibold text-foreground mb-2">Calculation Breakdown:</p>
+                        <div className="font-mono text-left w-full space-y-2 rounded-md bg-background/50 p-3">
+                           <div>
+                                <p>L' = L + F₁</p>
+                                <p className="pl-2">L' = {result.inputs.objectVergence.toFixed(2)} + {result.inputs.surfacePower1.toFixed(2)} = {result.L_prime.toFixed(2)} D</p>
+                           </div>
+                           <div>
+                                <p>l' = n' / L'</p>
+                                <p className="pl-2">l' = {result.inputs.refractiveIndex.toFixed(3)} / {result.L_prime.toFixed(2)} = {result.l_prime.toFixed(4)} m</p>
+                           </div>
+                           {result.L2_prime !== undefined && result.inputs.surfacePower2 !== undefined && (
+                             <>
+                                <Separator className="my-2 bg-muted-foreground/30"/>
+                                <div>
+                                    <p>L'₂ = L + F₂</p>
+                                    <p className="pl-2">L'₂ = {result.inputs.objectVergence.toFixed(2)} + {result.inputs.surfacePower2.toFixed(2)} = {result.L2_prime.toFixed(2)} D</p>
+                               </div>
+                               <div>
+                                    <p>l'₂ = n' / L'₂</p>
+                                    <p className="pl-2">l'₂ = {result.inputs.refractiveIndex.toFixed(3)} / {result.L2_prime.toFixed(2)} = {result.l2_prime?.toFixed(4)} m</p>
+                               </div>
+                             </>
+                           )}
+                        </div>
                     </CardFooter>
                 </Card>
             ) : (
