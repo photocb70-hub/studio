@@ -98,13 +98,25 @@ const formatPower = (power?: number) => {
     return (power > 0 ? '+' : '') + power.toFixed(2);
 };
 
-const RxInputGroup = ({ nestName }: { nestName: 'currentRx.od' | 'currentRx.os' | 'previousRx.od' | 'previousRx.os' }) => {
-    const { control, watch } = useFormContext<FormValues>();
+const RxInputGroup = ({ nestName, eye }: { nestName: 'currentRx.od' | 'currentRx.os' | 'previousRx.od' | 'previousRx.os', eye: 'od' | 'os' }) => {
+    const { control, watch, getValues, setValue } = useFormContext<FormValues>();
+    const { toast } = useToast();
 
     const sphereValue = watch(`${nestName}.sphere`);
     const cylinderValue = watch(`${nestName}.cylinder`);
     const invertedCylinderValue = cylinderValue !== undefined ? -cylinderValue : 0;
     const axisValue = watch(`${nestName}.axis`);
+
+    const copyMeasurementsOdToOs = () => {
+        const parentNest = nestName.split('.')[0] as 'currentRx' | 'previousRx';
+        const odMeasurements = {
+            pd: getValues(`${parentNest}.od.pd`),
+            hts: getValues(`${parentNest}.od.hts`),
+        };
+        setValue(`${parentNest}.os.pd`, odMeasurements.pd);
+        setValue(`${parentNest}.os.hts`, odMeasurements.hts);
+        toast({ title: 'Right eye measurements copied to left eye.' });
+    };
 
     return (
         <div className="grid grid-cols-1 gap-x-4 gap-y-6 md:grid-cols-2">
@@ -168,55 +180,67 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx.od' | 'currentRx.os' 
                     </FormItem>
                 )}
             />
-            <div className="grid grid-cols-2 gap-4 md:col-span-2 md:grid-cols-4">
-                 <FormField
-                    control={control}
-                    name={`${nestName}.pd`}
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>PD (mm)</FormLabel>
-                            <FormControl>
-                            <Input placeholder="e.g., 30" {...field} value={field.value ?? ''} />
-                            </FormControl>
-                        </FormItem>
+             <div className="md:col-span-2 space-y-4">
+                <Separator />
+                <div className="flex items-center justify-between">
+                    <h5 className="font-medium text-sm">Measurements</h5>
+                    {eye === 'od' && (
+                         <Button type="button" variant="ghost" size="sm" onClick={copyMeasurementsOdToOs} className="shrink-0 text-xs">
+                            <Copy className="mr-2"/>
+                            Copy Measurements to Left
+                        </Button>
                     )}
-                />
-                 <FormField
-                    control={control}
-                    name={`${nestName}.hts`}
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Heights (mm)</FormLabel>
-                            <FormControl>
-                            <Input placeholder="e.g., 22" {...field} value={field.value ?? ''} />
-                            </FormControl>
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={control}
-                    name={`${nestName}.prism`}
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Prism</FormLabel>
-                            <FormControl>
-                            <Input placeholder="2.00" {...field} value={field.value ?? ''} />
-                            </FormControl>
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={control}
-                    name={`${nestName}.base`}
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Base</FormLabel>
-                            <FormControl>
-                            <Input placeholder="UP" {...field} value={field.value ?? ''} />
-                            </FormControl>
-                        </FormItem>
-                    )}
-                />
+                </div>
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                    <FormField
+                        control={control}
+                        name={`${nestName}.pd`}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>PD (mm)</FormLabel>
+                                <FormControl>
+                                <Input placeholder="e.g., 30" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={control}
+                        name={`${nestName}.hts`}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Heights (mm)</FormLabel>
+                                <FormControl>
+                                <Input placeholder="e.g., 22" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={control}
+                        name={`${nestName}.prism`}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Prism</FormLabel>
+                                <FormControl>
+                                <Input placeholder="2.00" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={control}
+                        name={`${nestName}.base`}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Base</FormLabel>
+                                <FormControl>
+                                <Input placeholder="UP" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                </div>
             </div>
         </div>
     );
@@ -225,20 +249,6 @@ const RxInputGroup = ({ nestName }: { nestName: 'currentRx.od' | 'currentRx.os' 
 const BinocularRxInput = ({ nestName, title }: { nestName: 'currentRx' | 'previousRx', title: string }) => {
     const { getValues, setValue } = useFormContext<FormValues>();
     const { toast } = useToast();
-
-    const copyMeasurementsOdToOs = () => {
-        const odMeasurements = {
-            pd: getValues(`${nestName}.od.pd`),
-            hts: getValues(`${nestName}.od.hts`),
-            prism: getValues(`${nestName}.od.prism`),
-            base: getValues(`${nestName}.od.base`),
-        };
-        setValue(`${nestName}.os.pd`, odMeasurements.pd);
-        setValue(`${nestName}.os.hts`, odMeasurements.hts);
-        setValue(`${nestName}.os.prism`, odMeasurements.prism);
-        setValue(`${nestName}.os.base`, odMeasurements.base);
-        toast({ title: 'Right eye measurements copied to left eye.' });
-    };
 
     const copyCurrentToPrevious = () => {
         const currentRxValues = getValues('currentRx');
@@ -258,21 +268,15 @@ const BinocularRxInput = ({ nestName, title }: { nestName: 'currentRx' | 'previo
                 )}
             </div>
             <Tabs defaultValue="od">
-                 <div className="flex justify-between items-center border-b">
-                    <TabsList className="grid w-full grid-cols-2 bg-transparent p-0">
-                        <TabsTrigger value="od" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Right Eye (OD)</TabsTrigger>
-                        <TabsTrigger value="os" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Left Eye (OS)</TabsTrigger>
-                    </TabsList>
-                    <Button type="button" variant="ghost" size="sm" onClick={copyMeasurementsOdToOs} className="shrink-0 text-xs">
-                        <Copy className="mr-2"/>
-                        Copy Measurements to Left
-                    </Button>
-                </div>
+                <TabsList className="grid w-full grid-cols-2 bg-transparent p-0 border-b">
+                    <TabsTrigger value="od" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Right Eye (OD)</TabsTrigger>
+                    <TabsTrigger value="os" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Left Eye (OS)</TabsTrigger>
+                </TabsList>
                 <TabsContent value="od" className="pt-4">
-                    <RxInputGroup nestName={`${nestName}.od`} />
+                    <RxInputGroup nestName={`${nestName}.od`} eye="od" />
                 </TabsContent>
                 <TabsContent value="os" className="pt-4">
-                    <RxInputGroup nestName={`${nestName}.os`} />
+                    <RxInputGroup nestName={`${nestName}.os`} eye="os"/>
                 </TabsContent>
             </Tabs>
         </div>
@@ -546,5 +550,3 @@ export default function DispensingTroubleshooterPage() {
         </ToolPageLayout>
     );
 }
-
-    
