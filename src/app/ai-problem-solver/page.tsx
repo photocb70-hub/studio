@@ -212,8 +212,12 @@ export default function AiProblemSolverPage() {
         >
             <AlertDialog open={showRefundAlert}>
                  <AlertDialogContent 
-                    className="border-destructive bg-cover bg-center text-destructive-foreground p-0"
-                    style={{ backgroundImage: "url('/2poundprofit.jpg')" }}
+                    className="border-destructive text-destructive-foreground p-0"
+                    style={{ 
+                        backgroundImage: "url('/2poundprofit.jpg')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                     }}
                 >
                     <div className="bg-black/60 p-6 rounded-lg">
                         <AlertDialogHeader>
