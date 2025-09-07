@@ -30,6 +30,12 @@ import { Flowchart, type FlowchartStep } from '@/components/ui/flowchart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 
+const lensSchema = z.object({
+    type: z.string().optional(),
+    material: z.string().optional(),
+    corridor: z.string().optional(),
+});
+
 const rxSchema = z.object({
     sphere: z.coerce.number().min(-20).max(20).optional().default(0),
     cylinder: z.coerce.number().min(-10).max(0).optional().default(0),
@@ -44,6 +50,7 @@ const rxSchema = z.object({
 const binocularRxSchema = z.object({
     od: rxSchema,
     os: rxSchema,
+    lens: lensSchema,
 });
 
 const formSchema = z.object({
@@ -51,10 +58,6 @@ const formSchema = z.object({
   pathology: z.string().optional(),
   currentRx: binocularRxSchema,
   previousRx: binocularRxSchema,
-  lens: z.object({
-    type: z.string().optional(),
-    material: z.string().optional(),
-  }).optional(),
   isKnob: z.boolean().optional(),
 });
 
@@ -248,13 +251,15 @@ const RxInputGroup = ({ nestName, eye }: { nestName: 'currentRx.od' | 'currentRx
 };
 
 const BinocularRxInput = ({ nestName, title }: { nestName: 'currentRx' | 'previousRx', title: string }) => {
-    const { getValues, setValue } = useFormContext<FormValues>();
+    const { control, getValues, setValue, watch } = useFormContext<FormValues>();
     const { toast } = useToast();
+
+    const lensType = watch(`${nestName}.lens.type`);
 
     const copyCurrentToPrevious = () => {
         const currentRxValues = getValues('currentRx');
         setValue('previousRx', currentRxValues);
-        toast({ title: 'Current Rx copied to Previous Rx.' });
+        toast({ title: 'Current Rx & Lens Details copied to Previous Rx.' });
     };
 
     return (
@@ -268,18 +273,82 @@ const BinocularRxInput = ({ nestName, title }: { nestName: 'currentRx' | 'previo
                     </Button>
                 )}
             </div>
-            <Tabs defaultValue="od">
-                <TabsList className="grid w-full grid-cols-2 bg-transparent p-0 border-b">
-                    <TabsTrigger value="od" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Right Eye (OD)</TabsTrigger>
-                    <TabsTrigger value="os" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Left Eye (OS)</TabsTrigger>
-                </TabsList>
-                <TabsContent value="od" className="pt-4">
-                    <RxInputGroup nestName={`${nestName}.od`} eye="od" />
-                </TabsContent>
-                <TabsContent value="os" className="pt-4">
-                    <RxInputGroup nestName={`${nestName}.os`} eye="os"/>
-                </TabsContent>
-            </Tabs>
+            <div className="space-y-6">
+                <Tabs defaultValue="od">
+                    <TabsList className="grid w-full grid-cols-2 bg-transparent p-0 border-b">
+                        <TabsTrigger value="od" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Right Eye (OD)</TabsTrigger>
+                        <TabsTrigger value="os" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:shadow-none">Left Eye (OS)</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="od" className="pt-4">
+                        <RxInputGroup nestName={`${nestName}.od`} eye="od" />
+                    </TabsContent>
+                    <TabsContent value="os" className="pt-4">
+                        <RxInputGroup nestName={`${nestName}.os`} eye="os"/>
+                    </TabsContent>
+                </Tabs>
+                <Separator />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+                     <FormField
+                        control={control}
+                        name={`${nestName}.lens.type`}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Lens Type/Design</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a lens type" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="sv">Single Vision</SelectItem>
+                                        <SelectItem value="bf">Bifocal</SelectItem>
+                                        <SelectItem value="var">Varifocal</SelectItem>
+                                        <SelectItem value="occ">Occupational</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={control}
+                        name={`${nestName}.lens.material`}
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Lens Material/Index</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a material" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="1.50">Standard Index (1.50)</SelectItem>
+                                        <SelectItem value="1.59">Polycarbonate (1.59)</SelectItem>
+                                        <SelectItem value="1.60">Mid-Index (1.60)</SelectItem>
+                                        <SelectItem value="1.67">High-Index (1.67)</SelectItem>
+                                        <SelectItem value="1.74">High-Index (1.74)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </FormItem>
+                        )}
+                    />
+                    {lensType === 'var' && (
+                        <FormField
+                            control={control}
+                            name={`${nestName}.lens.corridor`}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Min Corridor (mm)</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="e.g., 14" {...field} value={field.value ?? ''}/>
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
@@ -298,15 +367,13 @@ export default function DispensingTroubleshooterPage() {
             currentRx: {
                 od: { sphere: -2.50, cylinder: -0.75, axis: 175, pd: '32', hts: '18' },
                 os: { sphere: -2.75, cylinder: -1.00, axis: 10, pd: '31.5', hts: '18' },
+                lens: { type: 'var', material: '1.67', corridor: '14' }
             },
             previousRx: {
                 od: { sphere: -2.25, cylinder: -0.75, axis: 175, pd: '32', hts: '18' },
                 os: { sphere: -2.50, cylinder: -0.75, axis: 15, pd: '31.5', hts: '18' },
+                lens: { type: 'var', material: '1.50', corridor: '18' }
             },
-            lens: {
-                type: 'var',
-                material: '1.67',
-            }
         },
     });
 
@@ -328,45 +395,56 @@ export default function DispensingTroubleshooterPage() {
     };
 
     const onSubmit = (values: FormValues) => {
-        const { currentRx, previousRx, lens, isKnob, problem, pathology } = values;
+        const { currentRx, previousRx, isKnob, problem, pathology } = values;
 
-        const getRxDiff = (eye: 'od' | 'os') => ({
-            sph: Math.abs((currentRx[eye]?.sphere ?? 0) - (previousRx[eye]?.sphere ?? 0)),
-            cyl: Math.abs((currentRx[eye]?.cylinder ?? 0) - (previousRx[eye]?.cylinder ?? 0)),
-            axis: Math.abs((currentRx[eye]?.axis ?? 90) - (previousRx[eye]?.axis ?? 90)),
-        });
-
-        const odDiff = getRxDiff('od');
-        const osDiff = getRxDiff('os');
-
-        const isSignificantChange = 
-            odDiff.sph > 0.5 || odDiff.cyl > 0.5 || (odDiff.axis > 10 && (currentRx.od.cylinder ?? 0) !== 0) ||
-            osDiff.sph > 0.5 || osDiff.cyl > 0.5 || (osDiff.axis > 10 && (currentRx.os.cylinder ?? 0) !== 0);
-        
-        const pathologyText = (pathology || '').toLowerCase();
         let keyFinding = "";
         let investigationPoint = "";
+        
+        const pathologyText = (pathology || '').toLowerCase();
+        
+        const odHts = parseFloat(currentRx.od.hts || '0');
+        const osHts = parseFloat(currentRx.os.hts || '0');
+        const corridor = parseFloat(currentRx.lens.corridor || '0');
 
-        if (pathologyText.includes('cataract')) {
-            keyFinding = "Patient has cataracts. This can cause reduced VA, glare sensitivity, and myopic shifts, complicating adaptation to any new Rx.";
-            investigationPoint = "Focus on Step 5: Discuss Patient Expectations. A perfect refraction may not yield perfect vision.";
-        } else if (pathologyText.includes('diabet')) {
-            keyFinding = "Patient has diabetes. Uncontrolled blood sugar can cause fluctuations in refractive error, leading to inconsistent vision.";
-            investigationPoint = "Focus on Step 5 & 6: Discuss recent blood sugar control. A re-check may be needed if vision is unstable.";
-        } else if (pathologyText.includes('amd') || pathologyText.includes('macular')) {
-            keyFinding = "Patient has AMD. This affects central vision, causing distortion and reduced detail perception, which new glasses cannot fix.";
-            investigationPoint = "Focus on Step 5: Manage Patient Expectations. Explain that glasses correct focus, but can't restore damaged retinal tissue.";
-        } else if (isSignificantChange) {
-            keyFinding = "There is a significant change in the prescription (sphere, cylinder, or axis) compared to the previous pair.";
-            investigationPoint = "Focus on Step 3: Analyze Rx Change.";
-        } else if (lens?.type && lens.type !== 'sv') {
-            const lensTypeMap: { [key: string]: string } = { 'var': 'Varifocal', 'bf': 'Bifocal', 'occ': 'Occupational' };
-            const lensTypeName = lensTypeMap[lens.type] || 'a new lens design';
-            keyFinding = `The lens type is a '${lensTypeName}'. If this is a new design for the patient, adaptation may be the primary factor.`;
-            investigationPoint = "Focus on Step 4: Assess Lens Type.";
+        if (currentRx.lens.type === 'var' && corridor > 0 && ( (odHts > 0 && odHts < corridor) || (osHts > 0 && osHts < corridor) )) {
+            keyFinding = `The fitting height (${odHts || osHts}mm) is lower than the minimum corridor length (${corridor}mm). This can cause the patient to not reach the full reading area.`;
+            investigationPoint = "Focus on Step 2: Check Dispensing Parameters, specifically fitting height, and Step 4: Assess Lens Type, consider a shorter corridor lens if frame allows.";
         } else {
-            keyFinding = "The previous and current prescriptions are very similar. The issue may lie with dispensing parameters or lens type.";
-            investigationPoint = "Focus on Step 2: Check Dispensing Parameters and Step 4: Assess Lens Type.";
+             const getRxDiff = (eye: 'od' | 'os') => ({
+                sph: Math.abs((currentRx[eye]?.sphere ?? 0) - (previousRx[eye]?.sphere ?? 0)),
+                cyl: Math.abs((currentRx[eye]?.cylinder ?? 0) - (previousRx[eye]?.cylinder ?? 0)),
+                axis: Math.abs((currentRx[eye]?.axis ?? 90) - (previousRx[eye]?.axis ?? 90)),
+            });
+    
+            const odDiff = getRxDiff('od');
+            const osDiff = getRxDiff('os');
+    
+            const isSignificantChange = 
+                odDiff.sph > 0.5 || odDiff.cyl > 0.5 || (odDiff.axis > 10 && (currentRx.od.cylinder ?? 0) !== 0) ||
+                osDiff.sph > 0.5 || osDiff.cyl > 0.5 || (osDiff.axis > 10 && (currentRx.os.cylinder ?? 0) !== 0);
+            
+
+            if (pathologyText.includes('cataract')) {
+                keyFinding = "Patient has cataracts. This can cause reduced VA, glare sensitivity, and myopic shifts, complicating adaptation to any new Rx.";
+                investigationPoint = "Focus on Step 5: Discuss Patient Expectations. A perfect refraction may not yield perfect vision.";
+            } else if (pathologyText.includes('diabet')) {
+                keyFinding = "Patient has diabetes. Uncontrolled blood sugar can cause fluctuations in refractive error, leading to inconsistent vision.";
+                investigationPoint = "Focus on Step 5 & 6: Discuss recent blood sugar control. A re-check may be needed if vision is unstable.";
+            } else if (pathologyText.includes('amd') || pathologyText.includes('macular')) {
+                keyFinding = "Patient has AMD. This affects central vision, causing distortion and reduced detail perception, which new glasses cannot fix.";
+                investigationPoint = "Focus on Step 5: Manage Patient Expectations. Explain that glasses correct focus, but can't restore damaged retinal tissue.";
+            } else if (isSignificantChange) {
+                keyFinding = "There is a significant change in the prescription (sphere, cylinder, or axis) compared to the previous pair.";
+                investigationPoint = "Focus on Step 3: Analyze Rx Change.";
+            } else if (currentRx.lens?.type && currentRx.lens.type !== previousRx.lens?.type) {
+                const lensTypeMap: { [key: string]: string } = { 'var': 'Varifocal', 'bf': 'Bifocal', 'occ': 'Occupational' };
+                const lensTypeName = lensTypeMap[currentRx.lens.type] || 'a new lens design';
+                keyFinding = `The lens type has changed to a '${lensTypeName}'. If this is a new design for the patient, adaptation may be the primary factor.`;
+                investigationPoint = "Focus on Step 4: Assess Lens Type.";
+            } else {
+                keyFinding = "The previous and current prescriptions are very similar. The issue may lie with dispensing parameters or lens material changes.";
+                investigationPoint = "Focus on Step 2: Check Dispensing Parameters and Step 4: Assess Lens Type.";
+            }
         }
 
         setAnalysisResult({
@@ -426,105 +504,54 @@ export default function DispensingTroubleshooterPage() {
                                             </FormItem>
                                         )}
                                     />
+                                    <FormField
+                                        control={form.control}
+                                        name="pathology"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Pathology / Other Notes</FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        placeholder="e.g., Early cataracts, uncontrolled diabetes, AMD, etc."
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
                                     <Separator />
                                     
                                     <div className="space-y-6">
-                                        <div>
-                                            <h3 className="mb-4 text-lg font-medium">Prescriptions & Lens Details (Optional)</h3>
-                                            <div className="space-y-6">
-                                                <FormField
-                                                    control={form.control}
-                                                    name="pathology"
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>Pathology / Other Notes</FormLabel>
-                                                            <FormControl>
-                                                                <Textarea
-                                                                    placeholder="e.g., Early cataracts, uncontrolled diabetes, AMD, etc."
-                                                                    {...field}
-                                                                />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                                <Separator />
-                                                <BinocularRxInput nestName="currentRx" title="Current Prescription" />
-                                                <Separator />
-                                                <BinocularRxInput nestName="previousRx" title="Previous Prescription" />
-                                                <Separator />
-                                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                                    <FormField
-                                                        control={form.control}
-                                                        name="lens.type"
-                                                        render={({ field }) => (
-                                                            <FormItem>
-                                                                <FormLabel>Lens Type/Design</FormLabel>
-                                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                                    <FormControl>
-                                                                        <SelectTrigger>
-                                                                            <SelectValue placeholder="Select a lens type" />
-                                                                        </SelectTrigger>
-                                                                    </FormControl>
-                                                                    <SelectContent>
-                                                                        <SelectItem value="sv">Single Vision</SelectItem>
-                                                                        <SelectItem value="bf">Bifocal</SelectItem>
-                                                                        <SelectItem value="var">Varifocal</SelectItem>
-                                                                        <SelectItem value="occ">Occupational</SelectItem>
-                                                                    </SelectContent>
-                                                                </Select>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                                    <FormField
-                                                        control={form.control}
-                                                        name="lens.material"
-                                                        render={({ field }) => (
-                                                            <FormItem>
-                                                                <FormLabel>Lens Material/Index</FormLabel>
-                                                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                                    <FormControl>
-                                                                        <SelectTrigger>
-                                                                            <SelectValue placeholder="Select a material" />
-                                                                        </SelectTrigger>
-                                                                    </FormControl>
-                                                                    <SelectContent>
-                                                                        <SelectItem value="1.50">Standard Index (1.50)</SelectItem>
-                                                                        <SelectItem value="1.59">Polycarbonate (1.59)</SelectItem>
-                                                                        <SelectItem value="1.60">Mid-Index (1.60)</SelectItem>
-                                                                        <SelectItem value="1.67">High-Index (1.67)</SelectItem>
-                                                                        <SelectItem value="1.74">High-Index (1.74)</SelectItem>
-                                                                    </SelectContent>
-                                                                </Select>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                                </div>
-                                                <Separator />
-                                                    <FormField
-                                                        control={form.control}
-                                                        name="isKnob"
-                                                        render={({ field }) => (
-                                                            <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
-                                                                <FormControl>
-                                                                    <Checkbox
-                                                                        checked={field.value}
-                                                                        onCheckedChange={handleKnobChange}
-                                                                    />
-                                                                </FormControl>
-                                                                <div className="space-y-1 leading-none">
-                                                                    <FormLabel>
-                                                                        Is the px a knob head?
-                                                                    </FormLabel>
-                                                                    <FormDescription>
-                                                                        Super-secret-diagnostic-tool for complex non-tolerance cases.
-                                                                    </FormDescription>
-                                                                </div>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                            </div>
+                                        <h3 className="mb-4 text-lg font-medium">Prescriptions & Lens Details (Optional)</h3>
+                                        <div className="space-y-6">
+                                            <BinocularRxInput nestName="currentRx" title="Current Prescription" />
+                                            <Separator />
+                                            <BinocularRxInput nestName="previousRx" title="Previous Prescription" />
+                                            <Separator />
+                                            <FormField
+                                                control={form.control}
+                                                name="isKnob"
+                                                render={({ field }) => (
+                                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+                                                        <FormControl>
+                                                            <Checkbox
+                                                                checked={field.value}
+                                                                onCheckedChange={handleKnobChange}
+                                                            />
+                                                        </FormControl>
+                                                        <div className="space-y-1 leading-none">
+                                                            <FormLabel>
+                                                                Is the px a knob head?
+                                                            </FormLabel>
+                                                            <FormDescription>
+                                                                Super-secret-diagnostic-tool for complex non-tolerance cases.
+                                                            </FormDescription>
+                                                        </div>
+                                                    </FormItem>
+                                                )}
+                                            />
                                         </div>
                                     </div>
                                     
@@ -588,3 +615,4 @@ export default function DispensingTroubleshooterPage() {
         </ToolPageLayout>
     );
 }
+
