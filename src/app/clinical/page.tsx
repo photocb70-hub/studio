@@ -27,7 +27,7 @@ const clinicalMenuItems = [
     title: 'Dispensing Troubleshooter',
     description: 'A step-by-step guide for non-tolerance cases.',
     icon: <Workflow className="size-8 text-primary" />,
-    inDevelopment: false,
+    inDevelopment: true,
   },
   {
     href: '/ocular-drugs',
