@@ -483,7 +483,7 @@ export default function DispensingTroubleshooterPage() {
                                                                     <FormControl>
                                                                         <SelectTrigger>
                                                                             <SelectValue placeholder="Select a material" />
-                                                                        </Trigger>
+                                                                        </SelectTrigger>
                                                                     </FormControl>
                                                                     <SelectContent>
                                                                         <SelectItem value="1.50">Standard Index (1.50)</SelectItem>
