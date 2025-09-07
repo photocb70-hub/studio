@@ -334,16 +334,16 @@ export default function DispensingTroubleshooterPage() {
         const osDiff = getRxDiff('os');
 
         const isSignificantChange = 
-            odDiff.sph > 0.5 || odDiff.cyl > 0.5 || odDiff.axis > 10 ||
-            osDiff.sph > 0.5 || osDiff.cyl > 0.5 || osDiff.axis > 10;
+            odDiff.sph > 0.5 || odDiff.cyl > 0.5 || (odDiff.axis > 5 && odDiff.cyl > 0.25) ||
+            osDiff.sph > 0.5 || osDiff.cyl > 0.5 || (osDiff.axis > 5 && osDiff.cyl > 0.25);
 
         let keyFinding = "The previous and current prescriptions are very similar. The issue may lie with dispensing parameters or lens type.";
-        let investigationPoint = "Focus on Step 2: Check Dispensing Parameters.";
+        let investigationPoint = "Focus on Step 2: Check Dispensing Parameters and Step 4: Assess Lens Type.";
 
         if (isSignificantChange) {
             keyFinding = "There is a significant change in the prescription (sphere, cylinder, or axis) compared to the previous pair.";
             investigationPoint = "Focus on Step 3: Analyze Rx Change.";
-        } else if (lens?.type) {
+        } else if (lens?.type && lens.type !== 'sv') {
             keyFinding = `The lens type is a '${lens.type}'. If this is a new design for the patient, adaptation may be the primary factor.`;
             investigationPoint = "Focus on Step 4: Assess Lens Type.";
         }
@@ -550,3 +550,5 @@ export default function DispensingTroubleshooterPage() {
         </ToolPageLayout>
     );
 }
+
+    
