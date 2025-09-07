@@ -64,9 +64,9 @@ const getPlaceholderResponse = async (input: ProblemSolverInput): Promise<Proble
 };
 
 export async function solveProblem(input: ProblemSolverInput): Promise<ProblemSolverOutput> {
-  // To re-enable the placeholder, uncomment the line below and comment out the problemSolverFlow call.
-  // return getPlaceholderResponse(input);
-  return problemSolverFlow(input);
+  // To re-enable the live AI, comment out the line below and uncomment the problemSolverFlow call.
+  return getPlaceholderResponse(input);
+  // return problemSolverFlow(input);
 }
 
 // The Genkit flow and prompt are defined below but are not currently used.
@@ -121,4 +121,3 @@ const problemSolverFlow = ai.defineFlow(
         return output;
     }
 );
-
