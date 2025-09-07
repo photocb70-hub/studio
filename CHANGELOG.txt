@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.8 alpha]
+### Added
+- **Experimental Web Scraping Feature (Rolled Back)**: Attempted to implement a new `searchWeb` tool for the AI Problem Solver. This involved adding `axios`, `cheerio`, and `google-it` dependencies, creating a web scraper service, and defining a new AI tool. The feature was ultimately rolled back to ensure maximum application stability.
+
+### Fixed
+- Corrected an invalid package version for a dependency that was causing installation errors during the experimental feature implementation.
+
 ## [2.7 alpha]
 ### Changed
 - Finalized UI for the "AI Problem Solver" form, replacing text inputs with sliders and reorganizing fields for better usability.
