@@ -292,17 +292,21 @@ export default function DispensingTroubleshooterPage() {
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            problem: '',
-            pathology: '',
+            problem: 'Patient reports that vision feels \'swimmy\' and they feel off-balance with their new glasses, especially when walking around.',
+            pathology: 'Early nuclear sclerosis noted in both eyes.',
             isKnob: false,
             currentRx: {
-                od: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
-                os: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
+                od: { sphere: -2.50, cylinder: -0.75, axis: 175, pd: '32', hts: '18' },
+                os: { sphere: -2.75, cylinder: -1.00, axis: 10, pd: '31.5', hts: '18' },
             },
             previousRx: {
-                od: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
-                os: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
+                od: { sphere: -2.25, cylinder: -0.75, axis: 175, pd: '32', hts: '18' },
+                os: { sphere: -2.50, cylinder: -0.75, axis: 15, pd: '31.5', hts: '18' },
             },
+            lens: {
+                type: 'var',
+                material: '1.67',
+            }
         },
     });
 
@@ -323,7 +327,7 @@ export default function DispensingTroubleshooterPage() {
         }
     };
 
-    const onSubmit = async (values: FormValues) => {
+    const onSubmit = (values: FormValues) => {
         const { currentRx, previousRx, lens, isKnob, problem, pathology } = values;
 
         const getRxDiff = (eye: 'od' | 'os') => ({
