@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.9 alpha]
+### Added
+- Added a "Pathology / Other Notes" input to the "Dispensing Troubleshooter" to allow for more nuanced clinical analysis.
+- Implemented new logic in the "Dispensing Troubleshooter" to analyze pathology keywords (e.g., cataracts, AMD, diabetes) and provide relevant clinical considerations.
+- Added conditional "Minimum Corridor" inputs that appear only when "Varifocal" is selected as the lens type for current or previous prescriptions.
+- Added logic to check for conflicts between fitting height and minimum corridor length in varifocal dispensings.
+- Populated the "Dispensing Troubleshooter" with default example data to make testing and demonstration easier.
+- Added an "In Development" badge to the "Dispensing Troubleshooter" on the Clinical Tools page.
+
+### Fixed
+- Corrected multiple critical syntax errors and logical flaws in `dispensing-troubleshooter/page.tsx` that were causing application build failures.
+
 ## [2.8 alpha]
 ### Added
 - **Experimental Web Scraping Feature (Rolled Back)**: Attempted to implement a new `searchWeb` tool for the AI Problem Solver. This involved adding `axios`, `cheerio`, and `google-it` dependencies, creating a web scraper service, and defining a new AI tool. The feature was ultimately rolled back to ensure maximum application stability.
