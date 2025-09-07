@@ -48,6 +48,7 @@ const binocularRxSchema = z.object({
 
 const formSchema = z.object({
   problem: z.string().min(10, 'Please describe the problem in at least 10 characters.'),
+  pathology: z.string().optional(),
   currentRx: binocularRxSchema,
   previousRx: binocularRxSchema,
   lens: z.object({
@@ -78,7 +79,7 @@ const staticFlowchart: FlowchartStep[] = [
     },
     {
       title: 'Discuss with Patient',
-      description: 'Talk through the adaptation period. Ask specific questions about when and where the problem occurs.',
+      description: 'Talk through the adaptation period. Ask specific questions about when and where the problem occurs. Manage expectations, especially if pathology is present.',
     },
     {
       title: 'Final Action',
@@ -187,7 +188,7 @@ const RxInputGroup = ({ nestName, eye }: { nestName: 'currentRx.od' | 'currentRx
                     {eye === 'od' && (
                          <Button type="button" variant="ghost" size="sm" onClick={copyMeasurementsOdToOs} className="shrink-0 text-xs">
                             <Copy className="mr-2"/>
-                            Copy Measurements to Left
+                            Copy PD & Hts to Left
                         </Button>
                     )}
                 </div>
@@ -292,6 +293,7 @@ export default function DispensingTroubleshooterPage() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             problem: '',
+            pathology: '',
             isKnob: false,
             currentRx: {
                 od: { sphere: 0, cylinder: 0, axis: 90, add: '', prism: '', base: '', pd: '', hts: '' },
@@ -322,38 +324,46 @@ export default function DispensingTroubleshooterPage() {
     };
 
     const onSubmit = async (values: FormValues) => {
-        const { currentRx, previousRx, lens, isKnob, problem } = values;
+        const { currentRx, previousRx, lens, isKnob, problem, pathology } = values;
 
         const getRxDiff = (eye: 'od' | 'os') => ({
             sph: Math.abs((currentRx[eye]?.sphere ?? 0) - (previousRx[eye]?.sphere ?? 0)),
             cyl: Math.abs((currentRx[eye]?.cylinder ?? 0) - (previousRx[eye]?.cylinder ?? 0)),
-            axis: Math.abs((currentRx[eye]?.axis ?? 0) - (previousRx[eye]?.axis ?? 0)),
+            axis: Math.abs((currentRx[eye]?.axis ?? 90) - (previousRx[eye]?.axis ?? 90)),
         });
 
         const odDiff = getRxDiff('od');
         const osDiff = getRxDiff('os');
 
         const isSignificantChange = 
-            odDiff.sph > 0.5 || odDiff.cyl > 0.5 || (odDiff.axis > 10 && odDiff.cyl > 0.25) ||
-            osDiff.sph > 0.5 || osDiff.cyl > 0.5 || (osDiff.axis > 10 && osDiff.cyl > 0.25);
+            odDiff.sph > 0.5 || odDiff.cyl > 0.5 || (odDiff.axis > 10 && (currentRx.od.cylinder ?? 0) !== 0) ||
+            osDiff.sph > 0.5 || osDiff.cyl > 0.5 || (osDiff.axis > 10 && (currentRx.os.cylinder ?? 0) !== 0);
+        
+        const pathologyText = (pathology || '').toLowerCase();
+        let keyFinding = "";
+        let investigationPoint = "";
 
-        let keyFinding = "The previous and current prescriptions are very similar. The issue may lie with dispensing parameters or lens type.";
-        let investigationPoint = "Focus on Step 2: Check Dispensing Parameters and Step 4: Assess Lens Type.";
-
-        if (isSignificantChange) {
+        if (pathologyText.includes('cataract')) {
+            keyFinding = "Patient has cataracts. This can cause reduced VA, glare sensitivity, and myopic shifts, complicating adaptation to any new Rx.";
+            investigationPoint = "Focus on Step 5: Discuss Patient Expectations. A perfect refraction may not yield perfect vision.";
+        } else if (pathologyText.includes('diabet')) {
+            keyFinding = "Patient has diabetes. Uncontrolled blood sugar can cause fluctuations in refractive error, leading to inconsistent vision.";
+            investigationPoint = "Focus on Step 5 & 6: Discuss recent blood sugar control. A re-check may be needed if vision is unstable.";
+        } else if (pathologyText.includes('amd') || pathologyText.includes('macular')) {
+            keyFinding = "Patient has AMD. This affects central vision, causing distortion and reduced detail perception, which new glasses cannot fix.";
+            investigationPoint = "Focus on Step 5: Manage Patient Expectations. Explain that glasses correct focus, but can't restore damaged retinal tissue.";
+        } else if (isSignificantChange) {
             keyFinding = "There is a significant change in the prescription (sphere, cylinder, or axis) compared to the previous pair.";
             investigationPoint = "Focus on Step 3: Analyze Rx Change.";
         } else if (lens?.type && lens.type !== 'sv') {
-            const lensTypeMap: { [key: string]: string } = {
-                'var': 'Varifocal',
-                'bf': 'Bifocal',
-                'occ': 'Occupational',
-            };
+            const lensTypeMap: { [key: string]: string } = { 'var': 'Varifocal', 'bf': 'Bifocal', 'occ': 'Occupational' };
             const lensTypeName = lensTypeMap[lens.type] || 'a new lens design';
             keyFinding = `The lens type is a '${lensTypeName}'. If this is a new design for the patient, adaptation may be the primary factor.`;
             investigationPoint = "Focus on Step 4: Assess Lens Type.";
+        } else {
+            keyFinding = "The previous and current prescriptions are very similar. The issue may lie with dispensing parameters or lens type.";
+            investigationPoint = "Focus on Step 2: Check Dispensing Parameters and Step 4: Assess Lens Type.";
         }
-
 
         setAnalysisResult({
             primaryConcern: problem,
@@ -419,6 +429,23 @@ export default function DispensingTroubleshooterPage() {
                                         <div>
                                             <h3 className="mb-4 text-lg font-medium">Prescriptions & Lens Details (Optional)</h3>
                                             <div className="space-y-6">
+                                                <FormField
+                                                    control={form.control}
+                                                    name="pathology"
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <FormLabel>Pathology / Other Notes</FormLabel>
+                                                            <FormControl>
+                                                                <Textarea
+                                                                    placeholder="e.g., Early cataracts, uncontrolled diabetes, AMD, etc."
+                                                                    {...field}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                                <Separator />
                                                 <BinocularRxInput nestName="currentRx" title="Current Prescription" />
                                                 <Separator />
                                                 <BinocularRxInput nestName="previousRx" title="Previous Prescription" />
@@ -456,7 +483,7 @@ export default function DispensingTroubleshooterPage() {
                                                                     <FormControl>
                                                                         <SelectTrigger>
                                                                             <SelectValue placeholder="Select a material" />
-                                                                        </SelectTrigger>
+                                                                        </Trigger>
                                                                     </FormControl>
                                                                     <SelectContent>
                                                                         <SelectItem value="1.50">Standard Index (1.50)</SelectItem>
