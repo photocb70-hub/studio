@@ -16,8 +16,8 @@ export const metadata: Metadata = {
   description: 'Precision tools for optical professionals.',
   manifest: '/manifest.json',
   icons: {
-    icon: '/optumusicon.jpg',
-    apple: '/optumusicon.jpg',
+    icon: '/optumusicon.svg',
+    apple: '/optumusicon.svg',
   }
 };
 
