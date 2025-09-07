@@ -195,7 +195,7 @@ export default function HomeClientPage({ changelogContent }: { changelogContent:
           </DialogHeader>
           <Separator />
           <ScrollArea className="h-96 pr-6">
-            <div className="prose prose-sm dark:prose-invert" dangerouslySetInnerHTML={{ __html: changelogContent.replace(/\\n/g, '<br />') }} />
+            <div className="prose prose-sm dark:prose-invert" dangerouslySetInnerHTML={{ __html: changelogContent.replace(/\n/g, '<br />') }} />
           </ScrollArea>
            <DialogClose asChild>
             <Button type="button" variant="secondary">
