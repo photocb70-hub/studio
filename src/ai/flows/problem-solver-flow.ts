@@ -41,7 +41,7 @@ const ProblemSolverInputSchema = z.object({
 export type ProblemSolverInput = z.infer<typeof ProblemSolverInputSchema>;
 
 const ProblemSolverOutputSchema = z.object({
-  analysis: z.string().describe("A detailed analysis of the potential root causes of the problem, considering all provided data."),
+  analysis: z.string().describe("A detailed analysis of the potential root causes of the problem, considering all provided data. This should be specific and avoid generalizations."),
   solution: z.string().describe("A step-by-step recommended solution or set of actions to resolve the issue. This should be formatted with markdown for lists."),
   considerations: z.string().describe("A list of other potential factors or further considerations the user should keep in mind."),
 });
@@ -64,10 +64,9 @@ const getPlaceholderResponse = async (input: ProblemSolverInput): Promise<Proble
 };
 
 export async function solveProblem(input: ProblemSolverInput): Promise<ProblemSolverOutput> {
-  // The live AI call is temporarily replaced with a placeholder for stability.
-  return getPlaceholderResponse(input);
-  // To re-enable the live AI, uncomment the line below and comment out the line above.
-  // return problemSolverFlow(input);
+  // To re-enable the placeholder, uncomment the line below and comment out the problemSolverFlow call.
+  // return getPlaceholderResponse(input);
+  return problemSolverFlow(input);
 }
 
 // The Genkit flow and prompt are defined below but are not currently used.
@@ -79,26 +78,32 @@ const problemSolverPrompt = ai.definePrompt({
     tools: [searchWeb],
     prompt: `You are an expert optical dispenser and problem solver. A user has submitted the following dispensing scenario.
 
-    Analyze the provided information, including the primary complaint, current and previous prescriptions, and lens details.
+    Your task is to provide a highly specific and tailored analysis. Do not make generic statements.
     
-    Your task is to:
-    1.  Provide a detailed analysis of the potential root causes of the problem.
-    2.  Recommend a clear, step-by-step solution. Format this as a markdown list.
-    3.  List any other considerations the user should be aware of.
-    4.  If the 'isKnob' flag is true, acknowledge this with a touch of humor and empathy in your 'considerations' section, emphasizing the importance of patient communication.
-    5.  If the query is complex or involves very new technology, use the searchWeb tool to find the most up-to-date information to inform your answer.
+    1.  **Analyze the Data**: Carefully compare the current and previous prescriptions.
+        -   If there is a change in sphere, cylinder, or axis, comment on that specific change and its likely impact.
+        -   If there is **no change**, state that the prescription is stable and the cause likely lies elsewhere (e.g., measurements, lens type). Do not invent a prescription change.
+        -   Consider the lens type, material, and patient complaint.
+    2.  **Provide a Solution**: Recommend a clear, step-by-step solution based on your specific analysis. Format this as a markdown list.
+    3.  **List Considerations**: Note any other factors (e.g., fitting measurements, previous lens history).
+    4.  **Use Your Tools**: If the query involves a new or complex technology, use the \`searchWeb\` tool to find the most up-to-date information to inform your answer.
+    5.  **(Secret Rule)** If the 'isKnob' flag is true, acknowledge this with a touch of humor and empathy in your 'considerations' section, emphasizing the importance of patient communication.
 
-    Problem: {{{problem}}}
-    
-    Current Rx (OD): R: {{currentRx.od.sphere}} / {{currentRx.od.cylinder}} x {{currentRx.od.axis}}
-    Current Rx (OS): L: {{currentRx.os.sphere}} / {{currentRx.os.cylinder}} x {{currentRx.os.axis}}
-    
-    Previous Rx (OD): R: {{previousRx.od.sphere}} / {{previousRx.od.cylinder}} x {{previousRx.od.axis}}
-    Previous Rx (OS): L: {{previousRx.os.sphere}} / {{previousRx.os.cylinder}} x {{previousRx.os.axis}}
+    **Scenario Details**
 
-    Lens Details:
-    - Type: {{lens.type}}
-    - Material: {{lens.material}}
+    - **Primary Complaint**: {{{problem}}}
+    
+    - **Current Prescription**:
+      - OD: R: {{currentRx.od.sphere}} / {{currentRx.od.cylinder}} x {{currentRx.od.axis}}
+      - OS: L: {{currentRx.os.sphere}} / {{currentRx.os.cylinder}} x {{currentRx.os.axis}}
+    
+    - **Previous Prescription**:
+      - OD: R: {{previousRx.od.sphere}} / {{previousRx.od.cylinder}} x {{previousRx.od.axis}}
+      - OS: L: {{previousRx.os.sphere}} / {{previousRx.os.cylinder}} x {{previousRx.os.axis}}
+
+    - **Lens Details**:
+      - Type: {{lens.type}}
+      - Material: {{lens.material}}
     `,
 });
 
@@ -116,3 +121,4 @@ const problemSolverFlow = ai.defineFlow(
         return output;
     }
 );
+
