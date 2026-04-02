@@ -19,7 +19,7 @@
     "hint": "detached retina"
   },
   "glaucoma": {
-    "url": "https://picsum.photos/seed/104/600/400",
+    "url": "/glaucoma.png",
     "width": 600,
     "height": 400,
     "hint": "optic nerve"

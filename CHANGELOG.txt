@@ -3,6 +3,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.25 alpha]
+### Updated
+- Clinical Asset Fix: Mapped the custom image for Primary Open Angle Glaucoma (POAG) to `glaucoma.png`.
+
 ## [2.24 alpha]
 ### Updated
 - Clinical Asset Fix: Mapped the custom image for Diabetic Retinopathy to `dr.png`.
@@ -26,27 +30,3 @@ All notable changes to this project will be documented in this file.
 ### Updated
 - AMD Visual Reference: Updated the image for Age-Related Macular Degeneration in the Pathology Guide with a more detailed clinical representation.
 - General maintenance of the image registry.
-
-## [2.19 alpha]
-### Added
-- Ocular Pathology Guide: A new comprehensive reference under Clinical Tools covering common conditions like Glaucoma, AMD, and Diabetic Retinopathy.
-- Referral Urgency Tagging: Integrated urgency levels (Routine, Urgent, Emergency) into the pathology guide for better clinical guidance.
-- Structured Clinical Signs & Symptoms: Detailed data breakdown for ocular conditions to aid pattern recognition.
-
-## [2.18 alpha]
-### Added
-- PDF Upload & Extraction: The Course Study Hub now supports direct PDF file uploads for seamless text analysis.
-- Advanced AI Analysis: Enhanced the study assistant to suggest clinical diagrams, provide "Pro-Tips" for the dispensing desk, and generate structured professional reference guides.
-- Standardized UI: Finalized the Hybrid Power Adjuster (Slider + Stepper) across all relevant tools for better mobile precision.
-- Accessibility: Fixed screen reader accessibility issues in the mobile navigation menu.
-
-## [2.17 alpha]
-### Added
-- Integrated Firebase Firestore for persistent data storage.
-- New Tool: Course Study Hub (Dispensing Toolbox). Allows professionals to analyze and log course chapters with AI summaries and professional rewrites.
-- Study Vault: A secure, logged history of all analyzed course materials.
-
-## [2.16 alpha]
-### Added
-- New Clinical Tool: Visual Acuity Converter. Supports Snellen (6m/20ft), LogMAR, and Decimal formats with a live reference table.
-- Upgraded the Contact Lens Rx Converter to support full sphero-cylindrical vertex compensation (both meridians).
