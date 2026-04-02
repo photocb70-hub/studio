@@ -8,4 +8,24 @@ All notable changes to this project will be documented in this file.
 - Ocular Pathology Guide Overhaul: Integrated a complete suite of clinical reference images for all major conditions, including AMD, Diabetic Retinopathy, Retinal Detachment, POAG, AACG, PCAG, Cataracts, and Keratoconus.
 - Clinical Lightbox: Added a full-screen, high-resolution visualization tool for all pathology assets, providing an optimized experience for clinical detail recognition on mobile devices.
 - Asset Precision: Synchronized the image registry with exact case-sensitive filenames (e.g., POAG.png, Keratoconus.png) to ensure reliable asset loading across all environments.
-- Feature Consolidation: Hard-saved and verified the integration of the AI Study Hub (PDF-to-Pro-Notes) and the full Rx Contact Lens Vertex Converter.
+
+## [2.10 alpha]
+### Added
+- AI Study Hub: Integrated PDF-to-Pro-Notes conversion using Genkit and `pdf-parse`.
+- Study Vault: Firestore-backed storage for analyzed course units with persistent logging.
+
+## [1.80 alpha]
+### Added
+- Rx Contact Lens Vertex Converter: Implemented a robust dual-meridian vertex distance compensation tool.
+- Visual Acuity Converter: Added a clinical reference suite for converting between LogMAR, Snellen (m/ft), and Decimal standards.
+
+## [1.50 alpha]
+### Added
+- AI Image Analyzer: Experimental tool for fundus photo analysis and feature highlighting.
+- AI Problem Solver: Intelligent scenario analysis for complex optical non-tolerance cases.
+- Ocular Drugs Guide: Reference guide for systemic drugs with ocular side effects.
+
+## [1.00 alpha]
+### Added
+- Initial Release: Core dispensing calculators including Lens Thickness, Blank Size, Induced Prism, and Prescription Transposer.
+- Modern UI: Responsive design with ShadCN components and "Optical" theme toggle (Light/Dark mode).
