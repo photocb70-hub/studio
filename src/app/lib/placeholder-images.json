@@ -76,5 +76,23 @@
     "width": 600,
     "height": 400,
     "hint": "red eye"
+  },
+  "corneal_ulcer": {
+    "url": "/Corneal Ulcer.png",
+    "width": 600,
+    "height": 400,
+    "hint": "corneal infiltrate"
+  },
+  "scleritis": {
+    "url": "/Scleritis.png",
+    "width": 600,
+    "height": 400,
+    "hint": "inflamed sclera"
+  },
+  "optic_neuritis": {
+    "url": "/Optic Neuritis.png",
+    "width": 600,
+    "height": 400,
+    "hint": "swollen nerve"
   }
 }

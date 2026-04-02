@@ -92,6 +92,14 @@ export const pathologyCategories: PathologyCategory[] = [
         symptoms: 'Headache (worse on waking/straining), nausea, vomiting, transient visual obscurations.',
         referralUrgency: 'Emergency',
         imageKey: 'papilledema',
+      },
+      {
+        name: 'Optic Neuritis',
+        overview: 'Inflammation of the optic nerve, frequently the first presenting sign of Multiple Sclerosis.',
+        clinicalSigns: 'Relative Afferent Pupillary Defect (RAPD), swollen or normal disc (Retrobulbar), red-green color deficiency.',
+        symptoms: 'Sudden, unilateral vision loss, pain on eye movement, "washed-out" colors.',
+        referralUrgency: 'Urgent',
+        imageKey: 'optic_neuritis',
       }
     ]
   },
@@ -121,6 +129,22 @@ export const pathologyCategories: PathologyCategory[] = [
         symptoms: 'Dull aching pain, photophobia (light sensitivity), redness, blurred vision.',
         referralUrgency: 'Urgent',
         imageKey: 'uveitis',
+      },
+      {
+        name: 'Corneal Ulcer',
+        overview: 'A serious infection of the cornea, often associated with contact lens wear. Requires immediate ophthalmic assessment.',
+        clinicalSigns: 'White/creamy infiltrate, epithelial defect, hypopyon in severe cases, ciliary flush.',
+        symptoms: 'Severe ocular pain, redness, photophobia, blurred vision.',
+        referralUrgency: 'Emergency',
+        imageKey: 'corneal_ulcer',
+      },
+      {
+        name: 'Scleritis',
+        overview: 'Severe, destructive inflammation of the sclera, often associated with underlying systemic autoimmune diseases.',
+        clinicalSigns: 'Deep-red or violaceous (purple) hue of the sclera, scleral edema, non-blanching vessels with phenylephrine.',
+        symptoms: 'Intense, "boring" ocular pain (often radiating to the forehead), tenderness, photophobia.',
+        referralUrgency: 'Urgent',
+        imageKey: 'scleritis',
       }
     ]
   }
