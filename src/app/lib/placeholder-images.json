@@ -100,5 +100,11 @@
     "width": 600,
     "height": 400,
     "hint": "red sclera"
+  },
+  "subconj_haemorrhage_front": {
+    "url": "/Subconjunctival Haemorrhage1.png",
+    "width": 600,
+    "height": 400,
+    "hint": "external eye"
   }
 }

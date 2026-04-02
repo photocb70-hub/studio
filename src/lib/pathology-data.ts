@@ -4,7 +4,7 @@ export type PathologyInfo = {
   clinicalSigns: string;
   symptoms: string;
   referralUrgency: 'Routine' | 'Urgent' | 'Emergency';
-  imageKey: string;
+  imageKeys: string[];
 };
 
 export type PathologyCategory = {
@@ -22,7 +22,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Drusen, pigmentary changes, geographic atrophy. Wet AMD: Subretinal fluid, hemorrhage, or lipid exudates.',
         symptoms: 'Blurred central vision, metamorphopsia (distortion), difficulty reading.',
         referralUrgency: 'Urgent',
-        imageKey: 'amd',
+        imageKeys: ['amd'],
       },
       {
         name: 'Diabetic Retinopathy',
@@ -30,7 +30,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Microaneurysms, dot and blot hemorrhages, hard exudates, cotton wool spots. Proliferative stage: Neovascularization.',
         symptoms: 'Often asymptomatic in early stages. Later: Floaters, blurred vision, vision loss.',
         referralUrgency: 'Routine',
-        imageKey: 'diabetic_retinopathy',
+        imageKeys: ['diabetic_retinopathy'],
       },
       {
         name: 'Retinal Detachment',
@@ -38,7 +38,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Grey/opaque appearance of the detached retina, presence of a hole or tear (Rhegmatogenous).',
         symptoms: 'Sudden onset of floaters, flashes of light (photopsia), "curtain" or "shadow" across vision.',
         referralUrgency: 'Emergency',
-        imageKey: 'retinal_detachment',
+        imageKeys: ['retinal_detachment'],
       },
       {
         name: 'Retinal Vein Occlusion (RVO)',
@@ -46,7 +46,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Widespread "blood and thunder" fundus, tortuous veins, macular edema, cotton wool spots.',
         symptoms: 'Sudden, painless blurred vision or vision loss (often in one eye).',
         referralUrgency: 'Urgent',
-        imageKey: 'rvo',
+        imageKeys: ['rvo'],
       },
       {
         name: 'Retinal Artery Occlusion (RAO)',
@@ -54,7 +54,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Pale/opaque retina due to edema, "cherry-red spot" at the macula (CRAO), retinal whitening (BRAO).',
         symptoms: 'Sudden, painless, severe vision loss (often in one eye).',
         referralUrgency: 'Emergency',
-        imageKey: 'rao',
+        imageKeys: ['rao'],
       },
       {
         name: 'Epiretinal Membrane (ERM)',
@@ -62,7 +62,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Glare or sheen from the retinal surface, wrinkling or puckering of the macula, vascular tortuosity.',
         symptoms: 'Metamorphopsia (distortion), blurred central vision, difficulty reading fine detail.',
         referralUrgency: 'Routine',
-        imageKey: 'erm',
+        imageKeys: ['erm'],
       }
     ]
   },
@@ -75,7 +75,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Increased Cup-to-Disc ratio, thinning of the neuroretinal rim, raised IOP (usually), visual field defects.',
         symptoms: 'Asymptomatic until significant peripheral vision loss occurs ("silent thief of sight").',
         referralUrgency: 'Routine',
-        imageKey: 'poag',
+        imageKeys: ['poag'],
       },
       {
         name: 'Acute Angle Closure Glaucoma',
@@ -83,7 +83,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Very high IOP, ciliary flush, mid-dilated fixed pupil, cloudy cornea.',
         symptoms: 'Severe ocular pain, nausea, vomiting, blurred vision, halos around lights.',
         referralUrgency: 'Emergency',
-        imageKey: 'aacg',
+        imageKeys: ['aacg'],
       },
       {
         name: 'Papilledema',
@@ -91,7 +91,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Blurred disc margins, hyperemic disc, splinter hemorrhages, absence of spontaneous venous pulsation (SVP).',
         symptoms: 'Headache (worse on waking/straining), nausea, vomiting, transient visual obscurations.',
         referralUrgency: 'Emergency',
-        imageKey: 'papilledema',
+        imageKeys: ['papilledema'],
       },
       {
         name: 'Optic Neuritis',
@@ -99,7 +99,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Relative Afferent Pupillary Defect (RAPD), swollen or normal disc (Retrobulbar), red-green color deficiency.',
         symptoms: 'Sudden, unilateral vision loss, pain on eye movement, "washed-out" colors.',
         referralUrgency: 'Urgent',
-        imageKey: 'optic_neuritis',
+        imageKeys: ['optic_neuritis'],
       }
     ]
   },
@@ -112,7 +112,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Cloudiness of the lens, reduced red reflex, myopic shift in refraction.',
         symptoms: 'Gradual blurring, glare (especially at night), fading of colors.',
         referralUrgency: 'Routine',
-        imageKey: 'cataract',
+        imageKeys: ['cataract'],
       },
       {
         name: 'Keratoconus',
@@ -120,7 +120,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Corneal thinning, Munson\'s sign, Fleischer ring, Vogt\'s striae.',
         symptoms: 'Progressive distortion, high astigmatism, ghosting, frequent Rx changes.',
         referralUrgency: 'Routine',
-        imageKey: 'keratoconus',
+        imageKeys: ['keratoconus'],
       },
       {
         name: 'Anterior Uveitis',
@@ -128,7 +128,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Ciliary flush, cells and flare in the anterior chamber, keratic precipitates (KPs), miosis (small pupil).',
         symptoms: 'Dull aching pain, photophobia (light sensitivity), redness, blurred vision.',
         referralUrgency: 'Urgent',
-        imageKey: 'uveitis',
+        imageKeys: ['uveitis'],
       },
       {
         name: 'Corneal Ulcer',
@@ -136,7 +136,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'White/creamy infiltrate, epithelial defect, hypopyon in severe cases, ciliary flush.',
         symptoms: 'Severe ocular pain, redness, photophobia, blurred vision.',
         referralUrgency: 'Emergency',
-        imageKey: 'corneal_ulcer',
+        imageKeys: ['corneal_ulcer'],
       },
       {
         name: 'Scleritis',
@@ -144,7 +144,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Deep-red or violaceous (purple) hue of the sclera, scleral edema, non-blanching vessels with phenylephrine.',
         symptoms: 'Intense, "boring" ocular pain (often radiating to the forehead), tenderness, photophobia.',
         referralUrgency: 'Urgent',
-        imageKey: 'scleritis',
+        imageKeys: ['scleritis'],
       },
       {
         name: 'Subconjunctival Haemorrhage',
@@ -152,7 +152,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Bright red patch on the sclera with sharp borders. The rest of the conjunctiva is quiet.',
         symptoms: 'Often asymptomatic. Patient may notice a "bloody eye" in the mirror. No vision loss.',
         referralUrgency: 'Routine',
-        imageKey: 'subconj_haemorrhage',
+        imageKeys: ['subconj_haemorrhage', 'subconj_haemorrhage_front'],
       }
     ]
   }

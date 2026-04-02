@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -62,7 +61,6 @@ export default function PathologyPage() {
               <AccordionContent>
                 <Accordion type="multiple" className="w-full">
                   {category.conditions.map((condition) => {
-                    const imageData = (placeholderImages as any)[condition.imageKey];
                     return (
                       <AccordionItem value={condition.name} key={condition.name} className="border-t">
                         <AccordionTrigger className="text-base hover:no-underline">
@@ -72,27 +70,34 @@ export default function PathologyPage() {
                         </AccordionTrigger>
                         <AccordionContent>
                           <div className="prose prose-sm dark:prose-invert max-w-none space-y-4 pt-2">
-                             {imageData && (
-                               <div 
-                                 className="group relative mb-6 cursor-zoom-in overflow-hidden rounded-lg border bg-muted"
-                                 onClick={() => setSelectedImage({ url: imageData.url, name: condition.name })}
-                               >
-                                 <Image
-                                   src={imageData.url}
-                                   alt={condition.name}
-                                   width={imageData.width}
-                                   height={imageData.height}
-                                   className="h-auto w-full object-cover transition-transform group-hover:scale-105"
-                                   data-ai-hint={imageData.hint}
-                                 />
-                                 <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/20">
-                                    <Maximize2 className="size-8 text-white opacity-0 transition-opacity group-hover:opacity-100" />
-                                 </div>
-                                 <div className="absolute bottom-2 right-2 rounded-md bg-black/60 px-2 py-1 text-[10px] text-white backdrop-blur-sm">
-                                   Tap to Enlarge
-                                 </div>
-                               </div>
-                             )}
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                                {condition.imageKeys.map((key) => {
+                                    const imageData = (placeholderImages as any)[key];
+                                    if (!imageData) return null;
+                                    return (
+                                        <div 
+                                          key={key}
+                                          className="group relative cursor-zoom-in overflow-hidden rounded-lg border bg-muted"
+                                          onClick={() => setSelectedImage({ url: imageData.url, name: condition.name })}
+                                        >
+                                          <Image
+                                            src={imageData.url}
+                                            alt={condition.name}
+                                            width={imageData.width}
+                                            height={imageData.height}
+                                            className="h-auto w-full object-cover transition-transform group-hover:scale-105"
+                                            data-ai-hint={imageData.hint}
+                                          />
+                                          <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/20">
+                                             <Maximize2 className="size-8 text-white opacity-0 transition-opacity group-hover:opacity-100" />
+                                          </div>
+                                          <div className="absolute bottom-2 right-2 rounded-md bg-black/60 px-2 py-1 text-[10px] text-white backdrop-blur-sm">
+                                            Tap to Enlarge
+                                          </div>
+                                        </div>
+                                    );
+                                })}
+                             </div>
 
                              <div className="flex justify-between items-start">
                                   <div className="flex-1">
