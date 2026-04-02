@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.20 alpha]
+### Updated
+- AMD Visual Reference: Updated the image for Age-Related Macular Degeneration in the Pathology Guide with a more detailed clinical representation.
+- General maintenance of the image registry.
+
 ## [2.19 alpha]
 ### Added
 - Ocular Pathology Guide: A new comprehensive reference under Clinical Tools covering common conditions like Glaucoma, AMD, and Diabetic Retinopathy.
