@@ -39,6 +39,14 @@ export const pathologyCategories: PathologyCategory[] = [
         symptoms: 'Sudden onset of floaters, flashes of light (photopsia), "curtain" or "shadow" across vision.',
         referralUrgency: 'Emergency',
         imageKey: 'retinal_detachment',
+      },
+      {
+        name: 'Retinal Vein Occlusion (RVO)',
+        overview: 'Blockage of the retinal veins (Central or Branch), leading to vascular congestion and hemorrhage.',
+        clinicalSigns: 'Widespread "blood and thunder" fundus, tortuous veins, macular edema, cotton wool spots.',
+        symptoms: 'Sudden, painless blurred vision or vision loss (often in one eye).',
+        referralUrgency: 'Urgent',
+        imageKey: 'rvo',
       }
     ]
   },
