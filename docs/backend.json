@@ -1,0 +1,51 @@
+
+{
+  "entities": {
+    "CourseUnit": {
+      "title": "Course Unit",
+      "description": "Stored analysis and rewrites of optical course chapters.",
+      "type": "object",
+      "properties": {
+        "unitTitle": {
+          "type": "string",
+          "description": "The title or chapter name."
+        },
+        "unitNumber": {
+          "type": "number",
+          "description": "The sequence number of the unit."
+        },
+        "originalContent": {
+          "type": "string",
+          "description": "The raw text extracted from the course materials."
+        },
+        "aiSummary": {
+          "type": "string",
+          "description": "A concise AI-generated summary of the key points."
+        },
+        "professionalRewrite": {
+          "type": "string",
+          "description": "A structured, professionally rewritten version of the content."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "unitTitle",
+        "originalContent"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "google.com"
+    ]
+  },
+  "firestore": {
+    "/courseUnits/{unitId}": {
+      "schema": "CourseUnit",
+      "description": "A collection of analyzed course units for study reference."
+    }
+  }
+}

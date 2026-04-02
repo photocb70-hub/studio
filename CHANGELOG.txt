@@ -3,6 +3,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.17 alpha]
+### Added
+- Integrated Firebase Firestore for persistent data storage.
+- New Tool: Course Study Hub (Dispensing Toolbox). Allows professionals to analyze and log course chapters with AI summaries and professional rewrites.
+- Study Vault: A secure, logged history of all analyzed course materials.
+
 ## [2.16 alpha]
 ### Added
 - New Clinical Tool: Visual Acuity Converter. Supports Snellen (6m/20ft), LogMAR, and Decimal formats with a live reference table.
@@ -12,10 +18,3 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Established a new stability hardsave checkpoint.
 - Verified cross-component consistency for the new `PowerAdjuster` tactile interface.
-
-## [2.14 alpha]
-### Fixed
-- Fixed contrast issues in dark mode by adjusting `accent-foreground` HSL variables.
-- Improved `PowerAdjuster` UI with larger, more distinct stepper buttons (+/-) for better mobile usability.
-- Added explicit visual feedback for current power selection within the adjuster component.
-- Standardized prescription results across all pages to ensure consistent high contrast in both themes.

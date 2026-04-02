@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Layers, ArrowRightLeft, Triangle, Maximize, ChevronsUpDown, Repeat, Footprints, Search } from 'lucide-react';
+import { Layers, ArrowRightLeft, Triangle, Maximize, ChevronsUpDown, Repeat, Footprints, Search, BookMarked } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -13,6 +13,12 @@ import {
 import { ToolPageLayout } from '@/components/tool-page-layout';
 
 const dispensingMenuItems = [
+    {
+        href: '/study-hub',
+        title: 'Course Study Hub',
+        description: 'Log and analyze your course chapters with AI assistance.',
+        icon: <BookMarked className="size-8 text-primary" />,
+    },
     {
         href: '/blank-size',
         title: 'Blank Size',
