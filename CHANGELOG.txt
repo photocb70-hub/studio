@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.10 alpha]
+### Added
+- Implemented intelligent "Minimum Corridor" analysis in the Dispensing Troubleshooter. The tool now flags potential non-tolerance issues if fitting heights are too low for the selected corridor length.
+- Added a `public/manifest.json` file to support PWA features and correctly define app icons.
+- Updated app metadata to use `newicon.png` as the primary brand asset for browser tabs and home screen installs.
+
+### Changed
+- Refactored the Dispensing Troubleshooter UI to conditionally show corridor inputs only when "Varifocal" is selected, creating a cleaner and more relevant user experience.
+- Improved the home page changelog display by correctly converting newlines to line breaks, ensuring the version history is easy to read.
+
+### Fixed
+- Resolved a series of critical syntax errors and malformed imports in `src/app/dispensing-troubleshooter/page.tsx` that were preventing the application from building.
+
 ## [2.9 alpha]
 ### Added
 - Added a "Pathology / Other Notes" input to the "Dispensing Troubleshooter" to allow for more nuanced clinical analysis.
@@ -220,5 +233,3 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Set the default refractive index to "Standard Index" across all relevant calculators for consistency.
-
-    
