@@ -3,6 +3,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.19 alpha]
+### Added
+- Ocular Pathology Guide: A new comprehensive reference under Clinical Tools covering common conditions like Glaucoma, AMD, and Diabetic Retinopathy.
+- Referral Urgency Tagging: Integrated urgency levels (Routine, Urgent, Emergency) into the pathology guide for better clinical guidance.
+- Structured Clinical Signs & Symptoms: Detailed data breakdown for ocular conditions to aid pattern recognition.
+
 ## [2.18 alpha]
 ### Added
 - PDF Upload & Extraction: The Course Study Hub now supports direct PDF file uploads for seamless text analysis.
@@ -20,8 +26,3 @@ All notable changes to this project will be documented in this file.
 ### Added
 - New Clinical Tool: Visual Acuity Converter. Supports Snellen (6m/20ft), LogMAR, and Decimal formats with a live reference table.
 - Upgraded the Contact Lens Rx Converter to support full sphero-cylindrical vertex compensation (both meridians).
-
-## [2.15 alpha]
-### Added
-- Established a new stability hardsave checkpoint.
-- Verified cross-component consistency for the new `PowerAdjuster` tactile interface.

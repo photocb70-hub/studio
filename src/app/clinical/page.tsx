@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Pill, ScanEye, ClipboardCheck, Workflow, Eye } from 'lucide-react';
+import { Pill, ScanEye, ClipboardCheck, Workflow, Eye, Microscope } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -27,6 +27,13 @@ const clinicalMenuItems = [
     title: 'Visual Acuity Converter',
     description: 'Convert between Snellen (m/ft), LogMAR, and Decimal VA.',
     icon: <Eye className="size-8 text-primary" />,
+    inDevelopment: false,
+  },
+  {
+    href: '/clinical/pathology',
+    title: 'Ocular Pathology Guide',
+    description: 'Reference for common ocular conditions and referral guidelines.',
+    icon: <Microscope className="size-8 text-primary" />,
     inDevelopment: false,
   },
   {
