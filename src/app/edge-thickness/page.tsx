@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -47,9 +46,7 @@ const lensMaterials = [
 
 const diameterOptions = [55, 60, 65, 70, 75, 80];
 
-const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, maxAxis, eye }: { minThickness: number, maxThickness: number, centerThickness: number, minAxis: number, maxAxis: number, eye: 'OD' | 'OS' }) => {
-  const isPlusLens = (minThickness + maxThickness) / 2 < centerThickness;
-
+const LensDiagram = ({ nasalX, templeX, eye, centerThickness, minThickness, maxThickness, maxAxis, minAxis, isPlusLens }: { nasalX: number, templeX: number, eye: 'OD' | 'OS', centerThickness: number, minThickness: number, maxThickness: number, maxAxis: number, minAxis: number, isPlusLens: boolean }) => {
   const plusPath = `M 20,50 C 35,30 75,30 90,50 C 75,70 35,70 20,50 Z`;
   const minusPath = `M 20,35 C 45,45 65,45 90,35 L 90,65 C 65,55 45,55 20,65 Z`;
   const etRotation = `rotate(${maxAxis} 50 50)`;
@@ -61,9 +58,6 @@ const LensDiagram = ({ minThickness, maxThickness, centerThickness, minAxis, max
   const maxTextY = 50 + Math.sin(maxAngleRad) * 58;
   const minTextX = 50 + Math.cos(minAngleRad) * 58;
   const minTextY = 50 + Math.sin(minAngleRad) * 58;
-
-  const nasalX = eye === 'OD' ? -10 : 110;
-  const templeX = eye === 'OD' ? 110 : -10;
 
   return (
     <div className="w-full max-w-[250px] mx-auto p-4 flex flex-col items-center justify-center gap-6">
@@ -208,6 +202,10 @@ export default function EdgeThicknessPage() {
     if (power === undefined || power === null) return '0.00';
     return (power > 0 ? '+' : '') + power.toFixed(2);
   };
+
+  const isPlusLens = result ? (result.minThickness + result.maxThickness) / 2 < result.centerThickness : false;
+  const nasalX = result ? (result.eye === 'OD' ? -10 : 110) : 0;
+  const templeX = result ? (result.eye === 'OD' ? 110 : -10) : 0;
 
   return (
     <ToolPageLayout
@@ -418,12 +416,15 @@ export default function EdgeThicknessPage() {
                             </div>
                         </div>
                         <LensDiagram 
-                            minThickness={result.minThickness} 
-                            maxThickness={result.maxThickness} 
-                            centerThickness={result.centerThickness}
-                            minAxis={result.minAxis}
-                            maxAxis={result.maxAxis}
+                            nasalX={nasalX}
+                            templeX={templeX}
                             eye={result.eye}
+                            centerThickness={result.centerThickness}
+                            minThickness={result.minThickness}
+                            maxThickness={result.maxThickness}
+                            maxAxis={result.maxAxis}
+                            minAxis={result.minAxis}
+                            isPlusLens={isPlusLens}
                         />
                     </CardContent>
                     <CardFooter>

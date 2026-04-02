@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -21,8 +20,8 @@ import { Repeat } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 
 const formSchema = z.object({
-  sphere: z.coerce.number().min(-25).max(25),
-  cylinder: z.coerce.number().min(-15).max(15),
+  sphere: z.coerce.number().min(-20).max(20),
+  cylinder: z.coerce.number().min(-10).max(10),
   axis: z.coerce.number({ required_error: "Axis is required." }).min(1, "Axis must be between 1 and 180.").max(180, "Axis must be between 1 and 180."),
 });
 
@@ -93,8 +92,8 @@ export default function PrescriptionTransposerPage() {
                         <Slider
                             value={[field.value]}
                             onValueChange={(value) => field.onChange(value[0])}
-                            min={-25}
-                            max={25}
+                            min={-20}
+                            max={20}
                             step={0.25}
                         />
                       </FormControl>
@@ -112,8 +111,8 @@ export default function PrescriptionTransposerPage() {
                         <Slider
                             value={[field.value]}
                             onValueChange={(value) => field.onChange(value[0])}
-                            min={-15}
-                            max={15}
+                            min={-10}
+                            max={10}
                             step={0.25}
                         />
                       </FormControl>

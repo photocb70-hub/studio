@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -24,7 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 
 const formSchema = z.object({
-  objectVergence: z.coerce.number(),
+  objectVergence: z.coerce.number().min(-20).max(20),
   surfacePower1: z.coerce.number().min(-20).max(20),
   surfacePower2: z.coerce.number().optional(),
   refractiveIndex: z.coerce.number().min(1),
@@ -260,4 +259,3 @@ export default function StepAlongPage() {
     </ToolPageLayout>
   );
 }
-    
