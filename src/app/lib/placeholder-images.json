@@ -18,7 +18,7 @@
     "height": 400,
     "hint": "detached retina"
   },
-  "glaucoma": {
+  "poag": {
     "url": "/poag.png",
     "width": 600,
     "height": 400,
@@ -29,6 +29,12 @@
     "width": 600,
     "height": 400,
     "hint": "closed angle"
+  },
+  "pcag": {
+    "url": "/pcag.png",
+    "width": 600,
+    "height": 400,
+    "hint": "angle closure"
   },
   "cataract": {
     "url": "https://picsum.photos/seed/106/600/400",

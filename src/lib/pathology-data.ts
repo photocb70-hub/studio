@@ -1,4 +1,3 @@
-
 export type PathologyInfo = {
   name: string;
   overview: string;
@@ -52,7 +51,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Increased Cup-to-Disc ratio, thinning of the neuroretinal rim, raised IOP (usually), visual field defects.',
         symptoms: 'Asymptomatic until significant peripheral vision loss occurs ("silent thief of sight").',
         referralUrgency: 'Routine',
-        imageKey: 'glaucoma',
+        imageKey: 'poag',
       },
       {
         name: 'Acute Angle Closure Glaucoma',

@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.30 alpha]
+### Fixed
+- Ocular Pathology Visuals: Synchronized keys and filenames for POAG and AACG in the Pathology Guide to resolve display issues.
+- Image Registry: Updated `poag` and `aacg` entries to point directly to `poag.png` and `aacg.png`.
+
 ## [2.29 alpha]
 ### Updated
 - Clinical Asset Fix: Mapped the custom image for Acute Angle Closure Glaucoma (AACG) to `aacg.png`.
@@ -41,8 +46,3 @@ All notable changes to this project will be documented in this file.
 - Ocular Pathology Visuals: Integrated clinical reference images for all major conditions.
 - Asset Support: Prepared the Pathology Guide for custom file uploads to allow for more precise clinical representation.
 - Hard Save: Consolidated all recent feature additions, including the PDF-powered Study Hub and full Rx Contact Lens Converter.
-
-## [2.20 alpha]
-### Updated
-- AMD Visual Reference: Updated the image for Age-Related Macular Degeneration in the Pathology Guide with a more detailed clinical representation.
-- General maintenance of the image registry.
