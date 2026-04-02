@@ -3,6 +3,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.27 alpha]
+### Updated
+- Clinical Asset Fix: Mapped the custom image for Retinal Detachment to `rd.png`.
+
 ## [2.26 alpha]
 ### Updated
 - Clinical Asset Fix: Mapped the custom image for Primary Closed Angle Glaucoma (PCAG) to `pcag.png`.

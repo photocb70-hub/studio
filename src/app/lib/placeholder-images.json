@@ -13,7 +13,7 @@
     "hint": "retinal hemorrhages"
   },
   "retinal_detachment": {
-    "url": "https://picsum.photos/seed/103/600/400",
+    "url": "/rd.png",
     "width": 600,
     "height": 400,
     "hint": "detached retina"
