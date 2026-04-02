@@ -1,12 +1,11 @@
-
 {
   "name": "Optical Prime",
   "short_name": "OpticalPrime",
   "description": "Precision tools for optical professionals.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#238E54",
+  "background_color": "#ffffff",
+  "theme_color": "#2c6b4f",
   "icons": [
     {
       "src": "/newicon.png",

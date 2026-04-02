@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.11 alpha]
+### Changed
+- Replaced all placeholder "Eye" icons in the UI with the new official brand asset (newicon.png) for consistent branding across the app.
+- Updated Web App Manifest to correctly reference the new icon for PWA installs.
+- Consolidated latest clinical tool updates and UI refinements into a stable hardsave.
+
 ## [2.10 alpha]
 ### Added
 - Implemented intelligent "Minimum Corridor" analysis in the Dispensing Troubleshooter. The tool now flags potential non-tolerance issues if fitting heights are too low for the selected corridor length.
