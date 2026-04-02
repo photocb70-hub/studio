@@ -68,6 +68,7 @@ export default function StudyHubPage() {
       setAnalysis(result);
       toast({ title: 'Analysis Complete', description: 'AI has structured your chapter notes.' });
     } catch (error) {
+      console.error('Error analyzing course chapter:', error);
       toast({ variant: 'destructive', title: 'Error', description: 'Could not analyze content.' });
     } finally {
       setIsAnalyzing(false);
@@ -96,6 +97,7 @@ export default function StudyHubPage() {
       
       toast({ title: 'PDF Extracted', description: 'Content loaded into analysis field.' });
     } catch (error) {
+      console.error('Error extracting text from PDF:', error);
       toast({ variant: 'destructive', title: 'Extraction Failed', description: 'Could not read PDF text.' });
     } finally {
       setIsExtracting(false);
@@ -121,6 +123,7 @@ export default function StudyHubPage() {
       setAnalysis(null);
       form.reset();
     } catch (error) {
+      console.error('Error saving study unit to Firestore:', error);
       toast({ variant: 'destructive', title: 'Save Failed', description: 'Could not save to database.' });
     }
   };
