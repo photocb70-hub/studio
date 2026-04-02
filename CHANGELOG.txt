@@ -3,6 +3,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.23 alpha]
+### Updated
+- Clinical Asset Fix: Corrected the filename for the Age-Related Macular Degeneration (AMD) clinical reference image to `amd.png`.
+
 ## [2.22 alpha]
 ### Updated
 - Clinical Asset Integration: Successfully mapped the custom clinical image for Age-Related Macular Degeneration (AMD) to the Pathology Guide.
