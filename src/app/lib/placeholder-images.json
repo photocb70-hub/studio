@@ -7,7 +7,7 @@
     "hint": "macular degeneration"
   },
   "diabetic_retinopathy": {
-    "url": "https://picsum.photos/seed/102/600/400",
+    "url": "/dr.png",
     "width": 600,
     "height": 400,
     "hint": "retinal hemorrhages"
