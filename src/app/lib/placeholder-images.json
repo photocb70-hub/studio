@@ -19,13 +19,13 @@
     "hint": "detached retina"
   },
   "poag": {
-    "url": "/poag.png",
+    "url": "/POAG.png",
     "width": 600,
     "height": 400,
     "hint": "optic nerve"
   },
   "aacg": {
-    "url": "/aacg.png",
+    "url": "/AACG.png",
     "width": 600,
     "height": 400,
     "hint": "closed angle"
@@ -37,7 +37,7 @@
     "hint": "angle closure"
   },
   "cataract": {
-    "url": "/cataract.png",
+    "url": "/Cataract.png",
     "width": 600,
     "height": 400,
     "hint": "cloudy lens"

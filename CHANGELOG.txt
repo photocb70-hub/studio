@@ -3,6 +3,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.32 alpha]
+### Fixed
+- Asset Case Sensitivity: Updated POAG, AACG, and Cataract image references to uppercase (POAG.png, AACG.png, Cataract.png) to ensure proper loading on case-sensitive file systems.
+
 ## [2.31 alpha]
 ### Updated
 - Clinical Asset Integration: Mapped the custom image for Cataracts to `cataract.png`.
