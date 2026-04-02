@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.22 alpha]
+### Updated
+- Clinical Asset Integration: Successfully mapped the custom clinical image for Age-Related Macular Degeneration (AMD) to the Pathology Guide.
+- Image Registry: Swapped generic placeholder for user-provided clinical reference.
+
 ## [2.21 alpha]
 ### Added
 - Ocular Pathology Visuals: Integrated clinical reference images for all major conditions.
