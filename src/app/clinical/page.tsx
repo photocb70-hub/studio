@@ -1,9 +1,8 @@
-
 'use client';
 
 import React from 'react';
 import Link from 'next/link';
-import { Pill, Sparkles, ScanEye, ClipboardCheck, Workflow } from 'lucide-react';
+import { Pill, ScanEye, ClipboardCheck, Workflow } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -48,13 +47,6 @@ const clinicalMenuItems = [
     title: 'AI Image Analyzer',
     description: 'Upload an ocular image for AI-powered analysis.',
     icon: <ScanEye className="size-8 text-primary" />,
-    inDevelopment: true,
-  },
-  {
-    href: '/ai-problem-solver',
-    title: 'AI Problem Solver',
-    description: 'Get AI-powered solutions for optical problems.',
-    icon: <Sparkles className="size-8 text-primary" />,
     inDevelopment: true,
   },
 ];
