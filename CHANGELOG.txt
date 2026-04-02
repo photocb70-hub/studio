@@ -3,6 +3,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.21 alpha]
+### Added
+- Ocular Pathology Visuals: Integrated clinical reference images for all major conditions.
+- Asset Support: Prepared the Pathology Guide for custom file uploads to allow for more precise clinical representation.
+- Hard Save: Consolidated all recent feature additions, including the PDF-powered Study Hub and full Rx Contact Lens Converter.
+
 ## [2.20 alpha]
 ### Updated
 - AMD Visual Reference: Updated the image for Age-Related Macular Degeneration in the Pathology Guide with a more detailed clinical representation.
