@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview An AI-based image analyzer for ocular images.
@@ -9,8 +8,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { googleAI } from '@genkit-ai/googleai';
-import { z } from 'zod';
+import { z } from 'genkit';
 
 // Define the input schema for the image analyzer
 const ImageAnalyzerInputSchema = z.object({
@@ -41,9 +39,9 @@ export async function analyzeImage(input: ImageAnalyzerInput): Promise<ImageAnal
 // Define the Genkit prompt for text analysis
 const textAnalyzerPrompt = ai.definePrompt({
   name: 'textAnalyzerPrompt',
+  model: 'googleai/gemini-2.5-flash',
   input: { schema: ImageAnalyzerInputSchema },
   output: { schema: TextAnalysisOutputSchema },
-  model: googleAI('gemini-1.5-flash-latest'),
   prompt: `You are an expert ophthalmic image analyst. A user has uploaded the following ocular image.
 
 Your task is to:
@@ -69,7 +67,7 @@ const imageAnalyzerFlow = ai.defineFlow(
     const [textAnalysisResponse, imageAnnotationResponse] = await Promise.all([
       textAnalyzerPrompt(input),
       ai.generate({
-        model: googleAI('gemini-2.5-flash-image-preview'),
+        model: 'googleai/gemini-2.5-flash-image',
         prompt: [
           { media: { url: input.imageDataUri } },
           { text: "Analyze this ocular fundus image. Draw a clear, thin, yellow circle around the optic disc. Draw a clear, thin, light-blue circle around the macula. If you see any clear anomalies like hemorrhages or exudates, draw a thin red arrow pointing to one of them. The annotations should be precise and not obscure the underlying features. Return only the annotated image." }

@@ -35,6 +35,7 @@ export async function analyzeCourseChapter(input: StudyAnalysisInput): Promise<S
 
 const studyPrompt = ai.definePrompt({
   name: 'studyPrompt',
+  model: 'googleai/gemini-2.5-flash',
   input: { schema: StudyAnalysisInputSchema },
   output: { schema: StudyAnalysisOutputSchema },
   prompt: `You are an expert optical educator and clinical supervisor at a high-level training academy. You have been provided with text from an optical dispensing course chapter titled "{{{unitTitle}}}".

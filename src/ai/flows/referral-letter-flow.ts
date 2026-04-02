@@ -33,6 +33,7 @@ export async function generateReferralLetter(input: ReferralInput): Promise<Refe
 
 const referralPrompt = ai.definePrompt({
   name: 'referralPrompt',
+  model: 'googleai/gemini-2.5-flash',
   input: { schema: ReferralInputSchema },
   output: { schema: ReferralOutputSchema },
   prompt: `You are an expert optometrist writing a clinical referral letter to an ophthalmologist (HES). 

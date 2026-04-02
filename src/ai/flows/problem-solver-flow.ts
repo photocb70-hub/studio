@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview An AI-based problem solver for optical dispensing issues.
@@ -9,7 +8,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
+import { z } from 'genkit';
 import { searchWeb } from '@/ai/tools/search-tool';
 
 const rxSchema = z.object({
@@ -73,6 +72,7 @@ export async function solveProblem(input: ProblemSolverInput): Promise<ProblemSo
 // They will be re-integrated once the UI and application are fully stable.
 const problemSolverPrompt = ai.definePrompt({
     name: 'problemSolverPrompt',
+    model: 'googleai/gemini-2.5-flash',
     input: { schema: ProblemSolverInputSchema },
     output: { schema: ProblemSolverOutputSchema },
     tools: [searchWeb],
