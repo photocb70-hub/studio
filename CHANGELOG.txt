@@ -1,3 +1,4 @@
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -7,7 +8,7 @@ All notable changes to this project will be documented in this file.
 - Ocular Pathology Guide Overhaul: Integrated a complete suite of clinical reference images for all major conditions, including AMD, Diabetic Retinopathy, Retinal Detachment, RVO, RAO, ERM, Anterior Uveitis, Corneal Ulcer, Scleritis, Optic Neuritis, Subconjunctival Haemorrhage, POAG, AACG, PCAG, Cataracts, Keratoconus, and Papilledema.
 - Multi-Image Support: Updated the clinical lightbox to support multiple images per condition, enabling both internal (fundus) and external (front of eye) reference visualizations.
 - Clinical Lightbox: Added a full-screen, high-resolution visualization tool for all pathology assets, providing an optimized experience for clinical detail recognition on mobile devices.
-- Asset Precision: Synchronized the image registry with exact case-sensitive filenames (e.g., POAG.png, Keratoconus.png, Papilledema.png, Retinal Vein Occlusion.png, Retinal Artery Occlusion.png, Epiretinal Membrane.png, Anterior Uveitis.png, Corneal Ulcer.png, Scleritis.png, Optic Neuritis.png, Subconjunctival Haemorrhage.png, Subconjunctival Haemorrhage1.png, Cataract.png, AACG.png) to ensure reliable asset loading.
+- Asset Precision: Synchronized the image registry with exact case-sensitive filenames (e.g., POAG.png, Keratoconus.png, Papilledema.png, Retinal Vein Occlusion.png, Retinal Artery Occlusion.png, Epiretinal Membrane.png, Anterior Uveitis.png, Corneal Ulcer.png, Scleritis.png, Optic Neuritis.png, Subconjunctival Haemorrhage.png, Subconjunctival Haemorrhage 1.png, Cataract.png, AACG.png) to ensure reliable asset loading.
 
 ## [2.10 alpha]
 ### Added
