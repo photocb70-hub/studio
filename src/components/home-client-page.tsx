@@ -23,7 +23,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 
 
 const menuItems = [
@@ -76,6 +76,10 @@ const MobileNav = () => (
       </Button>
     </SheetTrigger>
     <SheetContent side="left">
+      <SheetHeader className="sr-only">
+        <SheetTitle>Navigation Menu</SheetTitle>
+        <SheetDescription>Access tools and resources for Optical Prime.</SheetDescription>
+      </SheetHeader>
       <div className="flex flex-col gap-6 p-6">
         <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 text-xl font-semibold">
