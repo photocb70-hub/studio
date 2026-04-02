@@ -55,6 +55,14 @@ export const pathologyCategories: PathologyCategory[] = [
         symptoms: 'Sudden, painless, severe vision loss (often in one eye).',
         referralUrgency: 'Emergency',
         imageKey: 'rao',
+      },
+      {
+        name: 'Epiretinal Membrane (ERM)',
+        overview: 'A thin, semi-translucent fibrocellular tissue that forms on the inner surface of the retina, specifically at the macula. Also known as "macular pucker".',
+        clinicalSigns: 'Glare or sheen from the retinal surface, wrinkling or puckering of the macula, vascular tortuosity.',
+        symptoms: 'Metamorphopsia (distortion), blurred central vision, difficulty reading fine detail.',
+        referralUrgency: 'Routine',
+        imageKey: 'erm',
       }
     ]
   },
@@ -80,15 +88,15 @@ export const pathologyCategories: PathologyCategory[] = [
       {
         name: 'Papilledema',
         overview: 'Swelling of the optic disc caused by increased intracranial pressure. This is a medical emergency requiring urgent investigation.',
-        clinicalSigns: 'Blurred disc margins, hyperemic disc, splinter hemorrhages, absence of spontaneous venous pulsation (SVP), Paton\'s lines.',
-        symptoms: 'Headache (worse on waking/straining), nausea, vomiting, transient visual obscurations, pulsatile tinnitus.',
+        clinicalSigns: 'Blurred disc margins, hyperemic disc, splinter hemorrhages, absence of spontaneous venous pulsation (SVP).',
+        symptoms: 'Headache (worse on waking/straining), nausea, vomiting, transient visual obscurations.',
         referralUrgency: 'Emergency',
         imageKey: 'papilledema',
       }
     ]
   },
   {
-    title: 'Anterior Segment',
+    title: 'Anterior Segment & Uveitis',
     conditions: [
       {
         name: 'Cataract',
@@ -105,6 +113,14 @@ export const pathologyCategories: PathologyCategory[] = [
         symptoms: 'Progressive distortion, high astigmatism, ghosting, frequent Rx changes.',
         referralUrgency: 'Routine',
         imageKey: 'keratoconus',
+      },
+      {
+        name: 'Anterior Uveitis',
+        overview: 'Inflammation of the iris and ciliary body. Often associated with HLA-B27 systemic conditions.',
+        clinicalSigns: 'Ciliary flush, cells and flare in the anterior chamber, keratic precipitates (KPs), miosis (small pupil).',
+        symptoms: 'Dull aching pain, photophobia (light sensitivity), redness, blurred vision.',
+        referralUrgency: 'Urgent',
+        imageKey: 'uveitis',
       }
     ]
   }

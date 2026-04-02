@@ -64,5 +64,17 @@
     "width": 600,
     "height": 400,
     "hint": "swollen disc"
+  },
+  "erm": {
+    "url": "/Epiretinal Membrane.png",
+    "width": 600,
+    "height": 400,
+    "hint": "macular pucker"
+  },
+  "uveitis": {
+    "url": "/Anterior Uveitis.png",
+    "width": 600,
+    "height": 400,
+    "hint": "red eye"
   }
 }
