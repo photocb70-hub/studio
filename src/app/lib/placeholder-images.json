@@ -37,7 +37,7 @@
     "hint": "angle closure"
   },
   "cataract": {
-    "url": "https://picsum.photos/seed/106/600/400",
+    "url": "/cataract.png",
     "width": 600,
     "height": 400,
     "hint": "cloudy lens"

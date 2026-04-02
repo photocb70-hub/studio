@@ -3,6 +3,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.31 alpha]
+### Updated
+- Clinical Asset Integration: Mapped the custom image for Cataracts to `cataract.png`.
+
 ## [2.30 alpha]
 ### Fixed
 - Ocular Pathology Visuals: Synchronized keys and filenames for POAG and AACG in the Pathology Guide to resolve display issues.
