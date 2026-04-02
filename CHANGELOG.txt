@@ -3,6 +3,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.35 alpha]
+### Added
+- Ocular Pathology Lightbox: Integrated a full-screen visualization tool for clinical assets. Users can now tap any pathology image to enlarge it, improving detail recognition on mobile devices.
+
 ## [2.34 alpha]
 ### Fixed
 - Clinical Asset Case Sensitivity: Updated Keratoconus image reference to `Keratoconus.png` to match the exact filename on disk.
