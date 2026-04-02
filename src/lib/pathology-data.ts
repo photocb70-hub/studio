@@ -1,3 +1,4 @@
+
 export type PathologyInfo = {
   name: string;
   overview: string;
