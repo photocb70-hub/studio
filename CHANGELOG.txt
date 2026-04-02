@@ -1,6 +1,12 @@
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [2.14 alpha]
+### Added
+- Implemented a new `PowerAdjuster` component to solve mobile usability issues with sliders. The new control features a hybrid design with a broad-range slider, large fine-tuning buttons (+/- 0.25D), and direct numeric input.
+- Standardized all prescription-based tools to use the `PowerAdjuster` for sphere and cylinder values.
 
 ## [2.13 alpha]
 ### Removed
@@ -18,22 +24,3 @@ All notable changes to this project will be documented in this file.
 - Refined branding: Reverted the "O" logo in the application header and home page to the original Lucide `Eye` icon for internal UI consistency.
 - Maintained `newicon.png` as the official brand asset for PWA installations, browser tabs (favicon), and home screen icons.
 - Consolidated latest UI refinements into a stable hardsave checkpoint.
-
-## [2.11 alpha]
-### Changed
-- Replaced all placeholder "Eye" icons in the UI with the new official brand asset (newicon.png) for consistent branding across the app.
-- Updated Web App Manifest to correctly reference the new icon for PWA installs.
-- Consolidated latest clinical tool updates and UI refinements into a stable hardsave.
-
-## [2.10 alpha]
-### Added
-- Implemented intelligent "Minimum Corridor" analysis in the Dispensing Troubleshooter. The tool now flags potential non-tolerance issues if fitting heights are too low for the selected corridor length.
-- Added a `public/manifest.json` file to support PWA features and correctly define app icons.
-- Updated app metadata to use `newicon.png` as the primary brand asset for browser tabs and home screen installs.
-
-### Changed
-- Refactor the Dispensing Troubleshooter UI to conditionally show corridor inputs only when "Varifocal" is selected, creating a cleaner and more relevant user experience.
-- Improved the home page changelog display by correctly converting newlines to line breaks, ensuring the version history is easy to read.
-
-### Fixed
-- Resolved a series of critical syntax errors and malformed imports in `src/app/dispensing-troubleshooter/page.tsx` that were preventing the application from building.

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -17,9 +18,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Repeat } from 'lucide-react';
-import { Slider } from '@/components/ui/slider';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { TriangleAlert } from 'lucide-react';
+import { PowerAdjuster } from '@/components/power-adjuster';
 
 const formSchema = z.object({
   sphere: z.coerce.number().min(-20).max(20),
@@ -47,26 +48,12 @@ export default function ContactLensConverterPage() {
     },
   });
 
-  const sphereValue = form.watch('sphere');
-  const cylinderValue = form.watch('cylinder');
-  const invertedCylinderValue = cylinderValue !== undefined ? -cylinderValue : 0;
-  const axisValue = form.watch('axis');
-
-
   function onSubmit(values: FormValues) {
     const { sphere, cylinder = 0, axis, bvd } = values;
-
-    // Convert BVD from mm to meters
     const d = bvd / 1000;
-
-    // Vertex Compensated Power (Fc) = F / (1 - d*F)
     const compensatedSphere = sphere / (1 - d * sphere);
-
-    // Round to the nearest 0.25D step
     const roundedCompensatedSphere = Math.round(compensatedSphere * 4) / 4;
     
-    // For simplicity, this calculator does not vertex the cylinder power.
-    // In practice, toric adjustments can be more complex.
     setResult({
       sphere: roundedCompensatedSphere,
       cylinder,
@@ -106,11 +93,11 @@ export default function ContactLensConverterPage() {
                     name="sphere"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Sphere (D): {formatPower(sphereValue)}</FormLabel>
                         <FormControl>
-                            <Slider
-                                value={[field.value]}
-                                onValueChange={(value) => field.onChange(value[0])}
+                            <PowerAdjuster
+                                label="Sphere"
+                                value={field.value}
+                                onChange={field.onChange}
                                 min={-20}
                                 max={20}
                                 step={0.25}
@@ -125,13 +112,15 @@ export default function ContactLensConverterPage() {
                     name="cylinder"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Cylinder (D): {formatPower(cylinderValue)}</FormLabel>
                         <FormControl>
-                          <Slider
-                              value={[invertedCylinderValue]}
-                              onValueChange={(value) => field.onChange(-value[0])}
-                              min={0} max={10} step={0.25}
-                          />
+                            <PowerAdjuster
+                                label="Cylinder"
+                                value={field.value ?? 0}
+                                onChange={field.onChange}
+                                min={-10}
+                                max={0}
+                                step={0.25}
+                            />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -143,12 +132,14 @@ export default function ContactLensConverterPage() {
                             name="axis"
                             render={({ field }) => (
                                 <FormItem>
-                                <FormLabel>Axis (°): {axisValue}</FormLabel>
+                                <FormLabel>Axis (°)</FormLabel>
                                 <FormControl>
-                                    <Slider
-                                      value={[field.value ?? 90]}
-                                      onValueChange={(value) => field.onChange(value[0])}
-                                      min={1} max={180} step={1}
+                                    <Input 
+                                      type="number" 
+                                      min={1} 
+                                      max={180} 
+                                      value={field.value ?? 90} 
+                                      onChange={(e) => field.onChange(parseInt(e.target.value))}
                                     />
                                 </FormControl>
                                 <FormMessage />

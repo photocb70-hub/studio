@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -24,10 +25,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Slider } from '@/components/ui/slider';
 import { Flowchart, type FlowchartStep } from '@/components/ui/flowchart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
+import { PowerAdjuster } from '@/components/power-adjuster';
 
 const lensSchema = z.object({
     type: z.string().optional(),
@@ -96,19 +96,9 @@ type AnalysisResult = {
   isKnob: boolean;
 };
 
-const formatPower = (power?: number) => {
-    if (power === undefined || power === null) return '0.00';
-    return (power > 0 ? '+' : '') + power.toFixed(2);
-};
-
 const RxInputGroup = ({ nestName, eye }: { nestName: 'currentRx.od' | 'currentRx.os' | 'previousRx.od' | 'previousRx.os', eye: 'od' | 'os' }) => {
-    const { control, watch, getValues, setValue } = useFormContext<FormValues>();
+    const { control, getValues, setValue } = useFormContext<FormValues>();
     const { toast } = useToast();
-
-    const sphereValue = watch(`${nestName}.sphere`);
-    const cylinderValue = watch(`${nestName}.cylinder`);
-    const invertedCylinderValue = cylinderValue !== undefined ? -cylinderValue : 0;
-    const axisValue = watch(`${nestName}.axis`);
 
     const copyMeasurementsOdToOs = () => {
         const parentNest = nestName.split('.')[0] as 'currentRx' | 'previousRx';
@@ -127,13 +117,15 @@ const RxInputGroup = ({ nestName, eye }: { nestName: 'currentRx.od' | 'currentRx
                 control={control}
                 name={`${nestName}.sphere`}
                 render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Sphere (D): {formatPower(sphereValue)}</FormLabel>
+                    <FormItem className="md:col-span-2">
                         <FormControl>
-                             <Slider
-                                value={[field.value ?? 0]}
-                                onValueChange={(value) => field.onChange(value[0])}
-                                min={-20} max={20} step={0.25}
+                            <PowerAdjuster
+                                label="Sphere"
+                                value={field.value ?? 0}
+                                onChange={field.onChange}
+                                min={-20}
+                                max={20}
+                                step={0.25}
                             />
                         </FormControl>
                     </FormItem>
@@ -143,29 +135,33 @@ const RxInputGroup = ({ nestName, eye }: { nestName: 'currentRx.od' | 'currentRx
                 control={control}
                 name={`${nestName}.cylinder`}
                 render={({ field }) => (
-                     <FormItem>
-                        <FormLabel>Cylinder (D): {formatPower(cylinderValue)}</FormLabel>
+                    <FormItem className="md:col-span-2">
                         <FormControl>
-                            <Slider
-                                value={[invertedCylinderValue]}
-                                onValueChange={(value) => field.onChange(-value[0])}
-                                min={0} max={10} step={0.25}
+                            <PowerAdjuster
+                                label="Cylinder"
+                                value={field.value ?? 0}
+                                onChange={field.onChange}
+                                min={-10}
+                                max={0}
+                                step={0.25}
                             />
                         </FormControl>
-                      </FormItem>
+                    </FormItem>
                 )}
             />
             <FormField
                 control={control}
                 name={`${nestName}.axis`}
                 render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Axis (°): {axisValue}</FormLabel>
+                    <FormItem className="md:col-span-2">
+                        <FormLabel>Axis (°): {field.value ?? 90}</FormLabel>
                         <FormControl>
-                            <Slider
-                                value={[field.value ?? 90]}
-                                onValueChange={(value) => field.onChange(value[0])}
-                                min={1} max={180} step={1}
+                            <Input 
+                                type="number" 
+                                min={1} 
+                                max={180} 
+                                value={field.value ?? 90} 
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
                             />
                         </FormControl>
                     </FormItem>
