@@ -3,6 +3,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.33 alpha]
+### Updated
+- Clinical Asset Integration: Mapped the custom image for Keratoconus to `keratoconus.png`.
+
 ## [2.32 alpha]
 ### Fixed
 - Asset Case Sensitivity: Updated POAG, AACG, and Cataract image references to uppercase (POAG.png, AACG.png, Cataract.png) to ensure proper loading on case-sensitive file systems.
@@ -38,7 +42,7 @@ All notable changes to this project will be documented in this file.
 
 ## [2.24 alpha]
 ### Updated
-- Clinical Asset Fix: Mapped the custom image for Diabetic Retinopathy to `dr.png`.
+- Clinical Asset Fix: Corrected the filename for the Diabetic Retinopathy clinical reference image to `dr.png`.
 
 ## [2.23 alpha]
 ### Updated
