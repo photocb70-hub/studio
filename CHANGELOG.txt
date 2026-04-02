@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.12 alpha]
+### Added
+- Standardized all power sliders (Sphere, Cylinder) across all calculators to a universal range of -20.00D to +20.00D in 0.25D steps.
+- Enhanced the `Slider` component with a "bipolar" visualization: the progress bar now grows from the center (0.00) towards the selected value, with a clear zero-point indicator.
+
+### Changed
+- Refined branding: Reverted the "O" logo in the application header and home page to the original Lucide `Eye` icon for internal UI consistency.
+- Maintained `newicon.png` as the official brand asset for PWA installations, browser tabs (favicon), and home screen icons.
+- Consolidated latest UI refinements into a stable hardsave checkpoint.
+
 ## [2.11 alpha]
 ### Changed
 - Replaced all placeholder "Eye" icons in the UI with the new official brand asset (newicon.png) for consistent branding across the app.
@@ -15,7 +25,7 @@ All notable changes to this project will be documented in this file.
 - Updated app metadata to use `newicon.png` as the primary brand asset for browser tabs and home screen installs.
 
 ### Changed
-- Refactored the Dispensing Troubleshooter UI to conditionally show corridor inputs only when "Varifocal" is selected, creating a cleaner and more relevant user experience.
+- Refactor the Dispensing Troubleshooter UI to conditionally show corridor inputs only when "Varifocal" is selected, creating a cleaner and more relevant user experience.
 - Improved the home page changelog display by correctly converting newlines to line breaks, ensuring the version history is easy to read.
 
 ### Fixed
