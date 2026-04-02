@@ -1,8 +1,9 @@
+
 'use client';
 
 import React from 'react';
 import Link from 'next/link';
-import { Pill, ScanEye, ClipboardCheck, Workflow } from 'lucide-react';
+import { Pill, ScanEye, ClipboardCheck, Workflow, Eye } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -17,8 +18,15 @@ const clinicalMenuItems = [
   {
     href: '/contact-lens-converter',
     title: 'Contact Lens Rx Converter',
-    description: 'Convert a spectacle Rx to a contact lens Rx.',
+    description: 'Convert a spectacle Rx to a contact lens Rx with full vertexing.',
     icon: <ContactLensIcon className="size-8 text-primary" />,
+    inDevelopment: false,
+  },
+  {
+    href: '/va-converter',
+    title: 'Visual Acuity Converter',
+    description: 'Convert between Snellen (m/ft), LogMAR, and Decimal VA.',
+    icon: <Eye className="size-8 text-primary" />,
     inDevelopment: false,
   },
   {

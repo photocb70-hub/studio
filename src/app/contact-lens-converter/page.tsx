@@ -51,13 +51,24 @@ export default function ContactLensConverterPage() {
   function onSubmit(values: FormValues) {
     const { sphere, cylinder = 0, axis, bvd } = values;
     const d = bvd / 1000;
-    const compensatedSphere = sphere / (1 - d * sphere);
-    const roundedCompensatedSphere = Math.round(compensatedSphere * 4) / 4;
+    
+    // Compensate Sphere (Meridian 1)
+    const compensatedSph = sphere / (1 - d * sphere);
+    
+    // Compensate Meridian 2 (Sphere + Cylinder)
+    const meridian2 = sphere + cylinder;
+    const compensatedMeridian2 = meridian2 / (1 - d * meridian2);
+    
+    // Calculate new Cylinder
+    const compensatedCyl = compensatedMeridian2 - compensatedSph;
+
+    // Round to nearest 0.25D
+    const roundToQuarter = (val: number) => Math.round(val * 4) / 4;
     
     setResult({
-      sphere: roundedCompensatedSphere,
-      cylinder,
-      axis,
+      sphere: roundToQuarter(compensatedSph),
+      cylinder: roundToQuarter(compensatedCyl),
+      axis: axis,
     });
   }
 
@@ -68,8 +79,11 @@ export default function ContactLensConverterPage() {
 
   const formatResult = (prescription: Prescription) => {
     let formattedString = formatPower(prescription.sphere);
-    if (prescription.cylinder !== 0 && prescription.axis) {
-      formattedString += ` / ${formatPower(prescription.cylinder)} x ${prescription.axis}`;
+    if (prescription.cylinder !== 0) {
+      formattedString += ` / ${formatPower(prescription.cylinder)}`;
+      if (prescription.axis) {
+        formattedString += ` x ${prescription.axis}`;
+      }
     }
     return formattedString;
   }
@@ -77,7 +91,7 @@ export default function ContactLensConverterPage() {
   return (
     <ToolPageLayout
       title="Contact Lens Rx Converter"
-      description="Convert a spectacle prescription to an equivalent contact lens prescription by compensating for vertex distance."
+      description="Convert a spectacle prescription to an equivalent contact lens prescription by compensating for vertex distance in both meridians."
     >
       <div className="grid gap-8 md:grid-cols-2">
         <div className="space-y-8">
@@ -172,7 +186,7 @@ export default function ContactLensConverterPage() {
                 <TriangleAlert className="size-4" />
                 <AlertTitle>Note</AlertTitle>
                 <AlertDescription>
-                    This calculation only compensates the sphere power. Cylinder and axis are not adjusted. Vertex compensation is typically only clinically significant for powers of ±4.00D or greater.
+                    This tool now compensates both meridians (Sph/Cyl). Vertex compensation is typically clinically significant for powers of ±4.00D or greater.
                 </AlertDescription>
             </Alert>
         </div>
@@ -190,7 +204,7 @@ export default function ContactLensConverterPage() {
                     </CardContent>
                     <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
-                            Formula: Fc = F / (1 - d*F)
+                            Formula: Fc = F / (1 - d*F) calculated for both meridians.
                         </p>
                     </CardFooter>
                 </Card>
