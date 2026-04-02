@@ -1,7 +1,6 @@
-
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -19,12 +18,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Sparkles, Loader2, Save, BookOpen, Trash2 } from 'lucide-react';
-import { analyzeCourseChapter, StudyAnalysisOutput } from '@/ai/flows/study-hub-flow';
+import { Sparkles, Loader2, Save, BookOpen, FileUp, ClipboardText, Lightbulb, Image as ImageIcon } from 'lucide-react';
+import { analyzeCourseChapter, StudyAnalysisOutput, extractTextFromPdf } from '@/ai/flows/study-hub-flow';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { collection, addDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { useFirestore, useCollection } from '@/firebase';
+import { Badge } from '@/components/ui/badge';
 
 const formSchema = z.object({
   unitTitle: z.string().min(3, 'Title is too short.'),
@@ -37,8 +37,10 @@ type FormValues = z.infer<typeof formSchema>;
 export default function StudyHubPage() {
   const [analysis, setAnalysis] = useState<StudyAnalysisOutput | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
   const { toast } = useToast();
   const db = useFirestore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const courseUnitsQuery = React.useMemo(() => {
     if (!db) return null;
@@ -64,11 +66,39 @@ export default function StudyHubPage() {
         content: values.content,
       });
       setAnalysis(result);
-      toast({ title: 'Analysis Complete', description: 'AI has summarized and rewritten your chapter.' });
+      toast({ title: 'Analysis Complete', description: 'AI has structured your chapter notes.' });
     } catch (error) {
       toast({ variant: 'destructive', title: 'Error', description: 'Could not analyze content.' });
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      toast({ variant: 'destructive', title: 'Invalid File', description: 'Please upload a PDF file.' });
+      return;
+    }
+
+    setIsExtracting(true);
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const text = await extractTextFromPdf(buffer);
+      
+      form.setValue('content', text);
+      if (!form.getValues('unitTitle')) {
+        form.setValue('unitTitle', file.name.replace('.pdf', ''));
+      }
+      
+      toast({ title: 'PDF Extracted', description: 'Content loaded into analysis field.' });
+    } catch (error) {
+      toast({ variant: 'destructive', title: 'Extraction Failed', description: 'Could not read PDF text.' });
+    } finally {
+      setIsExtracting(false);
     }
   };
 
@@ -83,6 +113,8 @@ export default function StudyHubPage() {
         originalContent: values.content,
         aiSummary: analysis.summary,
         professionalRewrite: analysis.professionalRewrite,
+        suggestedFigures: analysis.suggestedFigures,
+        clinicalNotes: analysis.clinicalNotes,
         createdAt: serverTimestamp(),
       });
       toast({ title: 'Saved to Vault', description: 'Chapter analysis has been stored.' });
@@ -96,14 +128,37 @@ export default function StudyHubPage() {
   return (
     <ToolPageLayout
       title="Course Study Hub"
-      description="Analyze, rewrite, and store your optical course materials for professional reference."
+      description="Upload PDFs or paste text from your Specsavers course to generate professional reference notes."
     >
       <div className="grid gap-8">
         <Card>
           <CardHeader>
-            <CardTitle>New Chapter Analysis</CardTitle>
+            <CardTitle>Analysis Hub</CardTitle>
           </CardHeader>
           <CardContent>
+            <div className="mb-6">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+                accept=".pdf"
+                className="hidden"
+              />
+              <Button 
+                variant="outline" 
+                className="w-full h-24 border-dashed flex flex-col gap-2"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isExtracting}
+              >
+                {isExtracting ? (
+                  <Loader2 className="animate-spin size-8" />
+                ) : (
+                  <FileUp className="size-8 text-primary" />
+                )}
+                <span>{isExtracting ? 'Extracting Text...' : 'Upload Course PDF (Specsavers)'}</span>
+              </Button>
+            </div>
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onAnalyze)} className="space-y-6">
                 <div className="grid gap-4 sm:grid-cols-4">
@@ -133,22 +188,21 @@ export default function StudyHubPage() {
                   name="content"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Chapter Text Content</FormLabel>
+                      <FormLabel>Source Content</FormLabel>
                       <FormControl>
                         <Textarea 
-                          placeholder="Paste the text from your Specsavers course PDF here..." 
-                          className="min-h-[200px]" 
+                          placeholder="Paste text here or upload a PDF above..." 
+                          className="min-h-[200px] font-mono text-xs" 
                           {...field} 
                         />
                       </FormControl>
-                      <FormDescription>The AI will use this text to generate summaries and professional rewrites.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit" disabled={isAnalyzing} className="w-full">
+                <Button type="submit" disabled={isAnalyzing || isExtracting} className="w-full">
                   {isAnalyzing ? <Loader2 className="mr-2 animate-spin" /> : <Sparkles className="mr-2" />}
-                  Analyze & Rewrite
+                  Generate Professional Reference
                 </Button>
               </form>
             </Form>
@@ -160,22 +214,57 @@ export default function StudyHubPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="text-primary" />
-                AI Analysis Result
+                Study Analysis
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <h4 className="font-bold text-primary underline mb-2">Technical Summary</h4>
-                <p className="text-sm italic">{analysis.summary}</p>
-              </div>
+            <CardContent className="space-y-8">
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <ClipboardText className="size-5 text-primary" />
+                  <h4 className="font-bold text-lg">Technical Summary</h4>
+                </div>
+                <p className="text-sm italic text-muted-foreground">{analysis.summary}</p>
+              </section>
+
               <Separator />
-              <div>
-                <h4 className="font-bold text-primary underline mb-2">Professional Rewrite</h4>
+
+              <section>
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles className="size-5 text-primary" />
+                  <h4 className="font-bold text-lg">Professional Rewrite</h4>
+                </div>
                 <div 
                   className="prose prose-sm dark:prose-invert max-w-none"
                   dangerouslySetInnerHTML={{ __html: analysis.professionalRewrite.replace(/\n/g, '<br/>') }}
                 />
-              </div>
+              </section>
+
+              <Separator />
+
+              <section>
+                <div className="flex items-center gap-2 mb-4">
+                  <ImageIcon className="size-5 text-primary" />
+                  <h4 className="font-bold text-lg">Suggested Figures & Diagrams</h4>
+                </div>
+                <ul className="grid gap-3">
+                  {analysis.suggestedFigures.map((figure, idx) => (
+                    <li key={idx} className="bg-background/50 p-3 rounded-lg border text-sm flex gap-3">
+                      <Badge variant="outline" className="h-fit">Fig {idx + 1}</Badge>
+                      {figure}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              <Separator />
+
+              <section className="bg-accent/10 p-4 rounded-xl border border-accent/20">
+                <div className="flex items-center gap-2 mb-3">
+                  <Lightbulb className="size-5 text-accent" />
+                  <h4 className="font-bold text-lg text-accent-foreground">Clinical Pro-Tips</h4>
+                </div>
+                <p className="text-sm">{analysis.clinicalNotes}</p>
+              </section>
             </CardContent>
             <CardFooter>
               <Button onClick={onSave} className="w-full" variant="default">
@@ -203,7 +292,17 @@ export default function StudyHubPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="p-4 pt-0">
-                     <p className="text-xs text-muted-foreground line-clamp-2">{unit.aiSummary}</p>
+                     <p className="text-xs text-muted-foreground line-clamp-2 mb-2">{unit.aiSummary}</p>
+                     <div className="flex gap-2">
+                        <Badge variant="secondary" className="text-[10px]">
+                           {unit.suggestedFigures?.length || 0} Figures
+                        </Badge>
+                        {unit.clinicalNotes && (
+                          <Badge variant="outline" className="text-[10px] border-accent/30 text-accent">
+                            Clinical Notes
+                          </Badge>
+                        )}
+                     </div>
                   </CardContent>
                 </Card>
               ))}
