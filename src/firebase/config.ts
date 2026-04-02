@@ -2,19 +2,10 @@
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
-
-const firebaseConfig = {
-  apiKey: "placeholder-api-key",
-  authDomain: "placeholder-auth-domain",
-  projectId: "placeholder-project-id",
-  storageBucket: "placeholder-storage-bucket",
-  messagingSenderId: "placeholder-messaging-sender-id",
-  appId: "placeholder-app-id",
-  firestoreDatabaseId: "(default)"
-};
+import firebaseConfig from './firebase-applet-config.json';
 
 /**
- * Initializes the Firebase app or retrieves the existing one.
+ * Initializes the Firebase app or retrieves the existing one using the applet configuration.
  */
 export function getFirebaseApp(): FirebaseApp {
   const existingApp = getApps().at(0);

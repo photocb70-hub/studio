@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -26,6 +27,7 @@ export function useDoc<T = DocumentData>(ref: DocumentReference<T> | null) {
         setLoading(false);
       },
       (err) => {
+        // Explicitly log errors to console as per user requirement
         console.error('Firestore useDoc error:', err);
         setError(err);
         setLoading(false);
