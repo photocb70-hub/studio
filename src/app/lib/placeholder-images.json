@@ -1,0 +1,45 @@
+
+{
+  "amd": {
+    "url": "https://picsum.photos/seed/101/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "macular degeneration"
+  },
+  "diabetic_retinopathy": {
+    "url": "https://picsum.photos/seed/102/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "retinal hemorrhages"
+  },
+  "retinal_detachment": {
+    "url": "https://picsum.photos/seed/103/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "detached retina"
+  },
+  "glaucoma": {
+    "url": "https://picsum.photos/seed/104/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "optic nerve"
+  },
+  "aacg": {
+    "url": "https://picsum.photos/seed/105/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "closed angle"
+  },
+  "cataract": {
+    "url": "https://picsum.photos/seed/106/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "cloudy lens"
+  },
+  "keratoconus": {
+    "url": "https://picsum.photos/seed/107/600/400",
+    "width": 600,
+    "height": 400,
+    "hint": "cone cornea"
+  }
+}

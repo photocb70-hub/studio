@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { ToolPageLayout } from '@/components/tool-page-layout';
 import {
   Accordion,
@@ -13,6 +14,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { pathologyCategories } from '@/lib/pathology-data';
 import { Info, AlertCircle, Clock, Stethoscope } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import placeholderImages from '@/app/lib/placeholder-images.json';
 
 const UrgencyBadge = ({ urgency }: { urgency: 'Routine' | 'Urgent' | 'Emergency' }) => {
     const variants = {
@@ -51,43 +53,62 @@ export default function PathologyPage() {
               </AccordionTrigger>
               <AccordionContent>
                 <Accordion type="multiple" className="w-full">
-                  {category.conditions.map((condition) => (
-                    <AccordionItem value={condition.name} key={condition.name} className="border-t">
-                      <AccordionTrigger className="text-base hover:no-underline">
-                        <div className="flex items-center gap-3">
-                            <span>{condition.name}</span>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="prose prose-sm dark:prose-invert max-w-none space-y-4 pt-2">
-                           <div className="flex justify-between items-start">
-                                <div className="flex-1">
-                                    <h4 className="font-semibold text-foreground mb-1">Overview</h4>
-                                    <p className="mt-0">{condition.overview}</p>
-                                </div>
-                                <UrgencyBadge urgency={condition.referralUrgency} />
-                           </div>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="bg-muted/30 p-3 rounded-lg border">
-                                <h4 className="font-semibold text-foreground mb-1 flex items-center gap-2">
-                                    <Stethoscope className="size-4" />
-                                    Clinical Signs
-                                </h4>
-                                <p className="mt-0 text-xs leading-relaxed">{condition.clinicalSigns}</p>
-                            </div>
-                            <div className="bg-muted/30 p-3 rounded-lg border">
-                                <h4 className="font-semibold text-foreground mb-1 flex items-center gap-2">
-                                    <AlertCircle className="size-4" />
-                                    Symptoms
-                                </h4>
-                                <p className="mt-0 text-xs leading-relaxed">{condition.symptoms}</p>
+                  {category.conditions.map((condition) => {
+                    const imageData = (placeholderImages as any)[condition.imageKey];
+                    return (
+                      <AccordionItem value={condition.name} key={condition.name} className="border-t">
+                        <AccordionTrigger className="text-base hover:no-underline">
+                          <div className="flex items-center gap-3">
+                              <span>{condition.name}</span>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="prose prose-sm dark:prose-invert max-w-none space-y-4 pt-2">
+                             {imageData && (
+                               <div className="relative mb-6 overflow-hidden rounded-lg border bg-muted">
+                                 <Image
+                                   src={imageData.url}
+                                   alt={condition.name}
+                                   width={imageData.width}
+                                   height={imageData.height}
+                                   className="h-auto w-full object-cover transition-transform hover:scale-105"
+                                   data-ai-hint={imageData.hint}
+                                 />
+                                 <div className="absolute bottom-2 right-2 rounded-md bg-black/60 px-2 py-1 text-[10px] text-white backdrop-blur-sm">
+                                   Clinical Reference Visualization
+                                 </div>
+                               </div>
+                             )}
+
+                             <div className="flex justify-between items-start">
+                                  <div className="flex-1">
+                                      <h4 className="font-semibold text-foreground mb-1">Overview</h4>
+                                      <p className="mt-0">{condition.overview}</p>
+                                  </div>
+                                  <UrgencyBadge urgency={condition.referralUrgency} />
+                             </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="bg-muted/30 p-3 rounded-lg border">
+                                  <h4 className="font-semibold text-foreground mb-1 flex items-center gap-2">
+                                      <Stethoscope className="size-4" />
+                                      Clinical Signs
+                                  </h4>
+                                  <p className="mt-0 text-xs leading-relaxed">{condition.clinicalSigns}</p>
+                              </div>
+                              <div className="bg-muted/30 p-3 rounded-lg border">
+                                  <h4 className="font-semibold text-foreground mb-1 flex items-center gap-2">
+                                      <AlertCircle className="size-4" />
+                                      Symptoms
+                                  </h4>
+                                  <p className="mt-0 text-xs leading-relaxed">{condition.symptoms}</p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
                 </Accordion>
               </AccordionContent>
             </AccordionItem>

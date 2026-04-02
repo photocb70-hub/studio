@@ -5,6 +5,7 @@ export type PathologyInfo = {
   clinicalSigns: string;
   symptoms: string;
   referralUrgency: 'Routine' | 'Urgent' | 'Emergency';
+  imageKey: string;
 };
 
 export type PathologyCategory = {
@@ -22,6 +23,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Drusen, pigmentary changes, geographic atrophy. Wet AMD: Subretinal fluid, hemorrhage, or lipid exudates.',
         symptoms: 'Blurred central vision, metamorphopsia (distortion), difficulty reading.',
         referralUrgency: 'Urgent',
+        imageKey: 'amd',
       },
       {
         name: 'Diabetic Retinopathy',
@@ -29,6 +31,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Microaneurysms, dot and blot hemorrhages, hard exudates, cotton wool spots. Proliferative stage: Neovascularization.',
         symptoms: 'Often asymptomatic in early stages. Later: Floaters, blurred vision, vision loss.',
         referralUrgency: 'Routine',
+        imageKey: 'diabetic_retinopathy',
       },
       {
         name: 'Retinal Detachment',
@@ -36,6 +39,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Grey/opaque appearance of the detached retina, presence of a hole or tear (Rhegmatogenous).',
         symptoms: 'Sudden onset of floaters, flashes of light (photopsia), "curtain" or "shadow" across vision.',
         referralUrgency: 'Emergency',
+        imageKey: 'retinal_detachment',
       }
     ]
   },
@@ -48,6 +52,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Increased Cup-to-Disc ratio, thinning of the neuroretinal rim, raised IOP (usually), visual field defects.',
         symptoms: 'Asymptomatic until significant peripheral vision loss occurs ("silent thief of sight").',
         referralUrgency: 'Routine',
+        imageKey: 'glaucoma',
       },
       {
         name: 'Acute Angle Closure Glaucoma',
@@ -55,6 +60,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Very high IOP, ciliary flush, mid-dilated fixed pupil, cloudy cornea.',
         symptoms: 'Severe ocular pain, nausea, vomiting, blurred vision, halos around lights.',
         referralUrgency: 'Emergency',
+        imageKey: 'aacg',
       }
     ]
   },
@@ -67,6 +73,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Cloudiness of the lens, reduced red reflex, myopic shift in refraction.',
         symptoms: 'Gradual blurring, glare (especially at night), fading of colors.',
         referralUrgency: 'Routine',
+        imageKey: 'cataract',
       },
       {
         name: 'Keratoconus',
@@ -74,6 +81,7 @@ export const pathologyCategories: PathologyCategory[] = [
         clinicalSigns: 'Corneal thinning, Munson\'s sign, Fleischer ring, Vogt\'s striae.',
         symptoms: 'Progressive distortion, high astigmatism, ghosting, frequent Rx changes.',
         referralUrgency: 'Routine',
+        imageKey: 'keratoconus',
       }
     ]
   }
