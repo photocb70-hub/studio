@@ -3,6 +3,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.18 alpha]
+### Added
+- PDF Upload & Extraction: The Course Study Hub now supports direct PDF file uploads for seamless text analysis.
+- Advanced AI Analysis: Enhanced the study assistant to suggest clinical diagrams, provide "Pro-Tips" for the dispensing desk, and generate structured professional reference guides.
+- Standardized UI: Finalized the Hybrid Power Adjuster (Slider + Stepper) across all relevant tools for better mobile precision.
+- Accessibility: Fixed screen reader accessibility issues in the mobile navigation menu.
+
 ## [2.17 alpha]
 ### Added
 - Integrated Firebase Firestore for persistent data storage.
