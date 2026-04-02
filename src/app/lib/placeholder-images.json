@@ -23,6 +23,12 @@
     "height": 400,
     "hint": "vein occlusion"
   },
+  "rao": {
+    "url": "/Retinal Artery Occlusion.png",
+    "width": 600,
+    "height": 400,
+    "hint": "artery occlusion"
+  },
   "poag": {
     "url": "/POAG.png",
     "width": 600,

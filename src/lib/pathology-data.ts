@@ -47,6 +47,14 @@ export const pathologyCategories: PathologyCategory[] = [
         symptoms: 'Sudden, painless blurred vision or vision loss (often in one eye).',
         referralUrgency: 'Urgent',
         imageKey: 'rvo',
+      },
+      {
+        name: 'Retinal Artery Occlusion (RAO)',
+        overview: 'Blockage of the retinal arteries (Central or Branch), leading to acute retinal ischemia. This is an eye stroke.',
+        clinicalSigns: 'Pale/opaque retina due to edema, "cherry-red spot" at the macula (CRAO), retinal whitening (BRAO).',
+        symptoms: 'Sudden, painless, severe vision loss (often in one eye).',
+        referralUrgency: 'Emergency',
+        imageKey: 'rao',
       }
     ]
   },
