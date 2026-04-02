@@ -94,5 +94,11 @@
     "width": 600,
     "height": 400,
     "hint": "swollen nerve"
+  },
+  "subconj_haemorrhage": {
+    "url": "/Subconjunctival Haemorrhage.png",
+    "width": 600,
+    "height": 400,
+    "hint": "red sclera"
   }
 }

@@ -145,6 +145,14 @@ export const pathologyCategories: PathologyCategory[] = [
         symptoms: 'Intense, "boring" ocular pain (often radiating to the forehead), tenderness, photophobia.',
         referralUrgency: 'Urgent',
         imageKey: 'scleritis',
+      },
+      {
+        name: 'Subconjunctival Haemorrhage',
+        overview: 'A benign, painless collection of blood under the conjunctiva, often occurring spontaneously or after straining.',
+        clinicalSigns: 'Bright red patch on the sclera with sharp borders. The rest of the conjunctiva is quiet.',
+        symptoms: 'Often asymptomatic. Patient may notice a "bloody eye" in the mirror. No vision loss.',
+        referralUrgency: 'Routine',
+        imageKey: 'subconj_haemorrhage',
       }
     ]
   }
