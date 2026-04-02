@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.15 alpha]
+### Added
+- Established a new stability hardsave checkpoint.
+- Verified cross-component consistency for the new `PowerAdjuster` tactile interface.
+
 ## [2.14 alpha]
 ### Fixed
 - Fixed contrast issues in dark mode by adjusting `accent-foreground` HSL variables.
