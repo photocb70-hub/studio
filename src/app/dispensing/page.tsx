@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Layers, ArrowRightLeft, Triangle, Maximize, ChevronsUpDown, Repeat, Footprints, Search, BookMarked, MoveUpRight, Rainbow } from 'lucide-react';
+import { Layers, ArrowRightLeft, Triangle, Maximize, ChevronsUpDown, Repeat, Footprints, Search, BookMarked } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -24,18 +24,6 @@ const dispensingMenuItems = [
         title: 'Blank Size',
         description: 'Calculate the minimum lens blank size needed.',
         icon: <Maximize className="size-8 text-primary" />,
-    },
-    {
-        href: '/oblique-power',
-        title: 'Oblique Meridian',
-        description: 'Calculate lens power in any specific meridian.',
-        icon: <MoveUpRight className="size-8 text-primary" />,
-    },
-    {
-        href: '/chromatic-aberration',
-        title: 'Chromatic Aberration',
-        description: 'Calculate TCA and color fringing effects.',
-        icon: <Rainbow className="size-8 text-primary" />,
     },
     {
         href: '/vertex-conversion',

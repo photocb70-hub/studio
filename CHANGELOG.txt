@@ -5,9 +5,12 @@ All notable changes to this project will be documented in this file.
 
 ## [2.70 alpha]
 ### Added
-- Oblique Power Calculator: Added a precision tool for calculating power in any specific meridian.
-- Chromatic Aberration Calculator: Added a diagnostic tool for Transverse Chromatic Aberration (TCA).
 - Accommodation Range Tool: Integrated Hofstetter's formulas for estimating amplitude and vision ranges.
+### Changed
+- UI: Made prescription adjustment buttons smaller for better ergonomics.
+### Removed
+- Oblique Power Calculator: Removed from dispensing suite.
+- Chromatic Aberration Calculator: Removed from dispensing suite.
 
 ## [2.60 alpha]
 ### Fixed

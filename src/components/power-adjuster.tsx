@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -70,11 +71,11 @@ export function PowerAdjuster({
           type="button"
           variant="secondary"
           size="icon"
-          className="h-10 w-10 shrink-0 border shadow-md active:scale-95 transition-all"
+          className="h-8 w-8 shrink-0 border shadow-md active:scale-95 transition-all"
           onClick={handleDecrement}
           disabled={value <= min}
         >
-          <Minus className="size-5" />
+          <Minus className="size-4" />
         </Button>
 
         <div className="relative flex-1 px-2 py-4">
@@ -97,11 +98,11 @@ export function PowerAdjuster({
           type="button"
           variant="secondary"
           size="icon"
-          className="h-10 w-10 shrink-0 border shadow-md active:scale-95 transition-all"
+          className="h-8 w-8 shrink-0 border shadow-md active:scale-95 transition-all"
           onClick={handleIncrement}
           disabled={value >= max}
         >
-          <Plus className="size-5" />
+          <Plus className="size-4" />
         </Button>
       </div>
       
