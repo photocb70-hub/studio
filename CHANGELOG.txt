@@ -44,10 +44,6 @@ All notable changes to this project will be documented in this file.
 ### Updated
 - Clinical Asset Fix: Mapped the custom image for Primary Closed Angle Glaucoma (PCAG) to `pcag.png`.
 
-## [2.25 alpha]
-### Updated
-- Clinical Asset Fix: Mapped the custom image for Primary Open Angle Glaucoma (POAG) to `glaucoma.png`.
-
 ## [2.24 alpha]
 ### Updated
 - Clinical Asset Fix: Corrected the filename for the Diabetic Retinopathy clinical reference image to `dr.png`.
@@ -59,7 +55,6 @@ All notable changes to this project will be documented in this file.
 ## [2.22 alpha]
 ### Updated
 - Clinical Asset Integration: Successfully mapped the custom clinical image for Age-Related Macular Degeneration (AMD) to the Pathology Guide.
-- Image Registry: Swapped generic placeholder for user-provided clinical reference.
 
 ## [2.21 alpha]
 ### Added
