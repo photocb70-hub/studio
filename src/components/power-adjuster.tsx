@@ -28,12 +28,14 @@ export function PowerAdjuster({
   step = 0.25,
   className,
 }: PowerAdjusterProps) {
-  const handleIncrement = () => {
+  const handleIncrement = (e: React.MouseEvent) => {
+    e.preventDefault();
     const newValue = Math.min(max, value + step);
     onChange(newValue);
   };
 
-  const handleDecrement = () => {
+  const handleDecrement = (e: React.MouseEvent) => {
+    e.preventDefault();
     const newValue = Math.max(min, value - step);
     onChange(newValue);
   };
@@ -43,9 +45,9 @@ export function PowerAdjuster({
   };
 
   return (
-    <div className={cn("space-y-3", className)}>
+    <div className={cn("space-y-4 rounded-xl border bg-card/50 p-4 shadow-sm", className)}>
       <div className="flex items-center justify-between gap-4">
-        <Label className="text-sm font-medium">{label}</Label>
+        <Label className="text-sm font-bold uppercase tracking-wider text-muted-foreground">{label}</Label>
         <div className="flex items-center gap-2">
           <Input
             type="number"
@@ -55,54 +57,57 @@ export function PowerAdjuster({
               if (!isNaN(val)) onChange(val);
             }}
             step={step}
-            className="h-8 w-20 text-right font-mono text-sm"
+            className="h-9 w-24 text-right font-mono text-base font-bold"
           />
-          <span className="text-xs font-semibold text-muted-foreground">D</span>
+          <span className="text-sm font-bold text-primary">D</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           size="icon"
-          className="h-10 w-10 shrink-0 shadow-sm active:scale-95"
+          className="h-12 w-12 shrink-0 border shadow-md active:scale-95 transition-all"
           onClick={handleDecrement}
           disabled={value <= min}
         >
-          <Minus className="size-4" />
+          <Minus className="size-6" />
         </Button>
 
-        <div className="relative flex-1 py-2">
+        <div className="relative flex-1 px-2 py-4">
           <Slider
             value={[value]}
             onValueChange={(vals) => onChange(vals[0])}
             min={min}
             max={max}
             step={step}
-            className="py-4"
+            className="cursor-pointer"
           />
-          <div className="absolute -bottom-1 left-0 right-0 flex justify-between px-1 text-[10px] text-muted-foreground">
+          <div className="absolute -bottom-1 left-0 right-0 flex justify-between px-2 text-[10px] font-bold text-muted-foreground">
             <span>{min}</span>
-            <span className="font-bold text-primary">0</span>
+            <span className="text-primary">0</span>
             <span>+{max}</span>
           </div>
         </div>
 
         <Button
           type="button"
-          variant="outline"
+          variant="secondary"
           size="icon"
-          className="h-10 w-10 shrink-0 shadow-sm active:scale-95"
+          className="h-12 w-12 shrink-0 border shadow-md active:scale-95 transition-all"
           onClick={handleIncrement}
           disabled={value >= max}
         >
-          <Plus className="size-4" />
+          <Plus className="size-6" />
         </Button>
       </div>
-      <p className="text-center text-xs font-bold text-primary sm:hidden">
-        Current: {formatPower(value)}
-      </p>
+      
+      <div className="text-center pt-1">
+        <span className="inline-flex rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary">
+          {formatPower(value)}
+        </span>
+      </div>
     </div>
   );
 }

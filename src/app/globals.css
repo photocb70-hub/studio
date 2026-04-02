@@ -24,6 +24,7 @@
     --border: 210 20% 91%;
     --input: 210 20% 91%;
     --ring: 150 60% 35%;
+    --radius: 0.5rem;
   }
 
   .dark {
@@ -40,7 +41,7 @@
     --muted: 220 13% 24%;
     --muted-foreground: 210 20% 65%;
     --accent: 30 80% 55%;
-    --accent-foreground: 30 50% 10%;
+    --accent-foreground: 30 20% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 220 13% 24%;

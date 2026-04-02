@@ -4,9 +4,11 @@
 All notable changes to this project will be documented in this file.
 
 ## [2.14 alpha]
-### Added
-- Implemented a new `PowerAdjuster` component to solve mobile usability issues with sliders. The new control features a hybrid design with a broad-range slider, large fine-tuning buttons (+/- 0.25D), and direct numeric input.
-- Standardized all prescription-based tools to use the `PowerAdjuster` for sphere and cylinder values.
+### Fixed
+- Fixed contrast issues in dark mode by adjusting `accent-foreground` HSL variables.
+- Improved `PowerAdjuster` UI with larger, more distinct stepper buttons (+/-) for better mobile usability.
+- Added explicit visual feedback for current power selection within the adjuster component.
+- Standardized prescription results across all pages to ensure consistent high contrast in both themes.
 
 ## [2.13 alpha]
 ### Removed
