@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Calculator } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Slider } from '@/components/ui/slider';
+import { PowerAdjuster } from '@/components/power-adjuster';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -138,11 +138,6 @@ export default function EdgeThicknessPage() {
     },
   });
 
-  const sphereValue = form.watch('sphere');
-  const cylinderValue = form.watch('cylinder');
-  const invertedCylinderValue = cylinderValue !== undefined ? -cylinderValue : 0;
-  const axisValue = form.watch('axis');
-
   function calculateSag(power: number, index: number, diameter: number): number | null {
     if (Math.abs(power) < 0.01) return 0;
     
@@ -197,11 +192,6 @@ export default function EdgeThicknessPage() {
 
     setResult({ minThickness, maxThickness, centerThickness: finalCenterThickness, minAxis, maxAxis, eye });
   }
-
-  const formatPower = (power?: number) => {
-    if (power === undefined || power === null) return '0.00';
-    return (power > 0 ? '+' : '') + power.toFixed(2);
-  };
 
   const isPlusLens = result ? (result.minThickness + result.maxThickness) / 2 < result.centerThickness : false;
   const nasalX = result ? (result.eye === 'OD' ? -10 : 110) : 0;
@@ -261,11 +251,11 @@ export default function EdgeThicknessPage() {
                   name="sphere"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Sphere Power (D): {formatPower(sphereValue)}</FormLabel>
                       <FormControl>
-                        <Slider
-                            value={[field.value ?? 0]}
-                            onValueChange={(value) => field.onChange(value[0])}
+                        <PowerAdjuster
+                            label="Sphere"
+                            value={field.value ?? 0}
+                            onChange={field.onChange}
                             min={-20} max={20} step={0.25}
                         />
                       </FormControl>
@@ -273,18 +263,18 @@ export default function EdgeThicknessPage() {
                   )}
                 />
                 
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-4">
+                <div className="grid grid-cols-1 gap-6">
                    <FormField
                     control={form.control}
                     name="cylinder"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Cylinder (D): {formatPower(cylinderValue)}</FormLabel>
                         <FormControl>
-                          <Slider
-                              value={[invertedCylinderValue]}
-                              onValueChange={(value) => field.onChange(-value[0])}
-                              min={0} max={10} step={0.25}
+                          <PowerAdjuster
+                              label="Cylinder"
+                              value={field.value ?? 0}
+                              onChange={field.onChange}
+                              min={-10} max={0} step={0.25}
                           />
                         </FormControl>
                         <FormMessage />
@@ -296,12 +286,13 @@ export default function EdgeThicknessPage() {
                     name="axis"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Axis (°): {axisValue}</FormLabel>
                         <FormControl>
-                            <Slider
-                                value={[field.value ?? 90]}
-                                onValueChange={(value) => field.onChange(value[0])}
+                            <PowerAdjuster
+                                label="Axis"
+                                value={field.value ?? 90}
+                                onChange={field.onChange}
                                 min={1} max={180} step={1}
+                                unit="°"
                             />
                         </FormControl>
                         <FormMessage />
@@ -375,7 +366,7 @@ export default function EdgeThicknessPage() {
                     />
                 </div>
                 <Button type="submit" className="w-full sm:w-auto">
-                  <Calculator className="mr-2 size-4" />
+                  <Calculator className="mr-2 h-4 w-4" />
                   Calculate Thickness
                 </Button>
               </form>

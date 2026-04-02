@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -16,6 +15,7 @@ interface PowerAdjusterProps {
   min?: number;
   max?: number;
   step?: number;
+  unit?: string;
   className?: string;
 }
 
@@ -26,6 +26,7 @@ export function PowerAdjuster({
   min = -20,
   max = 20,
   step = 0.25,
+  unit = 'D',
   className,
 }: PowerAdjusterProps) {
   const handleIncrement = (e: React.MouseEvent) => {
@@ -40,7 +41,8 @@ export function PowerAdjuster({
     onChange(newValue);
   };
 
-  const formatPower = (p: number) => {
+  const formatValue = (p: number) => {
+    if (unit === '°') return p.toString();
     return (p > 0 ? '+' : '') + p.toFixed(2);
   };
 
@@ -59,7 +61,7 @@ export function PowerAdjuster({
             step={step}
             className="h-9 w-24 text-right font-mono text-base font-bold"
           />
-          <span className="text-sm font-bold text-primary">D</span>
+          <span className="text-sm font-bold text-primary">{unit}</span>
         </div>
       </div>
 
@@ -68,11 +70,11 @@ export function PowerAdjuster({
           type="button"
           variant="secondary"
           size="icon"
-          className="h-12 w-12 shrink-0 border shadow-md active:scale-95 transition-all"
+          className="h-10 w-10 shrink-0 border shadow-md active:scale-95 transition-all"
           onClick={handleDecrement}
           disabled={value <= min}
         >
-          <Minus className="size-6" />
+          <Minus className="size-5" />
         </Button>
 
         <div className="relative flex-1 px-2 py-4">
@@ -85,9 +87,9 @@ export function PowerAdjuster({
             className="cursor-pointer"
           />
           <div className="absolute -bottom-1 left-0 right-0 flex justify-between px-2 text-[10px] font-bold text-muted-foreground">
-            <span>{min}</span>
-            <span className="text-primary">0</span>
-            <span>+{max}</span>
+            <span>{min}{unit}</span>
+            <span className="text-primary">{unit === 'D' ? '0.00' : ''}</span>
+            <span>+{max}{unit}</span>
           </div>
         </div>
 
@@ -95,17 +97,17 @@ export function PowerAdjuster({
           type="button"
           variant="secondary"
           size="icon"
-          className="h-12 w-12 shrink-0 border shadow-md active:scale-95 transition-all"
+          className="h-10 w-10 shrink-0 border shadow-md active:scale-95 transition-all"
           onClick={handleIncrement}
           disabled={value >= max}
         >
-          <Plus className="size-6" />
+          <Plus className="size-5" />
         </Button>
       </div>
       
       <div className="text-center pt-1">
         <span className="inline-flex rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary">
-          {formatPower(value)}
+          {formatValue(value)} {unit}
         </span>
       </div>
     </div>

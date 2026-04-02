@@ -10,14 +10,13 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Repeat } from 'lucide-react';
-import { Slider } from '@/components/ui/slider';
+import { PowerAdjuster } from '@/components/power-adjuster';
 
 const formSchema = z.object({
   sphere: z.coerce.number().min(-20).max(20),
@@ -39,9 +38,6 @@ export default function PrescriptionTransposerPage() {
       axis: 90,
     },
   });
-
-  const sphereValue = form.watch('sphere');
-  const cylinderValue = form.watch('cylinder');
 
   function onSubmit(values: FormValues) {
     const { sphere, cylinder, axis } = values;
@@ -87,11 +83,11 @@ export default function PrescriptionTransposerPage() {
                   name="sphere"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Sphere (D): {formatPower(sphereValue)}</FormLabel>
                       <FormControl>
-                        <Slider
-                            value={[field.value]}
-                            onValueChange={(value) => field.onChange(value[0])}
+                        <PowerAdjuster
+                            label="Sphere"
+                            value={field.value}
+                            onChange={field.onChange}
                             min={-20}
                             max={20}
                             step={0.25}
@@ -106,11 +102,11 @@ export default function PrescriptionTransposerPage() {
                   name="cylinder"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cylinder (D): {formatPower(cylinderValue)}</FormLabel>
                       <FormControl>
-                        <Slider
-                            value={[field.value]}
-                            onValueChange={(value) => field.onChange(value[0])}
+                        <PowerAdjuster
+                            label="Cylinder"
+                            value={field.value}
+                            onChange={field.onChange}
                             min={-10}
                             max={10}
                             step={0.25}
@@ -125,16 +121,23 @@ export default function PrescriptionTransposerPage() {
                   name="axis"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Axis (°)</FormLabel>
                       <FormControl>
-                        <Input type="number" min="1" max="180" placeholder="e.g., 90" {...field} />
+                        <PowerAdjuster
+                            label="Axis"
+                            value={field.value}
+                            onChange={field.onChange}
+                            min={1}
+                            max={180}
+                            step={1}
+                            unit="°"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <Button type="submit" className="w-full sm:w-auto">
-                  <Repeat className="mr-2 size-4" />
+                  <Repeat className="mr-2 h-4 w-4" />
                   Transpose
                 </Button>
               </form>

@@ -24,9 +24,9 @@ import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Slider } from '@/components/ui/slider';
 import { solveProblem, ProblemSolverOutput } from '@/ai/flows/problem-solver-flow';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PowerAdjuster } from '@/components/power-adjuster';
 
 const rxSchema = z.object({
     sphere: z.coerce.number().min(-20).max(20).optional().default(0),
@@ -57,19 +57,9 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const formatPower = (power?: number) => {
-    if (power === undefined || power === null) return '0.00';
-    return (power > 0 ? '+' : '') + power.toFixed(2);
-};
-
 const RxInputGroup = ({ nestName, eye }: { nestName: 'currentRx.od' | 'currentRx.os' | 'previousRx.od' | 'previousRx.os', eye: 'od' | 'os' }) => {
-    const { control, watch, getValues, setValue } = useFormContext<FormValues>();
+    const { control, getValues, setValue } = useFormContext<FormValues>();
     const { toast } = useToast();
-
-    const sphereValue = watch(`${nestName}.sphere`);
-    const cylinderValue = watch(`${nestName}.cylinder`);
-    const invertedCylinderValue = cylinderValue !== undefined ? -cylinderValue : 0;
-    const axisValue = watch(`${nestName}.axis`);
 
     const copyMeasurementsOdToOs = () => {
         const parentNest = nestName.split('.')[0] as 'currentRx' | 'previousRx';
@@ -83,17 +73,17 @@ const RxInputGroup = ({ nestName, eye }: { nestName: 'currentRx.od' | 'currentRx
     };
 
     return (
-        <div className="grid grid-cols-1 gap-x-4 gap-y-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-6">
              <FormField
                 control={control}
                 name={`${nestName}.sphere`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Sphere (D): {formatPower(sphereValue)}</FormLabel>
                         <FormControl>
-                             <Slider
-                                value={[field.value ?? 0]}
-                                onValueChange={(value) => field.onChange(value[0])}
+                            <PowerAdjuster
+                                label="Sphere"
+                                value={field.value ?? 0}
+                                onChange={field.onChange}
                                 min={-20} max={20} step={0.25}
                             />
                         </FormControl>
@@ -105,12 +95,12 @@ const RxInputGroup = ({ nestName, eye }: { nestName: 'currentRx.od' | 'currentRx
                 name={`${nestName}.cylinder`}
                 render={({ field }) => (
                      <FormItem>
-                        <FormLabel>Cylinder (D): {formatPower(cylinderValue)}</FormLabel>
                         <FormControl>
-                            <Slider
-                                value={[invertedCylinderValue]}
-                                onValueChange={(value) => field.onChange(-value[0])}
-                                min={0} max={10} step={0.25}
+                            <PowerAdjuster
+                                label="Cylinder"
+                                value={field.value ?? 0}
+                                onChange={field.onChange}
+                                min={-10} max={0} step={0.25}
                             />
                         </FormControl>
                       </FormItem>
@@ -121,12 +111,13 @@ const RxInputGroup = ({ nestName, eye }: { nestName: 'currentRx.od' | 'currentRx
                 name={`${nestName}.axis`}
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Axis (°): {axisValue}</FormLabel>
                         <FormControl>
-                            <Slider
-                                value={[field.value ?? 90]}
-                                onValueChange={(value) => field.onChange(value[0])}
+                            <PowerAdjuster
+                                label="Axis"
+                                value={field.value ?? 90}
+                                onChange={field.onChange}
                                 min={1} max={180} step={1}
+                                unit="°"
                             />
                         </FormControl>
                     </FormItem>
@@ -144,18 +135,18 @@ const RxInputGroup = ({ nestName, eye }: { nestName: 'currentRx.od' | 'currentRx
                     </FormItem>
                 )}
             />
-             <div className="md:col-span-2 space-y-4">
+             <div className="space-y-4">
                 <Separator />
                 <div className="flex items-center justify-between">
                     <h5 className="font-medium text-sm">Measurements</h5>
                     {eye === 'od' && (
                          <Button type="button" variant="ghost" size="sm" onClick={copyMeasurementsOdToOs} className="shrink-0 text-xs">
-                            <Copy className="mr-2"/>
-                            Copy Measurements to Left
+                            <Copy className="mr-2 h-3 w-3"/>
+                            Copy to Left
                         </Button>
                     )}
                 </div>
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <div className="grid grid-cols-2 gap-4">
                     <FormField
                         control={control}
                         name={`${nestName}.pd`}
@@ -218,7 +209,7 @@ const BinocularRxInput = ({ nestName, title }: { nestName: 'currentRx' | 'previo
         const currentRxValues = getValues('currentRx');
         const currentLensValues = getValues('lens');
         setValue('previousRx', currentRxValues);
-        setValue('lens', currentLensValues); // This assumes the lens section is global, let's adjust if it is nested
+        setValue('lens', currentLensValues); 
         toast({ title: 'Current Rx & Lens Details copied to Previous Rx.' });
     };
 
@@ -228,7 +219,7 @@ const BinocularRxInput = ({ nestName, title }: { nestName: 'currentRx' | 'previo
                 <h4 className="font-medium">{title}</h4>
                  {nestName === 'previousRx' && (
                     <Button type="button" variant="ghost" size="sm" onClick={copyCurrentToPrevious} className="text-xs">
-                        <Copy className="mr-2"/>
+                        <Copy className="mr-2 h-3 w-3"/>
                         Copy Current Rx
                     </Button>
                 )}
@@ -445,9 +436,9 @@ export default function AiProblemSolverPage() {
 
                                     <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
                                         {isLoading ? (
-                                            <Loader2 className="mr-2 size-4 animate-spin" />
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                         ) : (
-                                            <Sparkles className="mr-2 size-4" />
+                                            <Sparkles className="mr-2 h-4 w-4" />
                                         )}
                                         Solve Problem
                                     </Button>
@@ -460,7 +451,7 @@ export default function AiProblemSolverPage() {
                 {isLoading && (
                     <div className="flex min-h-[200px] w-full items-center justify-center rounded-lg border border-dashed bg-card p-8 text-center text-muted-foreground">
                         <div className="flex flex-col items-center gap-2">
-                            <Bot className="size-8 animate-pulse" />
+                            <Bot className="h-8 w-8 animate-pulse" />
                             <p>AI is thinking...</p>
                         </div>
                     </div>

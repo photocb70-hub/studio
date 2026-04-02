@@ -15,10 +15,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Footprints } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { Slider } from '@/components/ui/slider';
+import { PowerAdjuster } from '@/components/power-adjuster';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
@@ -64,9 +64,6 @@ export default function StepAlongPage() {
     },
   });
 
-  const surfacePower1Value = form.watch('surfacePower1');
-  const objectVergenceValue = form.watch('objectVergence');
-
   function onSubmit(values: FormValues) {
     const { objectVergence, surfacePower1, surfacePower2, refractiveIndex } = values;
 
@@ -106,11 +103,11 @@ export default function StepAlongPage() {
                   name="objectVergence"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Initial Object Vergence (L, in Diopters): {objectVergenceValue.toFixed(2)}</FormLabel>
                       <FormControl>
-                        <Slider
-                            value={[field.value]}
-                            onValueChange={(value) => field.onChange(value[0])}
+                        <PowerAdjuster
+                            label="Object Vergence"
+                            value={field.value}
+                            onChange={field.onChange}
                             min={-20}
                             max={20}
                             step={0.25}
@@ -125,11 +122,11 @@ export default function StepAlongPage() {
                   name="surfacePower1"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Surface Power (F1, in Diopters): {surfacePower1Value.toFixed(2)}</FormLabel>
                       <FormControl>
-                        <Slider
-                            value={[field.value]}
-                            onValueChange={(value) => field.onChange(value[0])}
+                        <PowerAdjuster
+                            label="Surface Power 1"
+                            value={field.value}
+                            onChange={field.onChange}
                             min={-20}
                             max={20}
                             step={0.25}
@@ -144,9 +141,15 @@ export default function StepAlongPage() {
                   name="surfacePower2"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Astigmatic Surface Power (F2, optional)</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" placeholder="Enter for astigmatic systems" {...field} onChange={(e) => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}/>
+                        <PowerAdjuster
+                            label="Surface Power 2 (Astigmatic)"
+                            value={field.value ?? 0}
+                            onChange={(v) => field.onChange(v === 0 ? undefined : v)}
+                            min={-20}
+                            max={20}
+                            step={0.25}
+                        />
                       </FormControl>
                        <FormMessage />
                     </FormItem>
@@ -180,7 +183,7 @@ export default function StepAlongPage() {
                   )}
                 />
                 <Button type="submit" className="w-full sm:w-auto">
-                  <Footprints className="mr-2 size-4" />
+                  <Footprints className="mr-2 h-4 w-4" />
                   Calculate Vergence
                 </Button>
               </form>
