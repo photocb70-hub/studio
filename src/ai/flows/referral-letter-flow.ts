@@ -1,12 +1,12 @@
+
 'use server';
 /**
  * @fileOverview An AI flow for generating professional ophthalmic referral letters.
- *
- * - generateReferralLetter - A function that takes clinical findings and returns a structured letter.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 
 const ReferralInputSchema = z.object({
   patientAge: z.number().describe('Age of the patient.'),
@@ -33,7 +33,7 @@ export async function generateReferralLetter(input: ReferralInput): Promise<Refe
 
 const referralPrompt = ai.definePrompt({
   name: 'referralPrompt',
-  model: 'googleai/gemini-2.5-flash',
+  model: googleAI.model('gemini-2.5-flash'),
   input: { schema: ReferralInputSchema },
   output: { schema: ReferralOutputSchema },
   prompt: `You are an expert optometrist writing a clinical referral letter to an ophthalmologist (HES). 

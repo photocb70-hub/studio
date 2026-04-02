@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview AI flow for analyzing and rewriting optical course chapters.
@@ -5,6 +6,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 import pdf from 'pdf-parse';
 
 const StudyAnalysisInputSchema = z.object({
@@ -21,21 +23,28 @@ const StudyAnalysisOutputSchema = z.object({
 });
 export type StudyAnalysisOutput = z.infer<typeof StudyAnalysisOutputSchema>;
 
-/**
- * Extracts text from a PDF buffer.
- */
 export async function extractTextFromPdf(buffer: Buffer): Promise<string> {
-  const data = await pdf(buffer);
-  return data.text;
+  try {
+    const data = await pdf(buffer);
+    return data.text;
+  } catch (error) {
+    console.error('Error extracting text from PDF:', error);
+    throw error;
+  }
 }
 
 export async function analyzeCourseChapter(input: StudyAnalysisInput): Promise<StudyAnalysisOutput> {
-  return studyHubFlow(input);
+  try {
+    return await studyHubFlow(input);
+  } catch (error) {
+    console.error('Error in analyzeCourseChapter:', error);
+    throw error;
+  }
 }
 
 const studyPrompt = ai.definePrompt({
   name: 'studyPrompt',
-  model: 'googleai/gemini-2.5-flash',
+  model: googleAI.model('gemini-2.5-flash'),
   input: { schema: StudyAnalysisInputSchema },
   output: { schema: StudyAnalysisOutputSchema },
   prompt: `You are an expert optical educator and clinical supervisor at a high-level training academy. You have been provided with text from an optical dispensing course chapter titled "{{{unitTitle}}}".
@@ -58,8 +67,13 @@ const studyHubFlow = ai.defineFlow(
     outputSchema: StudyAnalysisOutputSchema,
   },
   async (input) => {
-    const { output } = await studyPrompt(input);
-    if (!output) throw new Error('AI failed to analyze the chapter.');
-    return output;
+    try {
+      const { output } = await studyPrompt(input);
+      if (!output) throw new Error('AI failed to analyze the chapter.');
+      return output;
+    } catch (error) {
+      console.error('Error in studyHubFlow:', error);
+      throw error;
+    }
   }
 );
