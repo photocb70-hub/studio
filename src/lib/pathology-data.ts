@@ -60,6 +60,14 @@ export const pathologyCategories: PathologyCategory[] = [
         symptoms: 'Severe ocular pain, nausea, vomiting, blurred vision, halos around lights.',
         referralUrgency: 'Emergency',
         imageKey: 'aacg',
+      },
+      {
+        name: 'Papilledema',
+        overview: 'Swelling of the optic disc caused by increased intracranial pressure. This is a medical emergency requiring urgent investigation.',
+        clinicalSigns: 'Blurred disc margins, hyperemic disc, splinter hemorrhages, absence of spontaneous venous pulsation (SVP), Paton\'s lines.',
+        symptoms: 'Headache (worse on waking/straining), nausea, vomiting, transient visual obscurations, pulsatile tinnitus.',
+        referralUrgency: 'Emergency',
+        imageKey: 'papilledema',
       }
     ]
   },

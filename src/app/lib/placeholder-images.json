@@ -47,5 +47,11 @@
     "width": 600,
     "height": 400,
     "hint": "cone cornea"
+  },
+  "papilledema": {
+    "url": "/Papilledema.png",
+    "width": 600,
+    "height": 400,
+    "hint": "swollen disc"
   }
 }
