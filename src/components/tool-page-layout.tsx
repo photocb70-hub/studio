@@ -1,10 +1,10 @@
+
 'use client';
 
 import type { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 
@@ -28,7 +28,7 @@ export function ToolPageLayout({ title, description, children }: ToolPageLayoutP
             </Button>
             <Link href="/" className="flex items-center gap-2">
                 <h1 className="flex items-center text-lg font-semibold tracking-tight text-foreground sm:text-xl">
-                    <Image src="/newicon.png" alt="" width={24} height={24} className="mr-1 size-6" />
+                    <Eye className="mr-1 size-6 text-primary" />
                     <span>ptical Prime</span>
                 </h1>
             </Link>

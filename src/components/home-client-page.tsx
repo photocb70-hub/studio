@@ -1,9 +1,9 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { BookOpen, FlaskConical, Beaker, Menu, X } from 'lucide-react';
+import { BookOpen, FlaskConical, Beaker, Menu, X, Eye } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -79,7 +79,7 @@ const MobileNav = () => (
       <div className="flex flex-col gap-6 p-6">
         <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 text-xl font-semibold">
-                <Image src="/newicon.png" alt="" width={24} height={24} className="size-6" />
+                <Eye className="size-6 text-primary" />
                 <span>Optical Prime</span>
             </Link>
             <SheetClose asChild>
@@ -141,7 +141,7 @@ export default function HomeClientPage({ changelogContent }: { changelogContent:
                     className="flex cursor-pointer items-center text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
                     onClick={handleTitleClick}
                  >
-                    <Image src="/newicon.png" alt="" width={32} height={32} className="mr-1 size-8" />
+                    <Eye className="mr-1 size-8 text-primary" />
                     <span>ptical Prime</span>
                 </h1>
             </div>
