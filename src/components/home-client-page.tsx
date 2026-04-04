@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { BookOpen, FlaskConical, Beaker, Menu, X, Eye } from 'lucide-react';
+import { Beaker, FlaskConical, Menu, X, Eye, ShieldCheck } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -18,13 +18,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogClose,
 } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-
 
 const menuItems = [
   {
@@ -93,7 +90,6 @@ const MobileNav = () => (
                 </Button>
             </SheetClose>
         </div>
-
         <Separator />
         <nav className="flex flex-col gap-4">
           {menuItems.map((item) => (
@@ -112,7 +108,6 @@ const MobileNav = () => (
 export default function HomeClientPage({ changelogContent }: { changelogContent: string }) {
   const [clickCount, setClickCount] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
-  const [showChangelog, setShowChangelog] = useState(false);
 
   useEffect(() => {
     if (clickCount >= 10) {
@@ -120,15 +115,12 @@ export default function HomeClientPage({ changelogContent }: { changelogContent:
       const timer = setTimeout(() => {
         setShowCelebration(false);
         setClickCount(0);
-      }, 5000); // Hide after 5 seconds
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [clickCount]);
 
-  const handleTitleClick = () => {
-    setClickCount((prev) => prev + 1);
-  };
-  
+  const handleTitleClick = () => setClickCount((prev) => prev + 1);
   const version = changelogContent.match(/## \[(\d+\.\d+.*?)\]/)?.[1] || 'N/A';
   
   return (
@@ -154,10 +146,13 @@ export default function HomeClientPage({ changelogContent }: { changelogContent:
 
         <main className="flex-grow">
           <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
-            <section className="text-center">
-              <p className="mt-4 text-lg text-muted-foreground">
-                Precision tools for optical professionals.
-              </p>
+            <section className="text-center max-w-2xl mx-auto space-y-4">
+              <Badge variant="outline" className="px-4 py-1 text-primary border-primary bg-primary/5">
+                <ShieldCheck className="mr-2 size-3" />
+                Professional Clinical Suite
+              </Badge>
+              <h2 className="text-4xl font-extrabold tracking-tight">Precision tools for optical professionals.</h2>
+              <p className="text-muted-foreground">Streamline your clinical and dispensing tasks with high-precision calculators and AI-driven decision support.</p>
             </section>
             
             <section className="mt-12">
@@ -169,12 +164,7 @@ export default function HomeClientPage({ changelogContent }: { changelogContent:
         </main>
         
         <div className="container mx-auto px-4 pb-8 sm:px-6 lg:px-8">
-          <AppFooter version={version}>
-            <Button variant="link" onClick={() => setShowChangelog(true)}>
-              <BookOpen className="mr-2 size-4" />
-              View Changelog
-            </Button>
-          </AppFooter>
+          <AppFooter version={version} />
         </div>
       </div>
 
@@ -183,29 +173,9 @@ export default function HomeClientPage({ changelogContent }: { changelogContent:
           <DialogHeader>
             <DialogTitle className="text-center text-2xl">🎉 Optimus Prime! 🎉</DialogTitle>
             <DialogDescription className="text-center">
-              You found the easter egg!
+              You found the easter egg! System stability restored.
             </DialogDescription>
           </DialogHeader>
-        </DialogContent>
-      </Dialog>
-      
-       <Dialog open={showChangelog} onOpenChange={setShowChangelog}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Changelog</DialogTitle>
-            <DialogDescription>
-              All notable changes to this project.
-            </DialogDescription>
-          </DialogHeader>
-          <Separator />
-          <ScrollArea className="h-96 pr-6">
-            <div className="prose prose-sm dark:prose-invert" dangerouslySetInnerHTML={{ __html: changelogContent.replace(/\n/g, '<br />') }} />
-          </ScrollArea>
-           <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
         </DialogContent>
       </Dialog>
     </div>
