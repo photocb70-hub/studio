@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -22,6 +21,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import { Badge } from '@/components/ui/badge';
 
 const menuItems = [
   {
