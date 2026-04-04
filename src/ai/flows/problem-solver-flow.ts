@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview An AI-based problem solver for optical dispensing issues.
@@ -56,7 +55,7 @@ export async function solveProblem(input: ProblemSolverInput): Promise<ProblemSo
 const problemSolverPrompt = ai.definePrompt({
     name: 'problemSolverPrompt',
     model: googleAI.model('gemini-2.5-flash'),
-    input: { schema: ImageAnalyzerInputSchema },
+    input: { schema: ProblemSolverInputSchema },
     output: { schema: ProblemSolverOutputSchema },
     tools: [searchWeb],
     prompt: `You are an expert optical dispenser and problem solver. A user has submitted the following dispensing scenario.

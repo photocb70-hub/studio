@@ -1,50 +1,9 @@
-
 # Changelog
 
 All notable changes to this project will be documented in this file.
 
-## [2.70 alpha]
-### Added
-- Accommodation Range Tool: Integrated Hofstetter's formulas for estimating amplitude and vision ranges.
-### Changed
-- UI: Made prescription adjustment buttons smaller for better ergonomics.
-### Removed
-- Oblique Power Calculator: Removed from dispensing suite.
-- Chromatic Aberration Calculator: Removed from dispensing suite.
-
-## [2.60 alpha]
+## [5.2.0] - 2026-04-04
 ### Fixed
-- Dependency Sync: Synchronized Genkit core and plugin versions to 1.31.0 to resolve NPM ERESOLVE conflicts.
-- Error Handling: Implemented explicit console.error logging across all AI flows and data operations to ensure no errors are swallowed.
-### Removed
-- AI Referral Letter Generator: Removed the experimental referral generator tool to streamline the clinical suite.
-
-## [2.50 alpha]
-### Added
-- IOP Correction Calculator: Added a precision tool to adjust Goldmann tonometry readings based on Central Corneal Thickness (CCT).
-
-## [2.40 alpha]
-### Added
-- Ocular Pathology Guide Overhaul: Integrated a complete suite of clinical reference images for all major conditions.
-- Multi-Image Support: Updated the clinical lightbox to support multiple images per condition.
-- Clinical Lightbox: Added a full-screen, high-resolution visualization tool for pathology assets.
-
-## [2.10 alpha]
-### Added
-- AI Study Hub: Integrated PDF-to-Pro-Notes conversion using Genkit and `pdf-parse`.
-- Study Vault: Firestore-backed storage for analyzed course units with persistent logging.
-
-## [1.80 alpha]
-### Added
-- Rx Contact Lens Vertex Converter: Implemented a robust dual-meridian vertex distance compensation tool.
-- Visual Acuity Converter: Added a clinical reference suite for converting between LogMAR, Snellen (m/ft), and Decimal standards.
-
-## [1.50 alpha]
-### Added
-- AI Image Analyzer: Experimental tool for fundus photo analysis and feature highlighting.
-- AI Problem Solver: Intelligent scenario analysis for complex optical non-tolerance cases.
-- Ocular Drugs Guide: Reference guide for systemic drugs with ocular side effects.
-
-## [1.00 alpha]
-### Added
-- Initial Release: Core dispensing calculators including Lens Thickness, Blank Size, Induced Prism, and Prescription Transposer.
+- Dependency Resolution: Switched Genkit packages to stable caretaker ranges (^1.0.0) to resolve ETARGET errors.
+- Peer Dependencies: Maintained React 19 / Next 15 synchronization with refined overrides.
+- App Stability: Verified all core logic files and UI component imports.

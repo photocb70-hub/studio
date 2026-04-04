@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -16,8 +15,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Calculator, ArrowRight, Info, CheckCircle2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Calculator, Info, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PowerAdjuster } from '@/components/power-adjuster';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -25,23 +24,15 @@ import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { PowerAdjuster } from '@/components/power-adjuster';
 
 const formSchema = z.object({
   sphere: z.coerce.number().min(-20).max(20),
   cylinder: z.coerce.number().min(-10).max(0),
   axis: z.coerce.number().min(1).max(180),
-<<<<<<< HEAD
   index1: z.coerce.number().min(1.4).max(2.0),
   index2: z.coerce.number().min(1.4).max(2.0).optional(),
   compareMode: z.boolean().default(false),
   diameter: z.coerce.number().min(30).max(90),
-=======
-  index: z.coerce.number().min(1.4).max(2.0),
-  eyeSize: z.coerce.number().min(1, "Required"),
-  bridgeSize: z.coerce.number().min(1, "Required"),
-  patientPD: z.coerce.number().min(1, "Required"),
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
   centerThickness: z.coerce.number().min(0.1).max(10),
   eye: z.enum(['OD', 'OS']),
 });
@@ -57,13 +48,9 @@ const lensMaterials = [
     { name: 'High-Index (1.74)', index: 1.74 },
 ];
 
-<<<<<<< HEAD
 const diameterOptions = [55, 60, 65, 70, 75, 80];
 
-const LensDiagram = ({ nasalX, templeX, eye, centerThickness, minThickness, maxThickness, maxAxis, minAxis, isPlusLens, label }: { nasalX: number, templeX: number, eye: 'OD' | 'OS', centerThickness: number, minThickness: number, maxThickness: number, maxAxis: number, minAxis: number, isPlusLens: boolean, label?: string }) => {
-=======
-const LensDiagram = ({ nasalX, templeX, eye, centerThickness, minThickness, maxThickness, maxAxis, minAxis, isPlusLens }: { nasalX: number, templeX: number, eye: 'OD' | 'OS', centerThickness: number, minThickness: number, maxThickness: number, maxAxis: number, minAxis: number, isPlusLens: boolean }) => {
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
+const LensDiagram = ({ nasalX, templeX, centerThickness, minThickness, maxThickness, maxAxis, minAxis, isPlusLens, label }: { nasalX: number, templeX: number, eye: 'OD' | 'OS', centerThickness: number, minThickness: number, maxThickness: number, maxAxis: number, minAxis: number, isPlusLens: boolean, label?: string }) => {
   const plusPath = `M 20,50 C 35,30 75,30 90,50 C 75,70 35,70 20,50 Z`;
   const minusPath = `M 20,35 C 45,45 65,45 90,35 L 90,65 C 65,55 45,55 20,65 Z`;
   const etRotation = `rotate(${maxAxis} 50 50)`;
@@ -116,8 +103,8 @@ const LensDiagram = ({ nasalX, templeX, eye, centerThickness, minThickness, maxT
               </g>
               <text x={maxTextX} y={maxTextY - 5} textAnchor="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-bold">{maxThickness.toFixed(2)}mm</text>
               <text x={minTextX} y={minTextY - 5} textAnchor="middle" fontSize="9" fill="hsl(var(--foreground))" className="font-bold">{minThickness.toFixed(2)}mm</text>
-              <text x={nasalX} y="55" textAnchor="middle" fontSize="10" fill="hsl(var(--muted-foreground))" className="font-bold opacity-30">N</text>
-              <text x={templeX} y="55" textAnchor="middle" fontSize="10" fill="hsl(var(--muted-foreground))" className="font-bold opacity-30">T</text>
+              <text x={nasalX} y={55} textAnchor="middle" fontSize="10" fill="hsl(var(--muted-foreground))" className="font-bold opacity-30">N</text>
+              <text x={templeX} y={55} textAnchor="middle" fontSize="10" fill="hsl(var(--muted-foreground))" className="font-bold opacity-30">T</text>
           </svg>
       </div>
     </div>
@@ -125,16 +112,12 @@ const LensDiagram = ({ nasalX, templeX, eye, centerThickness, minThickness, maxT
 };
 
 export default function EdgeThicknessPage() {
-<<<<<<< HEAD
   const [results, setResults] = useState<{ 
       lens1: any, 
       lens2: any | null,
       savings: number | null
   } | null>(null);
   
-=======
-  const [result, setResult] = useState<{ minThickness: number; maxThickness: number; centerThickness: number; minAxis: number; maxAxis: number; eye: 'OD' | 'OS'; blankSize: number } | null>(null);
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -143,23 +126,15 @@ export default function EdgeThicknessPage() {
       sphere: 0,
       cylinder: 0,
       axis: 90,
-<<<<<<< HEAD
       index1: 1.498,
       index2: 1.67,
       compareMode: false,
       diameter: 70,
-=======
-      index: 1.498,
-      eyeSize: 50,
-      bridgeSize: 20,
-      patientPD: 64,
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
       centerThickness: 2.0,
       eye: 'OD',
     },
   });
 
-<<<<<<< HEAD
   const watchCompare = form.watch('compareMode');
 
   function calculateLensData(power1: number, power2: number, axis: number, index: number, diameter: number, centerThickness: number) {
@@ -180,21 +155,6 @@ export default function EdgeThicknessPage() {
     if (power1 > 0 || power2 > 0) {
         const thinnestEdge = Math.min(centerThickness - sag1, centerThickness - sag2);
         if (thinnestEdge < 1.0) finalCT += (1.0 - thinnestEdge);
-=======
-  function calculateSag(power: number, index: number, diameter: number): number | null {
-    if (Math.abs(power) < 0.01) return 0;
-    
-    const radius = ((index - 1) / power) * 1000;
-    const semiDiameter = diameter / 2;
-
-    if (Math.abs(radius) < semiDiameter) {
-      toast({
-        variant: 'destructive',
-        title: 'Invalid Calculation',
-        description: `Power (${power.toFixed(2)}D) is too high for the calculated diameter (${diameter.toFixed(1)}mm), resulting in an invalid lens shape.`,
-      });
-      return null;
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
     }
 
     const t1 = finalCT - sag1;
@@ -208,22 +168,7 @@ export default function EdgeThicknessPage() {
   }
 
   function onSubmit(values: FormValues) {
-<<<<<<< HEAD
     const { sphere, cylinder, axis, index1, index2, compareMode, diameter, centerThickness, eye } = values;
-=======
-    const { sphere, cylinder = 0, axis = 90, index, eyeSize, bridgeSize, patientPD, centerThickness, eye } = values;
-
-    // Minimum Blank Size (MBS) formula
-    const framePD = eyeSize + bridgeSize;
-    const blankSize = framePD - patientPD + eyeSize + 2;
-
-    const cyl = cylinder || 0;
-    const power1 = sphere;
-    const power2 = sphere + cyl;
-
-    const sag1 = calculateSag(power1, index, blankSize);
-    const sag2 = calculateSag(power2, index, blankSize);
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
     
     const data1 = calculateLensData(sphere, sphere + cylinder, axis, index1, diameter, centerThickness);
     
@@ -242,45 +187,22 @@ export default function EdgeThicknessPage() {
         }
     }
 
-<<<<<<< HEAD
     setResults({ lens1: { ...data1, index: index1, eye }, lens2: data2 ? { ...data2, index: index2, eye } : null, savings });
   }
 
   const nasalX = (eye: 'OD' | 'OS') => eye === 'OD' ? -10 : 110;
   const templeX = (eye: 'OD' | 'OS') => eye === 'OD' ? 110 : -10;
-=======
-    const maxThickness = Math.max(thickness1, thickness2);
-    const minThickness = Math.min(thickness1, thickness2);
-    
-    const minAxis = thickness1 < thickness2 ? axis : (axis + 90 > 180 ? axis - 90 : axis + 90);
-    const maxAxis = thickness1 > thickness2 ? axis : (axis + 90 > 180 ? axis - 90 : axis + 90);
-
-    setResult({ minThickness, maxThickness, centerThickness: finalCenterThickness, minAxis, maxAxis, eye, blankSize });
-  }
-
-  const isPlusLens = result ? (result.minThickness + result.maxThickness) / 2 < result.centerThickness : false;
-  const nasalX = result ? (result.eye === 'OD' ? -10 : 110) : 0;
-  const templeX = result ? (result.eye === 'OD' ? 110 : -10) : 0;
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
 
   return (
     <ToolPageLayout
       title="Lens Thickness Calculator"
-<<<<<<< HEAD
       description="Calculate edge thickness and compare materials side-by-side for patients."
-=======
-      description="Calculate the approximate edge thickness for a sphero-cylindrical lens based on frame measurements."
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
     >
       <div className="grid gap-8 lg:grid-cols-12">
         <div className="lg:col-span-5">
         <Card className="sticky top-24">
           <CardHeader>
-<<<<<<< HEAD
             <CardTitle className="text-lg">Prescription & Parameters</CardTitle>
-=======
-            <CardTitle>Lens & Frame Parameters</CardTitle>
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -290,10 +212,6 @@ export default function EdgeThicknessPage() {
                   name="eye"
                   render={({ field }) => (
                     <FormItem className="space-y-3">
-<<<<<<< HEAD
-=======
-                      <FormLabel>Eye</FormLabel>
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
@@ -319,46 +237,19 @@ export default function EdgeThicknessPage() {
                   name="sphere"
                   render={({ field }) => (
                     <FormItem>
-<<<<<<< HEAD
                         <PowerAdjuster label="Sphere" value={field.value} onChange={field.onChange} />
-=======
-                      <FormControl>
-                        <PowerAdjuster
-                            label="Sphere"
-                            value={field.value ?? 0}
-                            onChange={field.onChange}
-                            min={-20} max={20} step={0.25}
-                        />
-                      </FormControl>
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
                     </FormItem>
                   )}
                 />
                 
-<<<<<<< HEAD
                 <div className="grid grid-cols-2 gap-4">
-=======
-                <div className="grid grid-cols-1 gap-6">
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
                    <FormField
                     control={form.control}
                     name="cylinder"
                     render={({ field }) => (
                       <FormItem>
-<<<<<<< HEAD
                          <FormLabel className="text-xs uppercase font-bold text-muted-foreground">Cyl</FormLabel>
                          <FormControl><Input type="number" step="0.25" {...field} /></FormControl>
-=======
-                        <FormControl>
-                          <PowerAdjuster
-                              label="Cylinder"
-                              value={field.value ?? 0}
-                              onChange={field.onChange}
-                              min={-10} max={0} step={0.25}
-                          />
-                        </FormControl>
-                        <FormMessage />
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
                       </FormItem>
                     )}
                   />
@@ -367,67 +258,12 @@ export default function EdgeThicknessPage() {
                     name="axis"
                     render={({ field }) => (
                       <FormItem>
-<<<<<<< HEAD
                         <FormLabel className="text-xs uppercase font-bold text-muted-foreground">Axis</FormLabel>
                         <FormControl><Input type="number" {...field} /></FormControl>
-=======
-                        <FormControl>
-                            <PowerAdjuster
-                                label="Axis"
-                                value={field.value ?? 90}
-                                onChange={field.onChange}
-                                min={1} max={180} step={1}
-                                unit="°"
-                            />
-                        </FormControl>
-                        <FormMessage />
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
                       </FormItem>
                     )}
                   />
                 </div>
-<<<<<<< HEAD
-=======
-                
-                <Separator />
-                <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Frame Measurements</h4>
-                
-                <div className="grid grid-cols-3 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="eyeSize"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="text-xs">Eye Size</FormLabel>
-                                <FormControl><Input type="number" step="1" {...field} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="bridgeSize"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="text-xs">Bridge</FormLabel>
-                                <FormControl><Input type="number" step="1" {...field} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="patientPD"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="text-xs">Patient PD</FormLabel>
-                                <FormControl><Input type="number" step="1" {...field} /></FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
 
                 <Separator />
 
@@ -508,28 +344,15 @@ export default function EdgeThicknessPage() {
                         name="centerThickness"
                         render={({ field }) => (
                             <FormItem>
-<<<<<<< HEAD
                             <FormLabel>Min CT (mm)</FormLabel>
                             <FormControl><Input type="number" step="0.1" {...field} /></FormControl>
-=======
-                            <FormLabel>Min Center Thickness</FormLabel>
-                            <FormControl>
-                                <Input type="number" step="0.1" {...field} />
-                            </FormControl>
-                            <FormMessage />
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
                             </FormItem>
                         )}
                     />
                 </div>
-<<<<<<< HEAD
 
                 <Button type="submit" className="w-full">
                   <Calculator className="mr-2 size-4" />
-=======
-                <Button type="submit" className="w-full">
-                  <Calculator className="mr-2 h-4 w-4" />
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
                   Calculate Thickness
                 </Button>
               </form>
@@ -538,7 +361,6 @@ export default function EdgeThicknessPage() {
         </Card>
         </div>
 
-<<<<<<< HEAD
         <div className="lg:col-span-7">
             {results ? (
                 <div className="space-y-6">
@@ -598,7 +420,7 @@ export default function EdgeThicknessPage() {
                                 <CardContent className="p-4 pt-4">
                                     <LensDiagram 
                                         nasalX={nasalX(results.lens2.eye)} 
-                                        templeX={templeX(results.lens2.eye)} 
+                                        templeX={nasalX(results.lens2.eye) === -10 ? 110 : -10} 
                                         eye={results.lens2.eye}
                                         centerThickness={results.lens2.centerThickness}
                                         minThickness={results.lens2.minThickness}
@@ -629,63 +451,6 @@ export default function EdgeThicknessPage() {
                         </CardContent>
                     </Card>
                 </div>
-=======
-        <div className="flex items-center justify-center">
-            {result ? (
-                <Card className="w-full bg-accent/10 border-accent/50">
-                    <CardHeader>
-                        <CardTitle>Result & Visualization</CardTitle>
-                    </CardHeader>
-                    <CardContent className="grid gap-4 md:grid-cols-2 items-center">
-                        <div className="flex flex-col gap-4 text-center">
-                           <div>
-                                <p className="text-[10px] text-muted-foreground uppercase font-bold">Calculated Blank Size</p>
-                                <p className="text-xl font-bold text-accent-foreground">{result.blankSize.toFixed(1)}mm</p>
-                           </div>
-                           <Separator />
-                           <div>
-                                <p className="text-sm text-muted-foreground">Min Edge Thickness</p>
-                                <p className="text-3xl font-bold tracking-tight text-primary">
-                                    {result.minThickness.toFixed(2)}
-                                    <span className="text-xl font-medium text-muted-foreground"> mm</span>
-                                </p>
-                                <p className="text-xs text-muted-foreground">at {result.minAxis}°</p>
-                            </div>
-                             <div>
-                                <p className="text-sm text-muted-foreground">Max Edge Thickness</p>
-                                <p className="text-3xl font-bold tracking-tight text-primary">
-                                    {result.maxThickness.toFixed(2)}
-                                    <span className="text-xl font-medium text-muted-foreground"> mm</span>
-                                </p>
-                                <p className="text-xs text-muted-foreground">at {result.maxAxis}°</p>
-                            </div>
-                            <div>
-                                <p className="text-sm text-muted-foreground">Final Center Thickness</p>
-                                <p className="text-3xl font-bold tracking-tight text-primary">
-                                    {result.centerThickness.toFixed(2)}
-                                    <span className="text-xl font-medium text-muted-foreground"> mm</span>
-                                </p>
-                            </div>
-                        </div>
-                        <LensDiagram 
-                            nasalX={nasalX}
-                            templeX={templeX}
-                            eye={result.eye}
-                            centerThickness={result.centerThickness}
-                            minThickness={result.minThickness}
-                            maxThickness={result.maxThickness}
-                            maxAxis={result.maxAxis}
-                            minAxis={result.minAxis}
-                            isPlusLens={isPlusLens}
-                        />
-                    </CardContent>
-                    <CardFooter>
-                        <p className="text-xs text-muted-foreground/80 text-center w-full">
-                           Diameter derived from Minimum Blank Size (MBS) formula.
-                        </p>
-                    </CardFooter>
-                </Card>
->>>>>>> f532de4543df975da718f4389b4ba57e39a1b621
             ) : (
                 <div className="flex h-full min-h-[400px] w-full items-center justify-center rounded-2xl border border-dashed bg-card p-12 text-center text-muted-foreground shadow-inner">
                     <div className="max-w-xs space-y-4">
