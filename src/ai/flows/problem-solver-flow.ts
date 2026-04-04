@@ -2,14 +2,11 @@
 'use server';
 /**
  * @fileOverview An AI-based problem solver for optical dispensing issues.
- *
- * - solveProblem - A function that takes a user's scenario and returns a structured analysis.
- * - ProblemSolverInput - The input type for the solveProblem function.
- * - ProblemSolverOutput - The return type for the solveProblem function.
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
+import { z } from 'genkit';
+import { googleAI } from '@genkit-ai/google-genai';
 import { searchWeb } from '@/ai/tools/search-tool';
 
 const rxSchema = z.object({
@@ -47,33 +44,19 @@ const ProblemSolverOutputSchema = z.object({
 });
 export type ProblemSolverOutput = z.infer<typeof ProblemSolverOutputSchema>;
 
-// Placeholder function to return a stable, canned response.
-const getPlaceholderResponse = async (input: ProblemSolverInput): Promise<ProblemSolverOutput> => {
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
-    
-    let considerations = "This is a placeholder response. The AI model is currently in testing. Please use this for UI validation only.";
-    if (input.isKnob) {
-        considerations += " And remember, even when the patient seems like a knob, patience and clear communication are key!";
-    }
-
-    return {
-        analysis: "Based on the provided information, the primary discrepancy appears to be the change in cylinder power and axis between the current and previous prescriptions. This, combined with a new lens design, is a common cause for adaptation issues.",
-        solution: "1.  Verify the measured prescription against the prescribed one.\n2.  Check the fitting parameters: PD, heights, and pantoscopic tilt.\n3.  Discuss adaptation period with the patient.\n4.  If issues persist, consider a trial with the previous prescription in a new frame.",
-        considerations: considerations,
-    };
-};
-
 export async function solveProblem(input: ProblemSolverInput): Promise<ProblemSolverOutput> {
-  // To re-enable the live AI, comment out the line below and uncomment the problemSolverFlow call.
-  return getPlaceholderResponse(input);
-  // return problemSolverFlow(input);
+  try {
+    return await problemSolverFlow(input);
+  } catch (error) {
+    console.error('Error in solveProblem:', error);
+    throw error;
+  }
 }
 
-// The Genkit flow and prompt are defined below but are not currently used.
-// They will be re-integrated once the UI and application are fully stable.
 const problemSolverPrompt = ai.definePrompt({
     name: 'problemSolverPrompt',
-    input: { schema: ProblemSolverInputSchema },
+    model: googleAI.model('gemini-2.5-flash'),
+    input: { schema: ImageAnalyzerInputSchema },
     output: { schema: ProblemSolverOutputSchema },
     tools: [searchWeb],
     prompt: `You are an expert optical dispenser and problem solver. A user has submitted the following dispensing scenario.
@@ -114,10 +97,15 @@ const problemSolverFlow = ai.defineFlow(
         outputSchema: ProblemSolverOutputSchema,
     },
     async (input) => {
-        const { output } = await problemSolverPrompt(input);
-        if (!output) {
-            throw new Error('The AI model failed to produce a valid output.');
+        try {
+          const { output } = await problemSolverPrompt(input);
+          if (!output) {
+              throw new Error('The AI model failed to produce a valid output.');
+          }
+          return output;
+        } catch (error) {
+          console.error('Error in problemSolverFlow:', error);
+          throw error;
         }
-        return output;
     }
 );

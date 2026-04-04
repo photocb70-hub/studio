@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Pill, ScanEye, ClipboardCheck, Workflow, Eye } from 'lucide-react';
+import { Pill, ScanEye, ClipboardCheck, Workflow, Eye, Microscope, FileText, Activity, Focus } from 'lucide-react';
 import {
   Card,
   CardHeader,
@@ -16,6 +16,20 @@ import { ContactLensIcon } from '@/components/icons/contact-lens-icon';
 
 const clinicalMenuItems = [
   {
+    href: '/iop-correction',
+    title: 'IOP Correction (CCT)',
+    description: 'Adjust tonometry readings based on corneal thickness.',
+    icon: <Activity className="size-8 text-primary" />,
+    inDevelopment: false,
+  },
+  {
+    href: '/accommodation',
+    title: 'Accommodation Range',
+    description: 'Estimate amplitude and clear vision range by age.',
+    icon: <Focus className="size-8 text-primary" />,
+    inDevelopment: false,
+  },
+  {
     href: '/contact-lens-converter',
     title: 'Contact Lens Rx Converter',
     description: 'Convert a spectacle Rx to a contact lens Rx with full vertexing.',
@@ -27,6 +41,13 @@ const clinicalMenuItems = [
     title: 'Visual Acuity Converter',
     description: 'Convert between Snellen (m/ft), LogMAR, and Decimal VA.',
     icon: <Eye className="size-8 text-primary" />,
+    inDevelopment: false,
+  },
+  {
+    href: '/clinical/pathology',
+    title: 'Ocular Pathology Guide',
+    description: 'Reference for common ocular conditions and referral guidelines.',
+    icon: <Microscope className="size-8 text-primary" />,
     inDevelopment: false,
   },
   {

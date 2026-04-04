@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -30,6 +31,7 @@ export function useCollection<T = DocumentData>(query: Query<T> | null) {
         setLoading(false);
       },
       (err) => {
+        // Explicitly log errors to console as per user requirement
         console.error('Firestore useCollection error:', err);
         setError(err);
         setLoading(false);

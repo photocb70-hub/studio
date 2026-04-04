@@ -1,0 +1,111 @@
+
+{
+  "amd": {
+    "url": "/amd.png",
+    "width": 600,
+    "height": 400,
+    "hint": "macular degeneration"
+  },
+  "diabetic_retinopathy": {
+    "url": "/dr.png",
+    "width": 600,
+    "height": 400,
+    "hint": "retinal hemorrhages"
+  },
+  "retinal_detachment": {
+    "url": "/rd.png",
+    "width": 600,
+    "height": 400,
+    "hint": "detached retina"
+  },
+  "rvo": {
+    "url": "/Retinal Vein Occlusion.png",
+    "width": 600,
+    "height": 400,
+    "hint": "vein occlusion"
+  },
+  "rao": {
+    "url": "/Retinal Artery Occlusion.png",
+    "width": 600,
+    "height": 400,
+    "hint": "artery occlusion"
+  },
+  "poag": {
+    "url": "/POAG.png",
+    "width": 600,
+    "height": 400,
+    "hint": "optic nerve"
+  },
+  "aacg": {
+    "url": "/AACG.png",
+    "width": 600,
+    "height": 400,
+    "hint": "closed angle"
+  },
+  "pcag": {
+    "url": "/pcag.png",
+    "width": 600,
+    "height": 400,
+    "hint": "angle closure"
+  },
+  "cataract": {
+    "url": "/Cataract.png",
+    "width": 600,
+    "height": 400,
+    "hint": "cloudy lens"
+  },
+  "keratoconus": {
+    "url": "/Keratoconus.png",
+    "width": 600,
+    "height": 400,
+    "hint": "cone cornea"
+  },
+  "papilledema": {
+    "url": "/Papilledema.png",
+    "width": 600,
+    "height": 400,
+    "hint": "swollen disc"
+  },
+  "erm": {
+    "url": "/Epiretinal Membrane.png",
+    "width": 600,
+    "height": 400,
+    "hint": "macular pucker"
+  },
+  "uveitis": {
+    "url": "/Anterior Uveitis.png",
+    "width": 600,
+    "height": 400,
+    "hint": "red eye"
+  },
+  "corneal_ulcer": {
+    "url": "/Corneal Ulcer.png",
+    "width": 600,
+    "height": 400,
+    "hint": "corneal infiltrate"
+  },
+  "scleritis": {
+    "url": "/Scleritis.png",
+    "width": 600,
+    "height": 400,
+    "hint": "inflamed sclera"
+  },
+  "optic_neuritis": {
+    "url": "/Optic Neuritis.png",
+    "width": 600,
+    "height": 400,
+    "hint": "swollen nerve"
+  },
+  "subconj_haemorrhage": {
+    "url": "/Subconjunctival Haemorrhage.png",
+    "width": 600,
+    "height": 400,
+    "hint": "red sclera"
+  },
+  "subconj_haemorrhage_front": {
+    "url": "/Subconjunctival Haemorrhage 1.png",
+    "width": 600,
+    "height": 400,
+    "hint": "external eye"
+  }
+}

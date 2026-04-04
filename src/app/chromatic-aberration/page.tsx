@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -16,50 +17,56 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Calculator } from 'lucide-react';
-import { PowerAdjuster } from '@/components/power-adjuster';
+import { Rainbow } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const lensMaterials = [
+    { name: 'Standard Index (1.50)', index: 1.498, abbe: 58 },
+    { name: 'Polycarbonate (1.59)', index: 1.586, abbe: 30 },
+    { name: 'Mid-Index (1.60)', index: 1.60, abbe: 42 },
+    { name: 'High-Index (1.67)', index: 1.67, abbe: 32 },
+    { name: 'High-Index (1.74)', index: 1.74, abbe: 33 },
+    { name: 'Crown Glass', index: 1.523, abbe: 59 },
+];
 
 const formSchema = z.object({
   power: z.coerce.number().min(-20).max(20),
-  originalBVD: z.coerce.number({ required_error: "Original BVD is required." }).min(0, "Must be positive."),
-  newBVD: z.coerce.number({ required_error: "New BVD is required." }).min(0, "Must be positive."),
+  decentration: z.coerce.number().min(0, "Must be positive."),
+  abbe: z.coerce.number().min(20).max(70),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function VertexConversionPage() {
+export default function ChromaticAberrationPage() {
   const [result, setResult] = useState<number | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      power: 0,
-      originalBVD: 12,
-      newBVD: 10,
+      power: 5.00,
+      decentration: 10,
+      abbe: 30,
     },
   });
 
   function onSubmit(values: FormValues) {
-    const { power, originalBVD, newBVD } = values;
-
-    // d = change in vertex distance in meters
-    const d = (originalBVD - newBVD) / 1000;
-
-    // Compensated Power (Fc) = F / (1 - d*F)
-    const compensatedPower = power / (1 - d * power);
-
-    setResult(compensatedPower);
+    const { power, decentration, abbe } = values;
+    
+    // TCA = (Power * Decentration in cm) / Abbe
+    // Decentration input is in mm, convert to cm
+    const tca = Math.abs((power * (decentration / 10)) / abbe);
+    setResult(tca);
   }
 
   return (
     <ToolPageLayout
-      title="BVD Conversion Calculator"
-      description="Calculate the compensated lens power when the back vertex distance changes."
+      title="Chromatic Aberration Calculator"
+      description="Calculate the Transverse Chromatic Aberration (TCA) for a lens, which causes perceived color fringes."
     >
       <div className="grid gap-8 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Enter Parameters</CardTitle>
+            <CardTitle>Parameters</CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -69,49 +76,50 @@ export default function VertexConversionPage() {
                   name="power"
                   render={({ field }) => (
                     <FormItem>
+                      <FormLabel>Power in Meridian of Decentration (D)</FormLabel>
                       <FormControl>
-                        <PowerAdjuster
-                            label="Original Power"
-                            value={field.value}
-                            onChange={field.onChange}
-                            min={-20}
-                            max={20}
-                            step={0.25}
-                        />
+                        <Input type="number" step="0.25" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
                 <FormField
                   control={form.control}
-                  name="originalBVD"
+                  name="decentration"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Original BVD (mm)</FormLabel>
+                      <FormLabel>Decentration from OC (mm)</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="e.g., 12" {...field} />
+                        <Input type="number" step="1" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
                 <FormField
                   control={form.control}
-                  name="newBVD"
+                  name="abbe"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>New BVD (mm)</FormLabel>
-                      <FormControl>
-                        <Input type="number" placeholder="e.g., 10" {...field} />
-                      </FormControl>
+                      <FormLabel>Abbe Number (V-Value)</FormLabel>
+                      <Select onValueChange={(v) => field.onChange(parseInt(v))} defaultValue={String(field.value)}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select or enter" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {lensMaterials.map((m) => (
+                            <SelectItem key={m.name} value={String(m.abbe)}>{m.name} (V={m.abbe})</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
                 <Button type="submit" className="w-full sm:w-auto">
-                  <Calculator className="mr-2 h-4 w-4" />
-                  Convert Power
+                  <Rainbow className="mr-2 size-4" />
+                  Calculate TCA
                 </Button>
               </form>
             </Form>
@@ -122,17 +130,20 @@ export default function VertexConversionPage() {
             {result !== null ? (
                 <Card className="w-full bg-accent/10 border-accent/50">
                     <CardHeader className="items-center text-center">
-                        <CardTitle>Compensated Power</CardTitle>
+                        <CardTitle>Transverse Chromatic Aberration</CardTitle>
                     </CardHeader>
                     <CardContent className="text-center pb-2">
-                        <p className="text-5xl font-bold tracking-tight text-accent-foreground">
-                        {result.toFixed(2)}
-                        <span className="text-3xl font-medium text-muted-foreground"> D</span>
+                        <p className="text-6xl font-bold tracking-tight text-accent-foreground">
+                        {result.toFixed(3)}
+                        <span className="text-2xl font-medium text-muted-foreground"> Δ</span>
+                        </p>
+                        <p className="mt-4 text-sm text-muted-foreground">
+                            {result >= 0.1 ? 'Clinically significant. Patient likely to notice color fringes.' : 'Below clinical threshold for most patients.'}
                         </p>
                     </CardContent>
                     <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
-                            Formula: Fc = F / (1 - dF)
+                            Formula: TCA = (P × d) / V
                         </p>
                     </CardFooter>
                 </Card>

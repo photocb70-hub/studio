@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Calculator } from 'lucide-react';
-import { Slider } from '@/components/ui/slider';
+import { PowerAdjuster } from '@/components/power-adjuster';
 
 const formSchema = z.object({
   power: z.coerce.number().min(-20).max(20),
@@ -39,8 +39,6 @@ export default function InducedPrismPage() {
       decentration: 3,
     },
   });
-
-  const powerValue = form.watch('power');
 
   function onSubmit(values: FormValues) {
     const { power, decentration } = values;
@@ -67,11 +65,11 @@ export default function InducedPrismPage() {
                   name="power"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Lens Power (D): {powerValue.toFixed(2)}</FormLabel>
                       <FormControl>
-                        <Slider
-                            value={[field.value]}
-                            onValueChange={(value) => field.onChange(value[0])}
+                        <PowerAdjuster
+                            label="Lens Power"
+                            value={field.value}
+                            onChange={field.onChange}
                             min={-20}
                             max={20}
                             step={0.25}
@@ -95,7 +93,7 @@ export default function InducedPrismPage() {
                   )}
                 />
                 <Button type="submit" className="w-full sm:w-auto">
-                  <Calculator className="mr-2 size-4" />
+                  <Calculator className="mr-2 h-4 w-4" />
                   Calculate Prism
                 </Button>
               </form>
