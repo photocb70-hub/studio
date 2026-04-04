@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -28,7 +29,9 @@ const formSchema = z.object({
   cylinder: z.coerce.number().min(-10).max(0),
   axis: z.coerce.number().min(1).max(180),
   index: z.coerce.number().min(1.4).max(2.0),
-  diameter: z.coerce.number().min(30).max(90),
+  eyeSize: z.coerce.number().min(1, "Required"),
+  bridgeSize: z.coerce.number().min(1, "Required"),
+  patientPD: z.coerce.number().min(1, "Required"),
   centerThickness: z.coerce.number().min(0.1).max(10),
   eye: z.enum(['OD', 'OS']),
 });
@@ -43,8 +46,6 @@ const lensMaterials = [
     { name: 'High-Index (1.67)', index: 1.67 },
     { name: 'High-Index (1.74)', index: 1.74 },
 ];
-
-const diameterOptions = [55, 60, 65, 70, 75, 80];
 
 const LensDiagram = ({ nasalX, templeX, eye, centerThickness, minThickness, maxThickness, maxAxis, minAxis, isPlusLens }: { nasalX: number, templeX: number, eye: 'OD' | 'OS', centerThickness: number, minThickness: number, maxThickness: number, maxAxis: number, minAxis: number, isPlusLens: boolean }) => {
   const plusPath = `M 20,50 C 35,30 75,30 90,50 C 75,70 35,70 20,50 Z`;
@@ -122,7 +123,7 @@ const LensDiagram = ({ nasalX, templeX, eye, centerThickness, minThickness, maxT
 };
 
 export default function EdgeThicknessPage() {
-  const [result, setResult] = useState<{ minThickness: number; maxThickness: number; centerThickness: number; minAxis: number; maxAxis: number; eye: 'OD' | 'OS' } | null>(null);
+  const [result, setResult] = useState<{ minThickness: number; maxThickness: number; centerThickness: number; minAxis: number; maxAxis: number; eye: 'OD' | 'OS'; blankSize: number } | null>(null);
   const { toast } = useToast();
 
   const form = useForm<FormValues>({
@@ -132,7 +133,9 @@ export default function EdgeThicknessPage() {
       cylinder: 0,
       axis: 90,
       index: 1.498,
-      diameter: 70,
+      eyeSize: 50,
+      bridgeSize: 20,
+      patientPD: 64,
       centerThickness: 2.0,
       eye: 'OD',
     },
@@ -148,7 +151,7 @@ export default function EdgeThicknessPage() {
       toast({
         variant: 'destructive',
         title: 'Invalid Calculation',
-        description: `Power (${power.toFixed(2)}D) is too high for the diameter, resulting in an invalid lens shape.`,
+        description: `Power (${power.toFixed(2)}D) is too high for the calculated diameter (${diameter.toFixed(1)}mm), resulting in an invalid lens shape.`,
       });
       return null;
     }
@@ -157,14 +160,18 @@ export default function EdgeThicknessPage() {
   }
   
   function onSubmit(values: FormValues) {
-    const { sphere, cylinder = 0, axis = 90, index, diameter, centerThickness, eye } = values;
+    const { sphere, cylinder = 0, axis = 90, index, eyeSize, bridgeSize, patientPD, centerThickness, eye } = values;
+
+    // Minimum Blank Size (MBS) formula
+    const framePD = eyeSize + bridgeSize;
+    const blankSize = framePD - patientPD + eyeSize + 2;
 
     const cyl = cylinder || 0;
     const power1 = sphere;
     const power2 = sphere + cyl;
 
-    const sag1 = calculateSag(power1, index, diameter);
-    const sag2 = calculateSag(power2, index, diameter);
+    const sag1 = calculateSag(power1, index, blankSize);
+    const sag2 = calculateSag(power2, index, blankSize);
     
     if (sag1 === null || sag2 === null) {
       setResult(null);
@@ -190,7 +197,7 @@ export default function EdgeThicknessPage() {
     const minAxis = thickness1 < thickness2 ? axis : (axis + 90 > 180 ? axis - 90 : axis + 90);
     const maxAxis = thickness1 > thickness2 ? axis : (axis + 90 > 180 ? axis - 90 : axis + 90);
 
-    setResult({ minThickness, maxThickness, centerThickness: finalCenterThickness, minAxis, maxAxis, eye });
+    setResult({ minThickness, maxThickness, centerThickness: finalCenterThickness, minAxis, maxAxis, eye, blankSize });
   }
 
   const isPlusLens = result ? (result.minThickness + result.maxThickness) / 2 < result.centerThickness : false;
@@ -200,12 +207,12 @@ export default function EdgeThicknessPage() {
   return (
     <ToolPageLayout
       title="Lens Thickness Calculator"
-      description="Calculate the approximate edge thickness for a sphero-cylindrical lens."
+      description="Calculate the approximate edge thickness for a sphero-cylindrical lens based on frame measurements."
     >
       <div className="grid gap-8 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Enter Lens Parameters</CardTitle>
+            <CardTitle>Lens & Frame Parameters</CardTitle>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -216,7 +223,7 @@ export default function EdgeThicknessPage() {
                   name="eye"
                   render={({ field }) => (
                     <FormItem className="space-y-3">
-                      <FormLabel>Lens</FormLabel>
+                      <FormLabel>Eye</FormLabel>
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
@@ -301,19 +308,44 @@ export default function EdgeThicknessPage() {
                   />
                 </div>
                 
-                 <FormField
-                    control={form.control}
-                    name="centerThickness"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Minimum Center Thickness (mm)</FormLabel>
-                        <FormControl>
-                            <Input type="number" step="0.1" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
+                <Separator />
+                <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Frame Measurements</h4>
+                
+                <div className="grid grid-cols-3 gap-4">
+                    <FormField
+                        control={form.control}
+                        name="eyeSize"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-xs">Eye Size</FormLabel>
+                                <FormControl><Input type="number" step="1" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="bridgeSize"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-xs">Bridge</FormLabel>
+                                <FormControl><Input type="number" step="1" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="patientPD"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="text-xs">Patient PD</FormLabel>
+                                <FormControl><Input type="number" step="1" {...field} /></FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                     <FormField
@@ -341,31 +373,20 @@ export default function EdgeThicknessPage() {
                       )}
                     />
                     <FormField
-                      control={form.control}
-                      name="diameter"
-                      render={({ field }) => (
-                          <FormItem>
-                          <FormLabel>Lens Diameter (mm)</FormLabel>
-                          <Select onValueChange={(e) => field.onChange(parseFloat(e))} defaultValue={String(field.value)}>
-                              <FormControl>
-                              <SelectTrigger>
-                                  <SelectValue placeholder="Select a diameter" />
-                              </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {diameterOptions.map((diameter) => (
-                                    <SelectItem key={diameter} value={String(diameter)}>
-                                    {diameter} mm
-                                    </SelectItem>
-                                ))}
-                              </SelectContent>
-                          </Select>
-                          <FormMessage />
-                          </FormItem>
-                      )}
+                        control={form.control}
+                        name="centerThickness"
+                        render={({ field }) => (
+                            <FormItem>
+                            <FormLabel>Min Center Thickness</FormLabel>
+                            <FormControl>
+                                <Input type="number" step="0.1" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                            </FormItem>
+                        )}
                     />
                 </div>
-                <Button type="submit" className="w-full sm:w-auto">
+                <Button type="submit" className="w-full">
                   <Calculator className="mr-2 h-4 w-4" />
                   Calculate Thickness
                 </Button>
@@ -382,6 +403,11 @@ export default function EdgeThicknessPage() {
                     </CardHeader>
                     <CardContent className="grid gap-4 md:grid-cols-2 items-center">
                         <div className="flex flex-col gap-4 text-center">
+                           <div>
+                                <p className="text-[10px] text-muted-foreground uppercase font-bold">Calculated Blank Size</p>
+                                <p className="text-xl font-bold text-accent-foreground">{result.blankSize.toFixed(1)}mm</p>
+                           </div>
+                           <Separator />
                            <div>
                                 <p className="text-sm text-muted-foreground">Min Edge Thickness</p>
                                 <p className="text-3xl font-bold tracking-tight text-primary">
@@ -420,7 +446,7 @@ export default function EdgeThicknessPage() {
                     </CardContent>
                     <CardFooter>
                         <p className="text-xs text-muted-foreground/80 text-center w-full">
-                           Formula: ET = CT ± Sagittal Depth. Assumes minus cylinder format.
+                           Diameter derived from Minimum Blank Size (MBS) formula.
                         </p>
                     </CardFooter>
                 </Card>
